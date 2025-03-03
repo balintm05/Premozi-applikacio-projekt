@@ -1,51 +1,86 @@
 import { useEffect, useState } from 'react';
-import './App.css';
+//import './App.css';
+import "./bootstrap.bundle.min.js";
 
-function App() {
-    const [forecasts, setForecasts] = useState();
+const Login = () => {
+    const [formData, setFormData] = useState({ username: "", password: "" });
+    const [error, setError] = useState("");
 
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tableLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        try {
+            const response = await fetch("https://localhost:60769/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+            const data = await response.json();
+            if (data.success) {
+                console.log("Login successful");
+            } else {
+                setError(data.message || "Hibás bejelentkezési adatok");
+            }
+        } catch (err) {
+            setError("Hálózati hiba");
+        }
+    };
 
     return (
-        <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
+        <div className="container">
+            <div className="row">
+                <div className="col-md-6 offset-md-3">
+                    <div className="card my-5">
+                        <form className="card-body p-lg-5" onSubmit={handleSubmit}>
+                            <div className="text-center mb-5">
+                                <h1 className="text-dark font-weight-bold">Bejelentkezés</h1>
+                            </div>
+                            {error && <div className="alert alert-danger">{error}</div>}
+                            <div className="mb-3">
+                                <label className="text-dark font-weight-bold">Felhasználónév</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    name="username"
+                                    placeholder="Felhasználónév"
+                                    value={formData.username}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div className="">
+                                <label className="text-dark font-weight-bold">Jelszó</label>
+                                <input
+                                    type="password"
+                                    className="form-control"
+                                    name="password"
+                                    placeholder="Jelszó"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </div>
+                            <div className="text-center">
+                                <button type="submit" className="btn btn-dark px-5 mb-5 w-100">
+                                    Bejelentkezés
+                                </button>
+                            </div>
+                            <div className="form-text text-center mb-5 text-dark">
+                                Nincs még fiókja? 
+                                <a href="/register" className="text-dark font-weight-bold">
+                                    Regisztráljon most.
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     );
-    
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        if (response.ok) {
-            const data = await response.json();
-            setForecasts(data);
-        }
-    }
-}
+};
 
-export default App;
+export default Login;
