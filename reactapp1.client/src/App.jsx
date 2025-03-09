@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import './App.css';
 import "../bootstrap/css/bootstrap.min.css";
@@ -14,7 +15,7 @@ const Login = () => {
         e.preventDefault();
         setError("");
         try {
-            const response = await fetch("http://localhost:5000/api/login", {
+            const response = await fetch("http://localhost:5000/api/Login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
@@ -41,13 +42,13 @@ const Login = () => {
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
                             <div className="mb-3">
-                                <label className="text-dark font-weight-bold">Felhasználónév</label>
+                                <label className="text-dark font-weight-bold">Email cím</label>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    name="username"
-                                    placeholder="Felhasználónév"
-                                    value={formData.username}
+                                    name="email"
+                                    placeholder="Email cím"
+                                    value={formData.email}
                                     onChange={handleChange}
                                     required
                                 />

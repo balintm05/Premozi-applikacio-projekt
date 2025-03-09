@@ -23,7 +23,7 @@ namespace ReactApp1.Server.Entities
         [Column(TypeName = "DateTime"), DataType(DataType.DateTime), Editable(false), NotNull, Required]
         public DateTime creation_date { get; set; } = DateTime.UtcNow;
         [Column(TypeName = "int(1)"), MaxLength(1), MinLength(1), NotNull, Required]
-        public int account_status { get; set; } = 2;
+        public int account_status { get; set; } = 1;
         [Column(TypeName = "varchar(30)"), MaxLength(1), MinLength(1), NotNull, Required]
         public string role { get; set; } = "User";
         [Column(TypeName = "longtext"), NotNull, DataType(DataType.Text)]

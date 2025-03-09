@@ -1,3 +1,8 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-empty */
+/* eslint-disable no-func-assign */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 /*!
   * Bootstrap v4.0.0 (https://getbootstrap.com)
   * Copyright 2011-2018 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
@@ -9,7 +14,7 @@
 	(factory((global.bootstrap = {}),global.jQuery));
 }(this, (function (exports,$) { 'use strict';
 
-$ = $ && $.hasOwnProperty('default') ? $['default'] : $;
+$ = $ && Object.prototype.hasOwnProperty.call($, 'default') ? $['default'] : $;
 
 function _defineProperties(target, props) {
   for (var i = 0; i < props.length; i++) {
