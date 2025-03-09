@@ -5,6 +5,9 @@ import "../../bootstrap/css/bootstrap.min.css";
 
 export default function Index() {
     return (
-        <p>Index</p>
+        <div>
+            <p>Index</p>
+            <a href="/account/login">Bejelentkezés</a>
+        </div>        
     );
 };
