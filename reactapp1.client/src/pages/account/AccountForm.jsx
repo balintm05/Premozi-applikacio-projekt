@@ -10,13 +10,13 @@ const AccountForm = () => {
     const cookies = new Cookies();
     const title = document.title;
     const path = location.pathname.split('/');
-    var switchPage = ["",""];
+    var switchPage = ["","",""];
     switch (title) {
         case "Bejelentkezés":
-            switchPage = ["/account/register", "Regisztráljon most."];
+            switchPage = ["/account/register", "Nincs még fiókja?", " Regisztráljon most."];
             break;
         case "Regisztráció":
-            switchPage = ["/account/login", "Jelentkezzen be."];
+            switchPage = ["/account/login", "Van már fiókja?", " Jelentkezzen be."];
             break;
         default:
             break;
@@ -29,6 +29,33 @@ const AccountForm = () => {
         e.preventDefault();
         setError("");
         try {
+            //I'll make this one later
+            /*
+            const jwtToken = cookies.get("JWTToken");
+            const rToken = cookies.get("/refresh/refreshToken");
+            let response;
+            if (jwtToken != null && rToken != null) {
+                return (
+                    <div>
+                        <p>Már be vagy jelentkezve</p>
+                    </div>
+                )
+            } 
+            if (rToken != null) {
+                response = await fetch("https://localhost:7153/api/Auth/refresh-token", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json", 'Authorization': (`Bearer ` + jwtToken),
+                }
+                })
+            }            
+            if (response == null) {
+                response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                });
+            }*/
             const response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -36,12 +63,12 @@ const AccountForm = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                cookies.set("JWTToken", data.accessToken, { Expires: new Date(Date.now() + 604800000), path: "/", httpOnly: true, sameSite: true, secure: true });
-                cookies.set("refreshToken", data.refreshToken, { Expires: new Date(Date.now() + 604800000), path: "/refresh", httpOnly: true, sameSite : true, secure:true});
+                cookies.set("JWTToken", data.accessToken, { Expires: new Date(Date.now() + 604800000), path: "/", httpOnly: false, sameSite: true, secure: true });
+                cookies.set("refreshToken", data.refreshToken, { Expires: new Date(Date.now() + 604800000), path: "/refresh", httpOnly: false, sameSite: true, secure: true });
                 window.open("/", "_self");
             } 
             else {
-                setError(data.error);
+                setError(data.error.errorMessage);
             }
         } catch (err) {
             setError(err.message);
@@ -55,11 +82,11 @@ const AccountForm = () => {
                     <div className="card my-5">
                         <form className="card-body p-lg-5" onSubmit={handleSubmit}>
                             <div className="text-center mb-5">
-                                <h1 className="text-dark fw-bold">{title}</h1>
+                                <h1 className="text-dark font-weight-bold fw-bold">{title}</h1>
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
                             <div className="mb-3">
-                                <label className="text-dark fw-bold">Email cím</label>
+                                <label className="text-dark font-weight-bold fw-bold">Email cím</label>
                                 <input
                                     type="text"
                                     className="form-control"
@@ -71,7 +98,7 @@ const AccountForm = () => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <label className="text-dark fw-bold">Jelszó</label>
+                                <label className="text-dark font-weight-bold fw-bold">Jelszó</label>
                                 <input
                                     type="password"
                                     className="form-control"
@@ -85,8 +112,8 @@ const AccountForm = () => {
                             <div className="text-center">
                                 <button type="submit" className="btn btn-dark px-5 mb-5 w-100">Bejelentkezés</button>
                             </div>
-                            <div className="form-text text-center mb-5 text-dark">Nincs még fiókja?
-                                <a href={switchPage[0]} className="text-dark fw-bold"> {switchPage[1]}</a>
+                            <div className="form-text text-center mb-5 text-dark">{switchPage[1]}
+                                <a href={switchPage[0]} className="text-dark font-weight-bold fw-bold">{switchPage[2]}</a>
                             </div>
                         </form>
                     </div>

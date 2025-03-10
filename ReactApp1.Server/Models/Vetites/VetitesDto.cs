@@ -10,9 +10,10 @@ namespace ReactApp1.Server.Models.Vetites
 {
     public class VetitesDto
     {
-        public DateTime Idopont { get; set; }
-        public string Megjegyzes { get; set; } = "Nincs megjegyzés";
-        public virtual Entities.Film Film { get; set; }
-        public virtual Entities.Terem Terem { get; set; }
+        public DateTime? Idopont { get; set; }
+        public string? Megjegyzes { get; set; } = "Nincs megjegyzés";
+        public virtual Entities.Film? Film { get; set; }
+        public virtual Entities.Terem? Terem { get; set; }
+        public ErrorModel? Error { get; set; }
     }
 }

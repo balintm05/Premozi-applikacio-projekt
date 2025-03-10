@@ -33,34 +33,38 @@ namespace ReactApp1.Server.Controllers
     [ApiController]
     public class AuthController(IAuthService authService) : ControllerBase
     {
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<TokenResponseDto>> Login(AuthUserDto request)
         {
             var token = await authService.LoginAsync(request);
-            if (token == null) 
+            if (token.Error != null) 
             {
-                return BadRequest(new TokenResponseDto { Error = "A megadott Email cím-jelszó kombinációval rendelkező felhasználó nem található" });
+                return BadRequest(token);
             }
 
             return Ok(token);
         }
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<TokenResponseDto>> Register(AuthUserDto request)
         {
             var token = await authService.RegisterAsync(request);
-            if (token == null) 
+            if (token.Error != null) 
             {
-                return BadRequest(new TokenResponseDto { Error = "Az Email címnek egyedinek és validnak, a jelszónak pedig 6 és 30 karakter között kell lennie" });
+                return BadRequest(token);
             }
             return Ok(token);
         }
+        [AllowAnonymous]
         [HttpPost("refresh-token")]
         public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
         {
+            request.userID = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             var token = await authService.RefreshTokenAsync(request);
-            if (token == null || token.AccessToken == null || token.RefreshToken == null)
+            if (token.Error != null)
             {
-                return Unauthorized(new TokenResponseDto { Error = "Invalid JWT or refresh token" });
+                return Unauthorized(token);
             }
             return Ok(token);
         }

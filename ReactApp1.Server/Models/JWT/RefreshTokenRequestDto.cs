@@ -2,7 +2,8 @@
 {
     public class RefreshTokenRequestDto
     {
-        public int userID { get; set; }
-        public required string RefreshToken { get; set; }
+        public int? userID { get; set; }
+        public string? RefreshToken { get; set; }
+        public ErrorModel? Error { get; set; }
     }
 }

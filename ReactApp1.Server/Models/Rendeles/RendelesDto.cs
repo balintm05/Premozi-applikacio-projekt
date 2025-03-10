@@ -10,10 +10,11 @@ namespace ReactApp1.Server.Models.Rendeles
 {
     public class RendelesDto
     {
-        public int Hely { get; set; }
-        public int Statusz { get; set; }
-        public string Megjegyzes { get; set; }
-        public virtual Entities.User User { get; set; }
-        public virtual Entities.Vetites Vetites { get; set; }
+        public int? Hely { get; set; }
+        public int? Statusz { get; set; }
+        public string? Megjegyzes { get; set; }
+        public virtual Entities.User? User { get; set; }
+        public virtual Entities.Vetites? Vetites { get; set; }
+        public ErrorModel? Error { get; set; }
     }
 }

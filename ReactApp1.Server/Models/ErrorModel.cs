@@ -2,9 +2,9 @@
 
 namespace ReactApp1.Server.Models
 {
-    public class Error
+    public class ErrorModel
     {
-        public Error(string message)
+        public ErrorModel(string message)
         {
             errorMessage = message;
         }

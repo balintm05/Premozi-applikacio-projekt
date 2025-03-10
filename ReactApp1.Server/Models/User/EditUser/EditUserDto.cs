@@ -2,6 +2,7 @@
 {
     public class EditUserDto
     {
-        public string email { get; set; }
+        public string? email { get; set; }
+        public ErrorModel? Error { get; set; }
     }
 }

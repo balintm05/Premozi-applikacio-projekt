@@ -2,6 +2,7 @@
 {
     public class EditPasswordDto
     {
-        public required string password { get; set; }
+        public string? password { get; set; }
+        public ErrorModel? Error { get; set; }
     }
 }

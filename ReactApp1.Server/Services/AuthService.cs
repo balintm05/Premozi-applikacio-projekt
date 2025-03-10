@@ -33,7 +33,7 @@ namespace ReactApp1.Server.Services
             var user = await context.Users.FirstOrDefaultAsync(x => x.email == request.email);
             if (user == null || new PasswordHasher<User>().VerifyHashedPassword(user, user.passwordHash, request.password) == PasswordVerificationResult.Failed)
             {
-                return null;
+                return new TokenResponseDto { Error = new Models.ErrorModel("A megadott Email cím-jelszó kombinációval rendelkező felhasználó nem található") };
             };
             return await CreateTokenResponse(user);
 
@@ -41,10 +41,22 @@ namespace ReactApp1.Server.Services
 
         public async Task<TokenResponseDto?> RegisterAsync(AuthUserDto request)
         {            
-            if (await context.Users.AnyAsync(u => u.email == request.email)|| !new EmailAddressAttribute().IsValid(request.email)|| !new Regex("^[a-zA-Z0-9_.-]*$").IsMatch(request.password)|| !(request.password.Length >= 6 && request.password.Length <= 30))
+            if (await context.Users.AnyAsync(u => u.email == request.email))
             {
-                return null;
+                return new TokenResponseDto { Error = new Models.ErrorModel("Az Email címnek egyedinek kell lennie") };
             }
+            if (!new EmailAddressAttribute().IsValid(request.email))
+            {
+                return new TokenResponseDto { Error = new Models.ErrorModel("Az Email címnek validnak kell lennie") };
+            }
+            if (!(request.password.Length >= 6 && request.password.Length <= 30))
+            {
+                return new TokenResponseDto { Error = new Models.ErrorModel("A jelszónak 6 és 30 karakter között kell lennie") };
+            }
+            if (!new Regex("^[a-zA-Z0-9_.-]*$").IsMatch(request.password))
+            {
+                return new TokenResponseDto { Error = new Models.ErrorModel("A jelszó csak alfanumerikus karakterekből állhat") };
+            }            
             var user = new User();
             var hashedPw = new PasswordHasher<User>().HashPassword(user, request.password);
             user.passwordHash = hashedPw;
@@ -55,8 +67,12 @@ namespace ReactApp1.Server.Services
         }
         public async Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request)
         {
-            var user = await ValidateRefreshTokenAsync(request.userID,request.RefreshToken);
-            return user != null ? await CreateTokenResponse(user) : null;
+            if (request.userID == null) 
+            { 
+                return new TokenResponseDto { Error = new Models.ErrorModel("Invalid JWT or refresh token") }; 
+            }
+            var user = await ValidateRefreshTokenAsync((int)request.userID,request.RefreshToken);
+            return user != null ? await CreateTokenResponse(user) : new TokenResponseDto { Error = new Models.ErrorModel("Invalid JWT or refresh token") };
         }
         public async Task<List<User>?> GetAllUsersAsync()
         {
