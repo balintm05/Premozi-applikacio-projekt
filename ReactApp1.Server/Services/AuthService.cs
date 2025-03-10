@@ -35,7 +35,7 @@ namespace ReactApp1.Server.Services
 
         }       
 
-        public async Task<User?> RegisterAsync(AuthUserDto request)
+        public async Task<TokenResponseDto?> RegisterAsync(AuthUserDto request)
         {            
             if (await context.Users.AnyAsync(u => u.email == request.email)|| !new EmailAddressAttribute().IsValid(request.email)|| !new Regex("^[a-zA-Z0-9_.-]*$").IsMatch(request.password)|| !(request.password.Length >= 6 && request.password.Length <= 30))
             {
@@ -47,7 +47,7 @@ namespace ReactApp1.Server.Services
             user.email = request.email;
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
-            return user;
+            return await CreateTokenResponse(user);
         }
         public async Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request)
         {

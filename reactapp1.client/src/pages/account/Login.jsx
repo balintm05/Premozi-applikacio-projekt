@@ -23,12 +23,10 @@ const Login = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                cookies.set("JWTToken", data.accessToken, { Expires: 7, httpOnly: true });
-                cookies.set("refreshToken", data.refreshToken, { Expires: 7, path: "/refresh", httpOnly: true });
                 window.open("/Index", "_self");
             } 
             else {
-                setError(response.status);
+                setError(data.message);
             }
         } catch (err) {
             setError(err.message);

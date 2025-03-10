@@ -18,6 +18,12 @@ using Microsoft.AspNetCore.JsonPatch;
 using ReactApp1.Server.Models.JWT;
 using ReactApp1.Server.Models.User;
 using ReactApp1.Server.Models.User.EditUser;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Renci.SshNet.Messages;
+using Humanizer;
+using NuGet.Protocol;
+using NuGet.Common;
 
 namespace ReactApp1.Server.Controllers
 {
@@ -26,30 +32,41 @@ namespace ReactApp1.Server.Controllers
     public class AuthController(IAuthService authService) : ControllerBase
     {
         [HttpPost("login")]
-        public async Task<ActionResult<TokenResponseDto>> Login(AuthUserDto request)
+        public async Task<ActionResult<HttpResponseMessage>> Login(AuthUserDto request)
         {
             var token = await authService.LoginAsync(request);
             if (token == null) 
-            {
-                return BadRequest("A megadott Email cím-jelszó kombinációval rendelkező felhasználó nem található");
+            {               
+                
+                return BadRequest(new { message = "A megadott Email cím-jelszó kombinációval rendelkező felhasználó nem található" });
             }
-            return Ok(token);
+            Response.Cookies.Append("JWTToken",token.AccessToken, new CookieOptions { /*HttpOnly = true,*/ Expires = DateTimeOffset.UtcNow.AddDays(7)});
+            Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions { /*HttpOnly = true,*/ Expires = DateTimeOffset.UtcNow.AddDays(7), Path = "/refresh" });
+            return Ok();
         }
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(AuthUserDto request)
+        public async Task<ActionResult<HttpResponseMessage>> Register(AuthUserDto request)
         {
-            var user = await authService.RegisterAsync(request);
-            if (user == null) 
+            var token = await authService.RegisterAsync(request);
+            if (token == null) 
             {
                 return BadRequest("Az Email címnek egyedinek és validnak, a jelszónak pedig 6 és 30 karakter között kell lennie");
-            }        
-            return Ok(user);
+            }
+            Response.Cookies.Append("JWTToken", token.AccessToken, new CookieOptions { /*HttpOnly = true,*/ Expires = DateTimeOffset.UtcNow.AddDays(7) });
+            Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions { /*HttpOnly = true,*/ Expires = DateTimeOffset.UtcNow.AddDays(7), Path = "/refresh" });
+            return Ok();
         }
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
+        public async Task<ActionResult<HttpResponseMessage>> RefreshToken(RefreshTokenRequestDto request)
         {
-            var result = await authService.RefreshTokenAsync(request);
-            return result==null||result.AccessToken==null||result.RefreshToken==null ? Unauthorized("Invalid refresh token") : Ok(result);
+            var token = await authService.RefreshTokenAsync(request);
+            if (token == null || token.AccessToken == null || token.RefreshToken == null)
+            {
+                return Unauthorized("Invalid JWT or refresh token");
+            }
+            Response.Cookies.Append("JWTToken", token.AccessToken, new CookieOptions { /*HttpOnly = true,*/ Expires = DateTimeOffset.UtcNow.AddDays(7) });
+            Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions { /*HttpOnly = true,*/ Expires = DateTimeOffset.UtcNow.AddDays(7), Path = "/refresh" });
+            return Ok();
         }
         [Authorize]
         [HttpGet("AuthenticatedOnlyEndpoint")]
