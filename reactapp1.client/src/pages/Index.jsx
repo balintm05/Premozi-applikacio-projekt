@@ -7,7 +7,7 @@ export default function Index() {
     return (
         <div>
             <p>Index</p>
-            <a href="/account/login">Bejelentkezés</a>
+            <a href="/account/login">BejelentkezÃ©s</a>
         </div>        
     );
 };
