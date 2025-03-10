@@ -8,12 +8,10 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var corsPolicy = "corsPolicy1";
-builder.Services.AddCors(options=> options.AddPolicy(name:corsPolicy, 
+builder.Services.AddCors(options=> options.AddPolicy(name: "corsPolicy", 
     builder => 
     {
-       // builder.WithOrigins("https://localhost:60769/");
-       builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+       builder.WithOrigins("https://localhost:60769").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
     }));
 builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -50,7 +48,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(corsPolicy);
+app.UseCors("corsPolicy");
 
 app.UseHttpsRedirection();
 

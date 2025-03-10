@@ -13,20 +13,22 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("huh");
         setError("");
         try {
             const response = await fetch("https://localhost:7153/api/Auth/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json",  },
-                body: JSON.stringify(formData)
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData)          
             });
             const data = await response.json();
+            console.log(data);
             if (response.ok) {
-                window.open("/Index", "_self");
+                cookies.set("JWTToken", data.accessToken, { Expires: new Date(Date.now() + 604800000), path: "/", httpOnly: true, sameSite: true, secure: true });
+                cookies.set("refreshToken", data.refreshToken, { Expires: new Date(Date.now() + 604800000), path: "/refresh", httpOnly: true, sameSite : true, secure:true});
+                window.open("/", "_self");
             } 
             else {
-                setError(data.message);
+                setError(data.error);
             }
         } catch (err) {
             setError(err.message);

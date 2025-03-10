@@ -17,6 +17,10 @@ using Microsoft.AspNetCore.Mvc;
 using ReactApp1.Server.Models.JWT;
 using ReactApp1.Server.Models.User;
 using ReactApp1.Server.Models.User.EditUser;
+using NuGet.Common;
+using System.Net.Http;
+using System.Net.Http.Formatting;
+using System.Net.Http.Headers;
 
 //https://www.youtube.com/watch?v=6EEltKS8AwA
 
@@ -163,5 +167,15 @@ namespace ReactApp1.Server.Services
                 );
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
+        //I have wasted a day on this shit and it never worked lmao
+        /*public async Task<HttpResponseMessage?> OkResponseSetTokenCookie(TokenResponseDto request)
+        {
+            var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK) { };
+            var jwtcookie = new CookieHeaderValue("JWTToken", request.AccessToken) { Expires = DateTimeOffset.UtcNow.AddDays(7), Path = "/", HttpOnly = true , Secure = true, Domain = "https://localhost:60769/" };
+            var refcookie = new CookieHeaderValue("refreshToken", request.RefreshToken) { Expires = DateTimeOffset.UtcNow.AddDays(7), Path = "/refresh", HttpOnly = true, Domain = "https://localhost:60769/"};
+            List<CookieHeaderValue> cookies = new List<CookieHeaderValue>{ jwtcookie, refcookie };
+            response.Headers.AddCookies(cookies);
+            return response;
+        }*/
     }
 }

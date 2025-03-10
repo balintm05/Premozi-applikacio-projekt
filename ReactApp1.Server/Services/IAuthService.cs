@@ -15,5 +15,7 @@ namespace ReactApp1.Server.Services
         Task<User?> EditUserAsync(EditUserDto request, int pid);
         Task<User?> EditUserAdminAsync(EditUserAdminDto request, int pid);
         Task<User?> EditPasswordAsync(EditPasswordDto request, int pid);
+        //just no
+        //Task<HttpResponseMessage?> OkResponseSetTokenCookie(TokenResponseDto request);
     }
 }
