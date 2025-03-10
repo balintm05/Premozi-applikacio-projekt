@@ -6,7 +6,7 @@ function PageNotFound() {
             <div className="row">
                 <div className="col-md-6 offset-md-3">
                     <div className="card my-5">
-                        A keresett oldal nem tal·lhatÛ
+                        A keresett oldal nem tal√°lhat√≥
                     </div>
                 </div>
             </div>
