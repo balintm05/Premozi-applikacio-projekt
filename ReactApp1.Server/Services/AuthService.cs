@@ -29,7 +29,7 @@ namespace ReactApp1.Server.Services
     public class AuthService(DataBaseContext context, IConfiguration configuration):IAuthService
     {
         public async Task<TokenResponseDto?> LoginAsync(AuthUserDto request)
-        {
+        {            
             var user = await context.Users.FirstOrDefaultAsync(x => x.email == request.email);
             if (user == null || new PasswordHasher<User>().VerifyHashedPassword(user, user.passwordHash, request.password) == PasswordVerificationResult.Failed)
             {

@@ -15,8 +15,6 @@ import AccountForm from './pages/account/AccountForm.jsx';
 export default function App() {
 
     return (
-        <div>
-            <h1>App </h1>
             <BrowserRouter>
                 <Routes>
                     <Route element={<Layout/> }>
@@ -26,12 +24,11 @@ export default function App() {
                         <Route path="*" element={<PageNotFound />} />
                     </Route>
                 </Routes>
-            </BrowserRouter>
-        </div>        
+            </BrowserRouter>      
     )
 }
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById('root2')).render(
         <App />
 );
 

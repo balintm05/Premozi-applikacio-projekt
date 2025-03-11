@@ -10,6 +10,8 @@ const AccountForm = () => {
     const cookies = new Cookies();
     const title = document.title;
     const path = location.pathname.split('/');
+    const jwtToken = cookies.get("JWTToken");
+    const rToken = cookies.get("refreshToken");
     var switchPage = ["","",""];
     switch (title) {
         case "Bejelentkezés":
@@ -29,6 +31,7 @@ const AccountForm = () => {
         e.preventDefault();
         setError("");
         try {
+
             //I'll make this one later
             /*
             const jwtToken = cookies.get("JWTToken");
@@ -56,22 +59,33 @@ const AccountForm = () => {
                     body: JSON.stringify(formData)
                 });
             }*/
-            const response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData)
-            });
+            let response;
+            if (jwtToken != "") {
+                response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", 'authorization': `Bearer ${jwtToken}` },
+                    body: JSON.stringify(formData)
+                });
+            }
+            else {
+                response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json"},
+                    body: JSON.stringify(formData)
+                });
+            }
             const data = await response.json();
-            if (response.ok) {
-                cookies.set("JWTToken", data.accessToken, { Expires: new Date(Date.now() + 604800000), path: "/", httpOnly: false, sameSite: true, secure: true });
-                cookies.set("refreshToken", data.refreshToken, { Expires: new Date(Date.now() + 604800000), path: "/refresh", httpOnly: false, sameSite: true, secure: true });
-                window.open("/", "_self");
+            if (response.status == 200) {
+                cookies.set("JWTToken", data.accessToken, { Expires: new Date(Date.now() + 604800000), path: "/",  sameSite: true, secure: true });
+                cookies.set("refreshToken", data.refreshToken, { Expires: new Date(Date.now() + 604800000), path: "/", sameSite: true, secure: true });
+                console.log(response.status + " Mi a retkes geci");
+                //window.open("/", "_self");
             } 
             else {
                 setError(data.error.errorMessage);
             }
         } catch (err) {
-            setError(err.message);
+            setError(err.status + " " + err.message);
         }
     };
 
@@ -110,7 +124,7 @@ const AccountForm = () => {
                                 />
                             </div>
                             <div className="text-center">
-                                <button type="submit" className="btn btn-dark px-5 mb-5 w-100">Bejelentkezés</button>
+                                <button type="submit" className="btn btn-dark px-5 mb-5 w-100">{title}</button>
                             </div>
                             <div className="form-text text-center mb-5 text-dark">{switchPage[1]}
                                 <a href={switchPage[0]} className="text-dark font-weight-bold fw-bold">{switchPage[2]}</a>

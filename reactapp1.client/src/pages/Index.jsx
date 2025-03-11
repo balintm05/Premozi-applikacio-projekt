@@ -24,8 +24,7 @@ export default function Index() {
     console.log(token);
     return (
         <div>
-            <p>Index</p>
-            <a href="/account/login">Bejelentkezés</a>
+            <p>A retek állna ebbe a projektbe</p>
         </div>        
     );
 };

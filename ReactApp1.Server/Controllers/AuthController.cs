@@ -33,10 +33,15 @@ namespace ReactApp1.Server.Controllers
     [ApiController]
     public class AuthController(IAuthService authService) : ControllerBase
     {
-        [AllowAnonymous]
+        //[AllowAnonymous]
+        [Authorize(Roles = "Admin, User")]
         [HttpPost("login")]
         public async Task<ActionResult<TokenResponseDto>> Login(AuthUserDto request)
         {
+            if (User.FindFirstValue(ClaimTypes.Role) != null)
+            {
+                return new TokenResponseDto() { Error = new Models.ErrorModel("Már be vagy jelentkezve") };
+            }
             var token = await authService.LoginAsync(request);
             if (token.Error != null) 
             {
@@ -49,6 +54,10 @@ namespace ReactApp1.Server.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<TokenResponseDto>> Register(AuthUserDto request)
         {
+            if (User.Identity!=null)
+            {
+                return new TokenResponseDto() { Error = new Models.ErrorModel("Már be vagy jelentkezve") };
+            }
             var token = await authService.RegisterAsync(request);
             if (token.Error != null) 
             {
