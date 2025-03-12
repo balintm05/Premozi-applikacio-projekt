@@ -26,6 +26,7 @@ using NuGet.Protocol;
 using NuGet.Common;
 using System.Net.Http.Formatting;
 using Microsoft.DotNet.MSIdentity.Shared;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace ReactApp1.Server.Controllers
 {
@@ -33,14 +34,13 @@ namespace ReactApp1.Server.Controllers
     [ApiController]
     public class AuthController(IAuthService authService) : ControllerBase
     {
-        //[AllowAnonymous]
-        [Authorize(Roles = "Admin, User")]
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<TokenResponseDto>> Login(AuthUserDto request)
         {
-            if (User.FindFirstValue(ClaimTypes.Role) != null)
+            if (User.Identity.IsAuthenticated)
             {
-                return new TokenResponseDto() { Error = new Models.ErrorModel("Már be vagy jelentkezve") };
+                return BadRequest(new TokenResponseDto() { Error = new Models.ErrorModel("Már be vagy jelentkezve") });
             }
             var token = await authService.LoginAsync(request);
             if (token.Error != null) 
@@ -54,9 +54,9 @@ namespace ReactApp1.Server.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<TokenResponseDto>> Register(AuthUserDto request)
         {
-            if (User.Identity!=null)
+            if (User.Identity.IsAuthenticated)
             {
-                return new TokenResponseDto() { Error = new Models.ErrorModel("Már be vagy jelentkezve") };
+                return BadRequest(new TokenResponseDto() { Error = new Models.ErrorModel("Már be vagy jelentkezve") });
             }
             var token = await authService.RegisterAsync(request);
             if (token.Error != null) 
@@ -68,8 +68,7 @@ namespace ReactApp1.Server.Controllers
         [AllowAnonymous]
         [HttpPost("refresh-token")]
         public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
-        {
-            request.userID = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+        {            
             var token = await authService.RefreshTokenAsync(request);
             if (token.Error != null)
             {

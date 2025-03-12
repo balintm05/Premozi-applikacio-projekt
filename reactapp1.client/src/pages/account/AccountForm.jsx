@@ -10,8 +10,6 @@ const AccountForm = () => {
     const cookies = new Cookies();
     const title = document.title;
     const path = location.pathname.split('/');
-    const jwtToken = cookies.get("JWTToken");
-    const rToken = cookies.get("refreshToken");
     var switchPage = ["","",""];
     switch (title) {
         case "Bejelentkezés":
@@ -59,6 +57,7 @@ const AccountForm = () => {
                     body: JSON.stringify(formData)
                 });
             }*/
+            const jwtToken = cookies.get("JWTToken");
             let response;
             if (jwtToken != "") {
                 response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
@@ -78,8 +77,7 @@ const AccountForm = () => {
             if (response.status == 200) {
                 cookies.set("JWTToken", data.accessToken, { Expires: new Date(Date.now() + 604800000), path: "/",  sameSite: true, secure: true });
                 cookies.set("refreshToken", data.refreshToken, { Expires: new Date(Date.now() + 604800000), path: "/", sameSite: true, secure: true });
-                console.log(response.status + " Mi a retkes geci");
-                //window.open("/", "_self");
+                window.open("/", "_self");
             } 
             else {
                 setError(data.error.errorMessage);

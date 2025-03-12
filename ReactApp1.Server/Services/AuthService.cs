@@ -67,12 +67,15 @@ namespace ReactApp1.Server.Services
         }
         public async Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request)
         {
-            if (request.userID == null) 
-            { 
-                return new TokenResponseDto { Error = new Models.ErrorModel("Invalid JWT or refresh token") }; 
+            if (await context.Users.AnyAsync(u=>u.refreshToken == request.RefreshToken && u.refreshTokenExpiry < DateTime.UtcNow)) 
+            {
+                var user = await ValidateRefreshTokenAsync((int)request.userID, request.RefreshToken);
+                return user != null ? await CreateTokenResponse(user) : new TokenResponseDto { Error = new Models.ErrorModel("Invalid JWT or refresh token") };               
             }
-            var user = await ValidateRefreshTokenAsync((int)request.userID,request.RefreshToken);
-            return user != null ? await CreateTokenResponse(user) : new TokenResponseDto { Error = new Models.ErrorModel("Invalid JWT or refresh token") };
+            else
+            {
+                return new TokenResponseDto();
+            }
         }
         public async Task<List<User>?> GetAllUsersAsync()
         {
