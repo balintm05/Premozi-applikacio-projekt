@@ -1,7 +1,7 @@
 import "../../../bootstrap/css/bootstrap.min.css";
 import { Outlet } from "react-router-dom";
 import "./Layout.css";
-import Cookies from 'universal-cookie';
+import React, { Component } from "react";
 /*
  <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -71,35 +71,30 @@ import Cookies from 'universal-cookie';
                         </Navbar.Link>
                     </Navbar.Collapse>    
  */
-function LoginButton() {
-    const x = async () => {
-        const response = await fetch("https://localhost:7153/api/Auth/CheckIfLoggedIn", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" }
-        });
-        const data = await response.json();
-        return data.isLoggedIn;
-    };
-    if (x() == true) {
-        return (
-            <div className="text-light my-2 my-lg-0 mr-sm-0 my-sm-0 ">
+function ButtonToggle() {
+    fetch("https://localhost:7153/api/Auth/CheckIfLoggedIn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include'
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            return data.isLoggedIn ?
+                (
                 <a href="/account/logout">
                     <button style={{ backgroundColor: "rgb(25,0,25)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center" type="submit">Kijelentkezés</button>
                 </a>
-            </div>
-        );
-    }
-    else {
-        return (
-            <div className="text-light my-2 my-lg-0 mr-sm-0 my-sm-0 ">
+                )
+                :
+                (
                 <a href="/account/login">
                     <button style={{ backgroundColor: "rgb(25,0,25)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center" type="submit">Bejelentkezés</button>
                 </a>
-            </div>
-        );
-    }
-}
-function Layout() {
+                );
+        });
+};
+export default function Layout() {
+    console.log(ButtonToggle());
     return (
         <div>
             <header>
@@ -122,7 +117,9 @@ function Layout() {
                                     <a style={{ color: "silver" }} className="nav-link" href="/">Film</a>
                                 </li>
                             </ul>
-                            <LoginButton></LoginButton>
+                            <div className="text-light my-2 my-lg-0 mr-sm-0 my-sm-0 ">
+                                <ButtonToggle />
+                            </div>
                         </div>
                     </div>
                 </nav>
@@ -140,5 +137,3 @@ function Layout() {
         </div>
   );
 }
-
-export default Layout;
