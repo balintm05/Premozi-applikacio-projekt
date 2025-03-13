@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NuGet.Common;
 using ReactApp1.Server.Data;
 using ReactApp1.Server.Services;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,8 +21,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
-    {        
-        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+    {
+        options.MapInboundClaims = false;
+        options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
             ValidIssuer = builder.Configuration["AppSettings:Issuer"],
@@ -41,21 +44,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 }
                 return Task.CompletedTask;
             },
-             /*OnAuthenticationFailed = context =>
-             {
-                 Console.WriteLine($"OnAuthenticationFailed: {context.Exception.Message}");
-                 return Task.CompletedTask;
-             },
-            OnTokenValidated = context =>
+            /*OnAuthenticationFailed = context =>
             {
-                Console.WriteLine("OnTokenValidated");
+                Console.WriteLine($"OnAuthenticationFailed: {context.Exception.Message}");
                 return Task.CompletedTask;
             },
-            OnChallenge = context =>
-            {
-                Console.WriteLine($"OnChallenge: {context.Error}");
-                return Task.CompletedTask;
-            }*/
+           OnTokenValidated = context =>
+           {
+               Console.WriteLine("OnTokenValidated");
+               return Task.CompletedTask;
+           },
+           OnChallenge = context =>
+           {
+               Console.WriteLine($"OnChallenge: {context.Error}");
+               return Task.CompletedTask;
+           }*/            
         };
     });
     

@@ -27,6 +27,8 @@ using NuGet.Common;
 using System.Net.Http.Formatting;
 using Microsoft.DotNet.MSIdentity.Shared;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Net;
+using ReactApp1.Server.Models.User.Response;
 
 namespace ReactApp1.Server.Controllers
 {
@@ -90,46 +92,59 @@ namespace ReactApp1.Server.Controllers
             
         }
         [Authorize]
-        [HttpGet("AuthenticatedOnlyEndpoint")]
-        public IActionResult AuthenticatedOnlyEndpoint()
+        [HttpGet("getUser")]
+        public async Task<ActionResult<GetUserResponseObject?>> GetUser()
         {
-            return Ok();
+            return Ok(new GetUserResponseObject(await authService.GetUserAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))));
         }
         [Authorize(Roles = "Admin")]
-        [HttpGet("AdminOnlyEndpoint")]
-        public IActionResult AdminOnlyEndpoint()
+        [HttpGet("getAllUsers")]
+        public async Task<ActionResult<List<GetUserResponseObject?>>> GetAllUsers()
         {
-            return Ok();
+            var users = await authService.GetAllUsersAsync();
+            var userResponses = new List<GetUserResponseObject>();
+            foreach(User user in users)
+            {
+                userResponses.Add(new GetUserResponseObject(user));
+            }
+            return Ok(userResponses);
+        }
+        [Authorize]
+        [HttpPatch("editUser")]
+        public async Task<ActionResult<Models.ErrorModel>> EditUser(EditUserDto request)
+        {
+            int? id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if(id == null)
+            {
+                return BadRequest("Hiba történt");
+            }
+            var isSuccessful = await authService.EditUserAsync(request, (int)id);
+            return isSuccessful == true ? Ok(new Models.ErrorModel("Sikeres frissítés")) : BadRequest(new Models.ErrorModel("Az email cím nem megfelelő, nem történt változás"));
         }
         [Authorize(Roles = "Admin")]
-        [HttpGet("GetAllUsers")]
-        public async Task<ActionResult<List<User>>> GetAllUsers()
+        [HttpPatch("editUserAdmin")]
+        public async Task<ActionResult<Models.ErrorModel?>> EditUserAdmin(EditUserAdminDto request)
         {
-            return Ok(await authService.GetAllUsersAsync());
+            if(request.role == "Admin"){
+                return StatusCode((int)HttpStatusCode.Forbidden, new Models.ErrorModel("Az admininsztátor fiókok nem módosíthatják a többi adminisztrátor fiókot"));
+            }
+            var isSuccessful = await authService.EditUserAdminAsync(request);
+            return isSuccessful == true ? Ok(new Models.ErrorModel("Sikeres frissítés")) : BadRequest(new Models.ErrorModel("Nem megfelelő értékek lettek megadva, nem történt változás"));
         }
-        [Authorize(Roles = "Admin, User")]
-        [HttpPatch("EditUser/{id}")]
-        public async Task<ActionResult<User>> EditUser(int id, EditUserDto request)
+        [Authorize]
+        [HttpPatch("editPassword")]
+        public async Task<ActionResult<Models.ErrorModel?>> EditPassword(EditPasswordDto request)
         {
-            var user = await authService.EditUserAsync(request, id);
-            return user!=null ? Ok(user) : BadRequest("Az email cím nem megfelelő, nem történt változás");
-        }
-        [Authorize(Roles = "Admin")]
-        [HttpPatch("EditUserAdmin/{id}")]
-        public async Task<ActionResult<User>> EditUserAdmin(int id, EditUserAdminDto request)
-        {
-            var user = await authService.EditUserAdminAsync(request, id);
-            return user != null ? Ok(user) : BadRequest("Nem megfelelő értékek lettek megadva, nem történt változás");
-        }
-        [Authorize(Roles = "Admin, User")]
-        [HttpPatch("EditPassword/{id}")]
-        public async Task<ActionResult<User>> EditPassword(int id, EditPasswordDto request)
-        {          
-            var user = await authService.EditPasswordAsync(request, id);
-            return user!= null ? Ok(user) : BadRequest("A megadott jelszó nem megfelelő, nem történt változás");
+            int? id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (id == null)
+            {
+                return BadRequest("Hiba történt");
+            }
+            var isSuccessful = await authService.EditPasswordAsync(request, (int)id);
+            return isSuccessful == true ? Ok(new Models.ErrorModel("Sikeres frissítés")) : BadRequest("A megadott jelszó nem megfelelő, nem történt változás");
         }
         [AllowAnonymous]
-        [HttpPost("CheckIfLoggedIn")]
+        [HttpPost("checkIfLoggedIn")]
         public ActionResult<LoginState> CheckIfLoggedIn()
         {
             if (User.Identity.IsAuthenticated)

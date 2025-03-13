@@ -3,11 +3,12 @@ import { Outlet } from "react-router-dom";
 import "./Layout.css";
 import React from "react";
 import { useState, useEffect } from "react";
+import Logout from "../account/Logout.jsx";
 function ButtonToggle() {
     const [isLoggedIn, setIsLoggedIn] = useState(null);
 
     useEffect(() => {
-        fetch("https://localhost:7153/api/Auth/CheckIfLoggedIn", {
+        fetch("https://localhost:7153/api/Auth/checkIfLoggedIn", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: 'include'
@@ -22,8 +23,8 @@ function ButtonToggle() {
     }
 
     return isLoggedIn ? (
-        <a href="/account/logout">
-            <button style={{ backgroundColor: "rgb(25,0,25)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
+        <a href="/">
+            <button onClick={Logout} style={{ backgroundColor: "rgb(25,0,25)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
                 Kijelentkezés
             </button>
         </a>

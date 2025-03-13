@@ -9,7 +9,6 @@ function Logout() {
         });
     };
     x();
-    window.open("/", "_self");
     return (
         <div>
             <p>Kijelentkezés folyamatban...</p>

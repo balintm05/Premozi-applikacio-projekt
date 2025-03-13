@@ -65,32 +65,35 @@ namespace ReactApp1.Server.Services
             await context.SaveChangesAsync();
             return await CreateTokenResponse(user);
         }        
+        public async Task<User?> GetUserAsync(int pid)
+        {
+            return await context.Users.FindAsync(pid);
+        }
         public async Task<List<User>?> GetAllUsersAsync()
         {
             return await context.Users.ToListAsync();
         }
-        //add token response later
-        public async Task<User?> EditUserAsync(EditUserDto request, int pid)
+        public async Task<bool?> EditUserAsync(EditUserDto request, int pid)
         {
             if(!new EmailAddressAttribute().IsValid(request.email))
             {
-                return null;
+                return false;
             }
             var user = await context.Users.FindAsync(pid);
             var patchDoc = new JsonPatchDocument<User>{ };
             patchDoc.Replace(user => user.email, request.email);
             patchDoc.ApplyTo(user);
             await context.SaveChangesAsync();
-            return user;
+            return true;
         }
-        public async Task<User?> EditUserAdminAsync(EditUserAdminDto request, int pid)
+        public async Task<bool?> EditUserAdminAsync(EditUserAdminDto request)
         {
             try
             {
-                var user = await context.Users.FindAsync(pid);
+                var user = await context.Users.FindAsync(request.id);
                 if (user == null || !new EmailAddressAttribute().IsValid(request.email) || !configuration["roles"].Split(',').ToList().Contains(request.role) || request.account_status.ToString().Length != 1)
                 {
-                    return null;
+                    return false;
                 }
                 var patchDoc = new JsonPatchDocument<User> { };
                 patchDoc.Replace(user => user.email, request.email);
@@ -99,26 +102,26 @@ namespace ReactApp1.Server.Services
                 patchDoc.Replace(user => user.Megjegyzes, request.Megjegyzes);
                 patchDoc.ApplyTo(user);
                 await context.SaveChangesAsync();
-                return user;
+                return true;
             }
             catch (NullReferenceException ex) 
             { 
-                return null; 
+                return false; 
             }
         }
-        public async Task<User?> EditPasswordAsync(EditPasswordDto request, int pid)
+        public async Task<bool?> EditPasswordAsync(EditPasswordDto request, int pid)
         {
             var user = await context.Users.FindAsync(pid);
             if(!(request.password.Length>=6 && request.password.Length <= 30))
             {
-                return null;
+                return false;
             }
             var hashedPw = new PasswordHasher<User>().HashPassword(user, request.password);
             var patchDoc = new JsonPatchDocument<User> { };
             patchDoc.Replace(user => user.passwordHash, hashedPw);
             patchDoc.ApplyTo(user);
             await context.SaveChangesAsync();
-            return user;
+            return true;
 
         }
         
@@ -176,7 +179,7 @@ namespace ReactApp1.Server.Services
             var Claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.userID.ToString()),
-                new Claim(ClaimTypes.Email, user.email),
+                //new Claim(ClaimTypes.Email, user.email),
                 new Claim(ClaimTypes.Role, user.role.ToString())
             };
             var Key = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
@@ -216,7 +219,7 @@ namespace ReactApp1.Server.Services
             });
             context.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
             {
-                Expires = DateTimeOffset.UtcNow.AddDays(7),
+                Expires = DateTimeOffset.UtcNow.AddDays(1),
                 HttpOnly = true,
                 IsEssential = true,
                 Secure = true,

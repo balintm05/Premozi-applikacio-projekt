@@ -55,7 +55,6 @@ const AccountForm = () => {
                 body: JSON.stringify(formData),
                 credentials: "include"
             });
-            console.log(response);
             if (response.status == 200) {
                 window.open("/", "_self");
             } 
