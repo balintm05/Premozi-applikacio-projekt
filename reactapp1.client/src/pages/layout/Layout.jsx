@@ -72,9 +72,15 @@ import Cookies from 'universal-cookie';
                     </Navbar.Collapse>    
  */
 function LoginButton() {
-    const cookies = new Cookies();
-    const jwtToken = cookies.get("JWTToken");
-    if (jwtToken != null) {
+    const x = async () => {
+        const response = await fetch("https://localhost:7153/api/Auth/CheckIfLoggedIn", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        });
+        const data = await response.json();
+        return data.isLoggedIn;
+    };
+    if (x() == true) {
         return (
             <div className="text-light my-2 my-lg-0 mr-sm-0 my-sm-0 ">
                 <a href="/account/logout">

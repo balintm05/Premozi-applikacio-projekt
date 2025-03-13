@@ -2,12 +2,10 @@
 import { useEffect, useState } from 'react';
 import './Login.css';
 import "../../../bootstrap/css/bootstrap.min.css";
-import Cookies from 'universal-cookie';
 
 const AccountForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
-    const cookies = new Cookies();
     const title = document.title;
     const path = location.pathname.split('/');
     var switchPage = ["","",""];
@@ -57,30 +55,18 @@ const AccountForm = () => {
                     body: JSON.stringify(formData)
                 });
             }*/
-            const jwtToken = cookies.get("JWTToken");
-            let response;
-            if (jwtToken != "") {
-                response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", 'authorization': `Bearer ${jwtToken}` },
-                    body: JSON.stringify(formData)
-                });
-            }
-            else {
-                response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json"},
-                    body: JSON.stringify(formData)
-                });
-            }
-            const data = await response.json();
+            const response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+            console.log(response);
             if (response.status == 200) {
-                cookies.set("JWTToken", data.accessToken, { Expires: new Date(Date.now() + 604800000), path: "/",  sameSite: true, secure: true });
-                cookies.set("refreshToken", data.refreshToken, { Expires: new Date(Date.now() + 604800000), path: "/", sameSite: true, secure: true });
-                window.open("/", "_self");
+                //window.open("/", "_self");
             } 
             else {
-                setError(data.error.errorMessage);
+                const data = await response.json();
+                setError(data.errorMessage);
             }
         } catch (err) {
             setError(err.status + " " + err.message);

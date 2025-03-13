@@ -64,19 +64,7 @@ namespace ReactApp1.Server.Services
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
             return await CreateTokenResponse(user);
-        }
-        public async Task<TokenResponseDto?> RefreshTokenAsync(RefreshTokenRequestDto request)
-        {
-            if (await context.Users.AnyAsync(u=>u.refreshToken == request.RefreshToken && u.refreshTokenExpiry < DateTime.UtcNow)) 
-            {
-                var user = await ValidateRefreshTokenAsync((int)request.userID, request.RefreshToken);
-                return user != null ? await CreateTokenResponse(user) : new TokenResponseDto { Error = new Models.ErrorModel("Invalid JWT or refresh token") };               
-            }
-            else
-            {
-                return new TokenResponseDto();
-            }
-        }
+        }        
         public async Task<List<User>?> GetAllUsersAsync()
         {
             return await context.Users.ToListAsync();
@@ -133,6 +121,23 @@ namespace ReactApp1.Server.Services
             return user;
 
         }
+        
+
+
+
+
+
+        //token methods
+
+        public async Task<TokenResponseDto?> RefreshTokenAsync(string refToken)
+        {
+
+            var user = await ValidateRefreshTokenAsync(refToken);
+            return user != null ? await CreateTokenResponse(user) : null;
+        }
+
+        private async Task<User?> ValidateRefreshTokenAsync(string refToken) => context.Users.Where(u => u.refreshToken == refToken && u.refreshTokenExpiry > DateTime.UtcNow).First();
+
         private async Task<TokenResponseDto> CreateTokenResponse(User? user)
         {
             return new TokenResponseDto
@@ -141,31 +146,24 @@ namespace ReactApp1.Server.Services
                 RefreshToken = await GenerateAndSaveRefreshTokenAsync(user)
             };
         }
-        private async Task<User?> ValidateRefreshTokenAsync(int uid, string refToken)
-        {
-            var user = await context.Users.FindAsync(uid);
-            if (user == null || user.refreshToken != refToken || user.refreshTokenExpiry <= DateTime.UtcNow)
-            {
-                return null;
-            }
-            return user;
-        }
 
         private string GenerateRefreshToken()
         {
             var ranNum = new byte[32];
             using var rng = RandomNumberGenerator.Create();
             rng.GetBytes(ranNum);
-            return Convert.ToBase64String(ranNum);
+            return Convert.ToHexString(ranNum);
         }
+
         private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
         {
             var rToken = GenerateRefreshToken();
             user.refreshToken = rToken;
-            user.refreshTokenExpiry = DateTime.UtcNow.AddHours(168);
+            user.refreshTokenExpiry = DateTime.UtcNow.AddDays(7);
             await context.SaveChangesAsync();
             return rToken;
         }
+
         private string CreateToken(User user)
         {
             var Claims = new List<Claim>
@@ -196,5 +194,29 @@ namespace ReactApp1.Server.Services
             response.Headers.AddCookies(cookies);
             return response;
         }*/
+
+        public void SetTokensInsideCookie(TokenResponseDto token, HttpContext context)
+        {
+            context.Response.Cookies.Append("accessToken", token.AccessToken, new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddMinutes(5),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/",
+                Domain = "localhost"
+            });
+            context.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(7),
+                HttpOnly = true,
+                IsEssential = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Path = "/",
+                Domain = "localhost"
+            });
+        }
     }
 }

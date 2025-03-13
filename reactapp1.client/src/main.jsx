@@ -18,16 +18,19 @@ import { useState } from 'react';
 
 export default function App() {
     const cookies = new Cookies();
-    const rToken = cookies.get("refreshToken");
     const refreshTokenAutoCall = async () => {
+        await fetch(("https://localhost:7153/api/Auth/refresh-token"), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        }
+        );
+        /*
         let response;
-        if (rToken != null || rToken != "") {
+        if (RefreshToken != null || RefreshToken != "") {
             response = await fetch(("https://localhost:7153/api/Auth/refresh-token"), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: {
-                    "refreshToken": { rToken }
-                }
+                body: JSON.stringify({  RefreshToken  })
             }
             );
         }
@@ -37,7 +40,7 @@ export default function App() {
                 cookies.set("JWTToken", data.accessToken, { Expires: new Date(Date.now() + 604800000), path: "/", sameSite: true, secure: true });
                 cookies.set("refreshToken", data.refreshToken, { Expires: new Date(Date.now() + 604800000), path: "/", sameSite: true, secure: true });
             }
-        } 
+        } */
     }
     refreshTokenAutoCall();
     return (

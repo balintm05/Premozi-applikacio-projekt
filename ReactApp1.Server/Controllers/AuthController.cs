@@ -36,45 +36,49 @@ namespace ReactApp1.Server.Controllers
     {
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<TokenResponseDto>> Login(AuthUserDto request)
+        public async Task<ActionResult<Models.ErrorModel?>> Login(AuthUserDto request)
         {
             if (User.Identity.IsAuthenticated)
             {
-                return BadRequest(new TokenResponseDto() { Error = new Models.ErrorModel("Már be vagy jelentkezve") });
+                return BadRequest(new Models.ErrorModel("Már be vagy jelentkezve") );
             }
             var token = await authService.LoginAsync(request);
             if (token.Error != null) 
             {
-                return BadRequest(token);
+                return BadRequest(token.Error);
             }
-
-            return Ok(token);
+            authService.SetTokensInsideCookie(token,HttpContext);
+            return Ok();
         }
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<TokenResponseDto>> Register(AuthUserDto request)
+        public async Task<ActionResult<Models.ErrorModel?>> Register(AuthUserDto request)
         {
             if (User.Identity.IsAuthenticated)
             {
-                return BadRequest(new TokenResponseDto() { Error = new Models.ErrorModel("Már be vagy jelentkezve") });
+                return BadRequest(new Models.ErrorModel("Már be vagy jelentkezve") );
             }
             var token = await authService.RegisterAsync(request);
             if (token.Error != null) 
             {
-                return BadRequest(token);
+                return BadRequest(token.Error);
             }
-            return Ok(token);
+            authService.SetTokensInsideCookie(token, HttpContext);
+            return Ok();
         }
         [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<TokenResponseDto>> RefreshToken(RefreshTokenRequestDto request)
-        {            
-            var token = await authService.RefreshTokenAsync(request);
-            if (token.Error != null)
+        public async void RefreshToken()
+        {
+            if (!User.Identity.IsAuthenticated)
             {
-                return Unauthorized(token);
+                return;
             }
-            return Ok(token);
+            HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken);
+            HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
+            var token = await authService.RefreshTokenAsync(refreshToken);
+            authService.SetTokensInsideCookie(token, HttpContext);
+            
         }
         [Authorize]
         [HttpGet("AuthenticatedOnlyEndpoint")]
@@ -115,5 +119,24 @@ namespace ReactApp1.Server.Controllers
             var user = await authService.EditPasswordAsync(request, id);
             return user!= null ? Ok(user) : BadRequest("A megadott jelszó nem megfelelő, nem történt változás");
         }
+        [AllowAnonymous]
+        [HttpPost("CheckIfLoggedIn")]
+        public ActionResult<LoginState> CheckIfLoggedIn()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                return Ok(new LoginState(true));
+            }
+            return Ok(new LoginState(false));
+        }
+        [Authorize]
+        [HttpDelete("logout")]
+        public ActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete("refreshToken", new CookieOptions { Path = "/", Domain = "localhost"});
+            HttpContext.Response.Cookies.Delete("accessToken", new CookieOptions { Path = "/", Domain = "localhost" });
+            return Ok();
+        }
+
     }
 }

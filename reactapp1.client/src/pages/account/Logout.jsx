@@ -1,12 +1,18 @@
-import Cookies from 'universal-cookie';
+
 
 function Logout() {
-    const cookies = new Cookies();
-    cookies.remove("JWTToken", { path: "/"});
-    cookies.remove("refreshToken", { path: "/" });
+    const x = async () => {
+        await fetch("https://localhost:7153/api/Auth/logout", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" }
+        });
+    };
+    x();
     window.open("/", "_self");
-  return (
-    <p>Kijelentkezés folyamatban...</p>
+    return (
+        <div>
+            <p>Kijelentkezés folyamatban...</p>
+        </div>    
   );
 }
 
