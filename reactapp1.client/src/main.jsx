@@ -25,23 +25,6 @@ export default function App() {
             credentials: "include"
         }
         );
-        /*
-        let response;
-        if (RefreshToken != null || RefreshToken != "") {
-            response = await fetch(("https://localhost:7153/api/Auth/refresh-token"), {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({  RefreshToken  })
-            }
-            );
-        }
-        const data = await response.json();
-        if (response.status == 200) {
-            if (data != null) {
-                cookies.set("JWTToken", data.accessToken, { Expires: new Date(Date.now() + 604800000), path: "/", sameSite: true, secure: true });
-                cookies.set("refreshToken", data.refreshToken, { Expires: new Date(Date.now() + 604800000), path: "/", sameSite: true, secure: true });
-            }
-        } */
     }
     refreshTokenAutoCall();
     return (

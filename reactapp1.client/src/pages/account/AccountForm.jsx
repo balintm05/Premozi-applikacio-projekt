@@ -2,8 +2,30 @@
 import { useEffect, useState } from 'react';
 import './Login.css';
 import "../../../bootstrap/css/bootstrap.min.css";
+function LetMeIIIIIIIIN() {
+    const [isLoggedIn, setIsLoggedIn] = useState(null);
 
+    useEffect(() => {
+        fetch("https://localhost:7153/api/Auth/CheckIfLoggedIn", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include'
+        })
+            .then((response) => response.json())
+            .then((data) => setIsLoggedIn(data.isLoggedIn))
+            .catch((error) => console.error("Hiba a bejelentkezés ellenőrzésekor:", error));
+    }, []);
+
+    if (isLoggedIn === null) {
+        return <p></p>;
+    }
+
+    if (isLoggedIn) {
+        window.open("/", "_self");
+    }
+}
 const AccountForm = () => {
+    LetMeIIIIIIIIN();
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
     const title = document.title;
