@@ -1,100 +1,41 @@
 import "../../../bootstrap/css/bootstrap.min.css";
 import { Outlet } from "react-router-dom";
 import "./Layout.css";
-import React, { Component } from "react";
-/*
- <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-
-    <Navbar
-                    fluid={true}
-                    rounded={true}
-                >
-                    <Navbar.Brand href="/">
-                        <img
-                            src="https://flowbite.com/docs/images/logo.svg"
-                            className="mr-3 h-6 sm:h-9"
-                            alt="Flowbite Logo"
-                        />
-                        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-                            Flowbite
-                        </span>
-                    </Navbar.Brand>
-                    <div className="flex md:order-2">
-                        <Dropdown
-                            arrowIcon={false}
-                            inline={true}
-                            label={<Avatar alt="User settings" img="https://flowbite.com/docs/images/people/profile-picture-5.jpg" rounded={true} />}>
-                            <Dropdown.Header>
-                                <span className="block text-sm">
-                                    Bonnie Green
-                                </span>
-                                <span className="block truncate text-sm font-medium">
-                                    name@flowbite.com
-                                </span>
-                            </Dropdown.Header>
-                            <Dropdown.Item>
-                                Dashboard
-                            </Dropdown.Item>
-                            <Dropdown.Item>
-                                Settings
-                            </Dropdown.Item>
-                            <Dropdown.Item>
-                                Earnings
-                            </Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item>
-                                Sign out
-                            </Dropdown.Item>
-                        </Dropdown>
-                        <Navbar.Toggle />
-                    </div>
-                    <Navbar.Collapse>
-                        <Navbar.Link
-                            href="/navbars"
-                            active={true}
-                        >
-                            Home
-                        </Navbar.Link>
-                        <Navbar.Link href="/navbars">
-                            About
-                        </Navbar.Link>
-                        <Navbar.Link href="/navbars">
-                            Services
-                        </Navbar.Link>
-                        <Navbar.Link href="/navbars">
-                            Pricing
-                        </Navbar.Link>
-                        <Navbar.Link href="/navbars">
-                            Contact
-                        </Navbar.Link>
-                    </Navbar.Collapse>    
- */
+import React from "react";
+import { useState, useEffect } from "react";
 function ButtonToggle() {
-    fetch("https://localhost:7153/api/Auth/CheckIfLoggedIn", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: 'include'
-    })
-        .then((response) => response.json())
-        .then((data) => {
-            return data.isLoggedIn ?
-                (
-                <a href="/account/logout">
-                    <button style={{ backgroundColor: "rgb(25,0,25)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center" type="submit">Kijelentkezés</button>
-                </a>
-                )
-                :
-                (
-                <a href="/account/login">
-                    <button style={{ backgroundColor: "rgb(25,0,25)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center" type="submit">Bejelentkezés</button>
-                </a>
-                );
-        });
-};
+    const [isLoggedIn, setIsLoggedIn] = useState(null);
+
+    useEffect(() => {
+        fetch("https://localhost:7153/api/Auth/CheckIfLoggedIn", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include'
+        })
+            .then((response) => response.json())
+            .then((data) => setIsLoggedIn(data.isLoggedIn))
+            .catch((error) => console.error("Hiba a bejelentkezés ellenőrzésekor:", error));
+    }, []);
+
+    if (isLoggedIn === null) {
+        return <p></p>;
+    }
+
+    return isLoggedIn ? (
+        <a href="/account/logout">
+            <button style={{ backgroundColor: "rgb(25,0,25)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
+                Kijelentkezés
+            </button>
+        </a>
+    ) : (
+        <a href="/account/login">
+            <button style={{ backgroundColor: "rgb(25,0,25)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
+                Bejelentkezés
+            </button>
+        </a>
+    );
+}
 export default function Layout() {
-    console.log(ButtonToggle());
     return (
         <div>
             <header>

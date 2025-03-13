@@ -70,14 +70,23 @@ namespace ReactApp1.Server.Controllers
         [HttpPost("refresh-token")]
         public async void RefreshToken()
         {
-            if (!User.Identity.IsAuthenticated)
+            try
+            {
+                if (User.Identity.IsAuthenticated)
+                {
+                    return;
+                }
+                HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
+                var token = await authService.RefreshTokenAsync(refreshToken);
+                if (token != null)
+                {
+                    authService.SetTokensInsideCookie(token, HttpContext);
+                }
+            }
+            catch
             {
                 return;
             }
-            HttpContext.Request.Cookies.TryGetValue("accessToken", out var accessToken);
-            HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
-            var token = await authService.RefreshTokenAsync(refreshToken);
-            authService.SetTokensInsideCookie(token, HttpContext);
             
         }
         [Authorize]

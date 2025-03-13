@@ -27,42 +27,15 @@ const AccountForm = () => {
         e.preventDefault();
         setError("");
         try {
-
-            //I'll make this one later
-            /*
-            const jwtToken = cookies.get("JWTToken");
-            const rToken = cookies.get("/refresh/refreshToken");
-            let response;
-            if (jwtToken != null && rToken != null) {
-                return (
-                    <div>
-                        <p>Már be vagy jelentkezve</p>
-                    </div>
-                )
-            } 
-            if (rToken != null) {
-                response = await fetch("https://localhost:7153/api/Auth/refresh-token", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json", 'Authorization': (`Bearer ` + jwtToken),
-                }
-                })
-            }            
-            if (response == null) {
-                response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData)
-                });
-            }*/
             const response = await fetch(("https://localhost:7153/api/Auth/" + path[path.length - 1]), {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
+                credentials: "include"
             });
             console.log(response);
             if (response.status == 200) {
-                //window.open("/", "_self");
+                window.open("/", "_self");
             } 
             else {
                 const data = await response.json();

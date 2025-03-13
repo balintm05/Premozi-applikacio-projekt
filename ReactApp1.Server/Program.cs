@@ -38,14 +38,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 if (!string.IsNullOrEmpty(accessToken))
                 {
                     context.Token = accessToken;
-
-                    //REMOVE LATER, ONLY FOR TESTING
-                    Console.WriteLine(accessToken);
                 }
-                Console.WriteLine("oops");
                 return Task.CompletedTask;
             },
-             OnAuthenticationFailed = context =>
+             /*OnAuthenticationFailed = context =>
              {
                  Console.WriteLine($"OnAuthenticationFailed: {context.Exception.Message}");
                  return Task.CompletedTask;
@@ -59,7 +55,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             {
                 Console.WriteLine($"OnChallenge: {context.Error}");
                 return Task.CompletedTask;
-            }
+            }*/
         };
     });
     

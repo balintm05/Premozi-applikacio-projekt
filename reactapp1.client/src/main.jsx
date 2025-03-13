@@ -21,7 +21,8 @@ export default function App() {
     const refreshTokenAutoCall = async () => {
         await fetch(("https://localhost:7153/api/Auth/refresh-token"), {
             method: "POST",
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json" },
+            credentials: "include"
         }
         );
         /*

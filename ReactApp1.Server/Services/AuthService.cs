@@ -131,12 +131,19 @@ namespace ReactApp1.Server.Services
 
         public async Task<TokenResponseDto?> RefreshTokenAsync(string refToken)
         {
-
-            var user = await ValidateRefreshTokenAsync(refToken);
-            return user != null ? await CreateTokenResponse(user) : null;
+            var user = await ValidateRefreshTokenAsync(refToken);          
+            return user != null ? 
+                new TokenResponseDto
+                {
+                    AccessToken = CreateToken(user)
+                } : null;
         }
 
-        private async Task<User?> ValidateRefreshTokenAsync(string refToken) => context.Users.Where(u => u.refreshToken == refToken && u.refreshTokenExpiry > DateTime.UtcNow).First();
+        private async Task<User?> ValidateRefreshTokenAsync(string refToken)
+        {
+            var user = context.Users.FirstAsync(u => u.refreshToken == refToken && u.refreshTokenExpiry > DateTime.UtcNow).Result;
+            return user;
+        }
 
         private async Task<TokenResponseDto> CreateTokenResponse(User? user)
         {
