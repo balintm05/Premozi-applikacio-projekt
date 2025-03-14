@@ -161,6 +161,15 @@ namespace ReactApp1.Server.Controllers
             HttpContext.Response.Cookies.Delete("accessToken", new CookieOptions { Path = "/", Domain = "localhost" });
             return Ok();
         }
-
+        [AllowAnonymous]
+        [HttpPost("checkIfAdmin")]
+        public ActionResult<LoginState> CheckIfAdmin()
+        {
+            if (User.Identity.IsAuthenticated && User.FindFirstValue(ClaimTypes.Role)=="Admin")
+            {
+                return Ok(new LoginState(true));
+            }
+            return Ok(new LoginState(false));
+        }
     }
 }

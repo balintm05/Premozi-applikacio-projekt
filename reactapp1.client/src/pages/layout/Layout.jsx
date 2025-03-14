@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import "../../../bootstrap/css/bootstrap.min.css";
 import { Outlet } from "react-router-dom";
 import "./Layout.css";
@@ -19,26 +20,54 @@ function ButtonToggle() {
     }, []);
 
     if (isLoggedIn === null) {
-        return <p></p>;
+        return null;
     }
 
-    return isLoggedIn ? (
+    return isLoggedIn == true ? (
         <a href="/">
-            <button onClick={Logout} style={{ backgroundColor: "rgb(25,0,25)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
+            <button onClick={Logout} style={{ backgroundColor: "rgb(50,50,50)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
                 Kijelentkezés
             </button>
         </a>
     ) : (
         <a href="/account/login">
-            <button style={{ backgroundColor: "rgb(25,0,25)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
+                <button style={{ backgroundColor: "rgb(50,50,50)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
                 Bejelentkezés
             </button>
         </a>
     );
 }
+function IsAdmin() {
+    const [isAdmin, setIsAdmin] = useState(null);
+    useEffect(() => {
+        fetch("https://localhost:7153/api/Auth/checkIfAdmin", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: 'include'
+        })
+            .then((response) => response.json())
+            .then((data) => setIsAdmin(data.isLoggedIn))
+            .catch((error) => console.error("Hiba a bejelentkezés ellenőrzésekor:", error));
+    }, []);
+    if (isAdmin === null) {
+        return null;
+    }
+    return isAdmin == true ? (<a href="/admin/index">
+        <button style={{ backgroundColor: "rgb(50,50,50)" }} className="btn my-2 btn-outline-light my-sm-0 mr-2 text-light text-center">
+            Adminisztrátori funckiók
+        </button>
+    </a>) : null;
+}
 export default function Layout() {
+    try {
+        ButtonToggle();
+        IsAdmin();
+    }
+    catch {
+        window.location.reload();
+    }
     return (
-        <div>
+        <div style={{ backgroundColor: "black" }}>
             <header>
                 <nav className="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
                     <div className="container-fluid">
@@ -60,13 +89,14 @@ export default function Layout() {
                                 </li>
                             </ul>
                             <div className="text-light my-2 my-lg-0 mr-sm-0 my-sm-0 ">
+                                <IsAdmin/>
                                 <ButtonToggle />
                             </div>
                         </div>
                     </div>
                 </nav>
             </header>
-            <div className="container bg-light text-dark">
+            <div className="container bg-dark text-light">
                 <main role="main" className="pb-3">
                     <Outlet />
                 </main>
@@ -79,3 +109,4 @@ export default function Layout() {
         </div>
   );
 }
+export {IsAdmin};

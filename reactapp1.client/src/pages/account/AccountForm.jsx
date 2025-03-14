@@ -71,7 +71,7 @@ const AccountForm = () => {
         <div className="container">
             <div className="row">
                 <div className="col-md-6 offset-md-3">
-                    <div className="card my-5">
+                    <div style={{ backgroundColor:"rgb(207,207,207)" }} className="card my-5">
                         <form className="card-body p-lg-5" onSubmit={handleSubmit}>
                             <div className="text-center mb-5">
                                 <h1 className="text-dark font-weight-bold fw-bold">{title}</h1>

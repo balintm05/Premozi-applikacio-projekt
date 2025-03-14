@@ -9,10 +9,12 @@ import Login from "./pages/account/Login.jsx";
 import Register from "./pages/account/Register.jsx";
 import Logout from "./pages/account/Logout.jsx";
 import PageNotFound from "./pages/errors/PageNotFound.jsx";
-import UserListAdmin from "./pages/account/accountManager/UserListAdmin.jsx";
+import UserListAdmin from "./pages/admin/UserListAdmin.jsx";
+import AdminCheck from "./pages/admin/AdminCheck.jsx";
 import * as React from 'react';
 import AccountForm from './pages/account/AccountForm.jsx';
 import { useState } from 'react';
+import AdminIndex from './pages/admin/AdminIndex.jsx';
 // import "flowbite/src/themes/default";
 //import './index.css' //Te itten nekem ne rondíts a kód jó légyszi köszike
 
@@ -32,8 +34,11 @@ export default function App() {
                 <Route element={<Layout />}>
                     <Route index element={<Index />} />
                     <Route path="/account/login" element={<Login />} />
-                    <Route path="/account/register" element={<Register />} />                    
-                    <Route path="/account/manage/users" element={<UserListAdmin />} />
+                    <Route path="/account/register" element={<Register />} />
+                    <Route element={<AdminCheck />}>
+                        <Route path="/admin/index" element={<AdminIndex />}/>
+                        <Route path="/admin/users" element={<UserListAdmin />} />
+                    </Route>
                     <Route path="*" element={<PageNotFound />} />
                 </Route>
             </Routes>
