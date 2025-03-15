@@ -12,7 +12,6 @@ namespace ReactApp1.Server.Services
         Task<TokenResponseDto?> LoginAsync(AuthUserDto request);
         Task<TokenResponseDto?> RegisterAsync(AuthUserDto request);   
         Task<User?> GetUserAsync(int pid);
-        Task<List<User>?> GetAllUsersAsync();
         Task<List<User>?> GetQueryUsersAsync(GetUserQueryFilter request);
         Task<bool?> EditUserAsync(EditUserDto request, int pid);
         Task<bool?> EditUserAdminAsync(EditUserAdminDto request);

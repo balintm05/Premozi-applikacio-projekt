@@ -3,11 +3,12 @@ import "../../../bootstrap/css/bootstrap.min.css";
 import React from "react";
 
 function GetUsersTable() {
-    const [formData, setFormData] = useState({ userID: "", email: "", account_status: "", role: "", Megjegyzes: "" });
+    const [formData, setFormData] = useState({ userID: "", email: "", accountStatus: "", role: "", Megjegyzes: "" });
     const [rowData, setRowData] = useState([]); 
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+        console.log(JSON.stringify(formData));
     };
 
     useEffect(() => {
@@ -22,8 +23,8 @@ function GetUsersTable() {
                 const formattedData = data.map(d => ({
                     userID: d.userID,
                     email: d.email,
-                    creation_date: d.creation_date,
-                    account_status: d.account_status,
+                    creationDate: d.creationDate,
+                    accountStatus: d.accountStatus,
                     role: d.role,
                     Megjegyzes: d.Megjegyzes,
                 }));
@@ -60,10 +61,20 @@ function GetUsersTable() {
                             </th>
                             <th className="border-1"></th>
                             <th className="border-1">
-                                <input type="text" name="account_status" onChange={handleChange} value={formData.account_status} />
+                                <select className="form-select" name="accountStatus" onChange={handleChange} value={formData.accountStatus}>
+                                    <option defaultValue value="none">Mind</option>
+                                    <option value="1">Aktív</option>
+                                    <option value="2">Felfüggesztett</option>
+                                    <option value="3">Törölt</option>
+                                </select>
                             </th>
                             <th className="border-1">
-                                <input type="text" name="role" onChange={handleChange} value={formData.role} />
+                                <select className="form-select" name="role" onChange={handleChange} value={formData.role}>
+                                    <option defaultValue value="none">Mind</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="User">User</option>
+                                </select>
+                                
                             </th>
                             <th className="border-1">
                                 <input type="text" name="Megjegyzes" onChange={handleChange} value={formData.Megjegyzes} />
@@ -74,17 +85,17 @@ function GetUsersTable() {
                             <tr key={row.userID} className="text-white border-1">
                                 <td className="border-1">{row.userID}</td>
                                 <td className="border-1">{row.email}</td>
-                                <td className="border-1">{row.creation_date}</td>
-                                <td className="border-1">{row.account_status}</td>
+                                <td className="border-1">{row.creationDate}</td>
+                                <td className="border-1">{row.accountStatus}</td>
                                 <td className="border-1">{row.role}</td>
                                 <td className="border-1">{row.Megjegyzes}</td>
                                 <td className="border-1">
-                                    <a href={`/account/profile/${row.userID}`} className="mr-1">
+                                    <a href={`/account/profile/details/${row.userID}`} className="mr-1">
                                         <button className="btn my-2 btn-outline-light my-sm-0 text-light text-center bg-primary font-weight-bold text-white">
                                             Profil
                                         </button>
                                     </a>
-                                    <a href={`/account/manage/editUser/${row.userID}`}>
+                                    <a href={`/account/profile/manage/edit/${row.userID}`}>
                                         <button className="btn my-2 btn-outline-light my-sm-0 text-light font-weight-bold text-center bg-info text-white">
                                             Módosítás
                                         </button>

@@ -70,12 +70,10 @@ namespace ReactApp1.Server.Services
         {
             return await context.Users.FindAsync(pid);
         }
-        public async Task<List<User>?> GetAllUsersAsync()
-        {
-            return await context.Users.ToListAsync();
-        }
         public async Task<List<User>?> GetQueryUsersAsync(GetUserQueryFilter request)
         {
+            request.role = request.role == "none" ? "" : request.role;
+            request.accountStatus = request.accountStatus == "none" ? "" : request.accountStatus;
             var users = await context.Users.ToListAsync();
             if (!string.IsNullOrEmpty(request.userID)&&int.TryParse(request.userID, out int r))
             {
@@ -85,13 +83,13 @@ namespace ReactApp1.Server.Services
             {
                 users = await users.ToAsyncEnumerable().WhereAwait(async user => user.email.StartsWith(request.email)).ToListAsync();
             }
-            if (!string.IsNullOrEmpty(request.account_status) && int.TryParse(request.account_status, out int s))
+            if (!string.IsNullOrEmpty(request.accountStatus) && int.TryParse(request.accountStatus, out int s))
             {
-                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.account_status.ToString().StartsWith(request.account_status)).ToListAsync();
+                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.accountStatus.ToString().Equals(request.accountStatus)).ToListAsync();
             }
             if (!string.IsNullOrEmpty(request.role))
             {
-                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.role.StartsWith(request.role)).ToListAsync();
+                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.role.Equals(request.role)).ToListAsync();
             }
             if (!string.IsNullOrEmpty(request.Megjegyzes))
             {
@@ -117,14 +115,14 @@ namespace ReactApp1.Server.Services
             try
             {
                 var user = await context.Users.FindAsync(request.id);
-                if (user == null || !new EmailAddressAttribute().IsValid(request.email) || !configuration["roles"].Split(',').ToList().Contains(request.role) || request.account_status.ToString().Length != 1)
+                if (user == null || !new EmailAddressAttribute().IsValid(request.email) || !configuration["roles"].Split(',').ToList().Contains(request.role) || request.accountStatus.ToString().Length != 1)
                 {
                     return false;
                 }
                 var patchDoc = new JsonPatchDocument<User> { };
                 patchDoc.Replace(user => user.email, request.email);
                 patchDoc.Replace(user => user.role, request.role);
-                patchDoc.Replace(user => user.account_status, request.account_status);
+                patchDoc.Replace(user => user.accountStatus, request.accountStatus);
                 patchDoc.Replace(user => user.Megjegyzes, request.Megjegyzes);
                 patchDoc.ApplyTo(user);
                 await context.SaveChangesAsync();
@@ -220,16 +218,6 @@ namespace ReactApp1.Server.Services
                 );
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
-        //I have wasted a day on this shit and it never worked lmao
-        /*public async Task<HttpResponseMessage?> OkResponseSetTokenCookie(TokenResponseDto request)
-        {
-            var response = new HttpResponseMessage(System.Net.HttpStatusCode.OK) { };
-            var jwtcookie = new CookieHeaderValue("JWTToken", request.AccessToken) { Expires = DateTimeOffset.UtcNow.AddDays(7), Path = "/", HttpOnly = true , Secure = true, Domain = "https://localhost:60769/" };
-            var refcookie = new CookieHeaderValue("refreshToken", request.RefreshToken) { Expires = DateTimeOffset.UtcNow.AddDays(7), Path = "/refresh", HttpOnly = true, Domain = "https://localhost:60769/"};
-            List<CookieHeaderValue> cookies = new List<CookieHeaderValue>{ jwtcookie, refcookie };
-            response.Headers.AddCookies(cookies);
-            return response;
-        }*/
 
         public void SetTokensInsideCookie(TokenResponseDto token, HttpContext context)
         {

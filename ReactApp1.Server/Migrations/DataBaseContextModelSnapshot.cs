@@ -174,7 +174,7 @@ namespace ReactApp1.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("account_status")
+                    b.Property<int>("accountStatus")
                         .HasMaxLength(1)
                         .HasColumnType("int(1)");
 

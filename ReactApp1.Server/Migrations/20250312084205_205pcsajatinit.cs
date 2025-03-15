@@ -89,7 +89,7 @@ namespace ReactApp1.Server.Migrations
                     passwordHash = table.Column<string>(type: "char(84)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     creation_date = table.Column<DateTime>(type: "DateTime", nullable: false),
-                    account_status = table.Column<int>(type: "int(1)", maxLength: 1, nullable: false),
+                    accountStatus = table.Column<int>(type: "int(1)", maxLength: 1, nullable: false),
                     role = table.Column<string>(type: "varchar(30)", maxLength: 1, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Megjegyzes = table.Column<string>(type: "longtext", nullable: false)

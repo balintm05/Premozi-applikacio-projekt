@@ -99,6 +99,12 @@ namespace ReactApp1.Server.Controllers
             return Ok(new GetUserResponseObject(await authService.GetUserAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))));
         }
         [Authorize(Roles = "Admin")]
+        [HttpGet("getUserAdmin/{id}")]
+        public async Task<ActionResult<GetUserResponseObject?>> GetUserAdmin(int id)
+        {
+            return Ok(new GetUserResponseObject(await authService.GetUserAsync(id)));
+        }
+        [Authorize(Roles = "Admin")]
         [HttpPost("queryUsers")]
         public async Task<ActionResult<List<GetUserResponseObject?>>> QueryUsers(GetUserQueryFilter request)
         {
@@ -106,7 +112,15 @@ namespace ReactApp1.Server.Controllers
             var userResponses = new List<GetUserResponseObject>();
             foreach(User user in users)
             {
-                userResponses.Add(new GetUserResponseObject(user));
+                if(user.accountStatus == 3)
+                {
+                    userResponses.Add(new GetUserResponseObject(user) { accountStatus = "Törölt" });
+                }
+                if (user.accountStatus == 2)
+                {
+                    userResponses.Add(new GetUserResponseObject(user) { accountStatus = "Felfüggesztett" });
+                }
+                userResponses.Add(new GetUserResponseObject(user) { accountStatus = "Aktív" });
             }
             return Ok(userResponses);
         }

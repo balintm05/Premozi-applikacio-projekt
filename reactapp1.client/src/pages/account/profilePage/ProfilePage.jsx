@@ -2,20 +2,20 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
-function UserEditor() {
+function ProfilePage() {
     const path = location.pathname.split('/');
     const [isAdmin, setIsAdmin] = useState(null);
     const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState(null); 
 
     const fetchAdmin = async () => {
         try {
             if (path[path.length - 1] == "details") {
-                fetchUser();
+                await fetchUser();
                 return;
             }
-            const response = await fetch(`https://localhost:7153/api/Auth/getUserAdmin/` + path[path.length - 1], {
+            const response = await fetch(`https://localhost:7153/api/Auth/getUserAdmin/` + path[path.length-1], {
                 method: "GET",
                 headers: { "Content-Type": "application/json" },
                 credentials: 'include'
@@ -92,15 +92,23 @@ function UserEditor() {
     if (!data) {
         return <div>No data available</div>;
     }
-
-    return (
-        <div className="container">
-            <h1>Felhasználó adatai</h1><br></br>
-            <p>ID: {data.userID}</p><br></br>
-            <p>Email cím: {data.email}</p><br></br>
-            <p>Fiók létrehozásának időpontja: {data.creationDate}</p><br></br>
-        </div>
-    );
+    return isAdmin == true ?
+    (<div className="container">
+    <h1>Felhasználó adatai</h1><br></br>
+    <p>ID: {data.userID}</p><br></br>
+    <p>Email cím: {data.email}</p><br></br>
+        <p>Regisztráció időpontja: {data.creationDate}</p><br></br>
+        <p>Felhasználó státusza	: {data.accountStatus}</p><br></br> 
+        <p>Jogosultság	: {data.role}</p><br></br>
+        <p>Megjegyzés: {data.Megjegyzes}</p><br></br>        
+    </div>)
+    :
+    (<div className="container">
+    <h1>Felhasználó adatai</h1><br></br>
+    <p>ID: {data.userID}</p><br></br>
+    <p>Email cím: {data.email}</p><br></br>
+    <p>Regisztráció időpontja: {data.creationDate}</p><br></br>
+    </div>);
 }
 
-export default UserEditor;
+export default ProfilePage;
