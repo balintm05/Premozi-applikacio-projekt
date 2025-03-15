@@ -79,8 +79,16 @@ function GetUsersTable() {
                                 <td className="border-1">{row.role}</td>
                                 <td className="border-1">{row.Megjegyzes}</td>
                                 <td className="border-1">
-                                    <a href={`/account/profile/${row.userID}`}>Profil</a> <br></br>
-                                    <a href={`/account/manage/editUser/${row.userID}`}>Módosítás</a> <br></br>                                    
+                                    <a href={`/account/profile/${row.userID}`} className="mr-1">
+                                        <button className="btn my-2 btn-outline-light my-sm-0 text-light text-center bg-primary font-weight-bold text-white">
+                                            Profil
+                                        </button>
+                                    </a>
+                                    <a href={`/account/manage/editUser/${row.userID}`}>
+                                        <button className="btn my-2 btn-outline-light my-sm-0 text-light font-weight-bold text-center bg-info text-white">
+                                            Módosítás
+                                        </button>
+                                    </a>                             
                                 </td>
                             </tr>
                         ))}

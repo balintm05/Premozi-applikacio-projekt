@@ -5,6 +5,13 @@ import "./Layout.css";
 import React from "react";
 import { useState, useEffect } from "react";
 import Logout from "../account/Logout.jsx";
+import { Navbar, Nav, Dropdown, Button } from "react-bootstrap";
+/*<a href="/">
+            <button onClick={Logout} style={{ backgroundColor: "rgb(50,50,50)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
+                Kijelentkezés
+            </button>
+        </a>
+ */
 function ButtonToggle() {
     const [isLoggedIn, setIsLoggedIn] = useState(null);
 
@@ -24,6 +31,7 @@ function ButtonToggle() {
     }
 
     return isLoggedIn == true ? (
+        
         <a href="/">
             <button onClick={Logout} style={{ backgroundColor: "rgb(50,50,50)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
                 Kijelentkezés
