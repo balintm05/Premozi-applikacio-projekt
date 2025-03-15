@@ -2,80 +2,75 @@ import { useEffect, useState } from 'react';
 import "../../../bootstrap/css/bootstrap.min.css";
 import React from "react";
 
-function GetUsersTable() {   
-    const [data, setData] = useState(null);
-   
+function GetUsersTable() {
+    const [formData, setFormData] = useState({ userID: "", email: "", account_status: "", role: "", Megjegyzes: "" });
+    const [rowData, setRowData] = useState([]); 
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
     useEffect(() => {
-        fetch("https://localhost:7153/api/Auth/getAllUsers", {
-            method: "GET",
+        fetch("https://localhost:7153/api/Auth/queryUsers", {
+            method: "POST",
             headers: { "Content-Type": "application/json" },
-            credentials: 'include'
+            body: JSON.stringify(formData),
+            credentials: "include"
         })
             .then(response => response.json())
-            .then(data => setData(data))
-            /*.catch((error) => {
-                console.error("Hiba a bejelentkezés ellenőrzésekor:", error)})*/
-            ;
-    }, []);
-    if (data === null) {
-        return;
-    }
-    return (
-        <div className="container text-center">
-            <br></br><h1>Felhasználók listája</h1><br></br><br></br>
-            <table className="table table-bordered">
-                <thead>
-                    <tr className="text-white border-1">
-                        <th className="border-1">
-                            ID
-                        </th>
-                        <th className="border-1">
-                            Email
-                        </th>
-                        <th className="border-1">
-                            Regisztráció időpontja
-                        </th>
-                        <th className="border-1">
-                            Felhasználó státusza
-                        </th>
-                        <th className="border-1">
-                            Jogosultság
-                        </th>
-                        <th className="border-1">
-                            Megjegyzés
-                        </th>
-                        <th className="border-1">
-                            Műveletek
-                        </th>
-                    </tr>
-                </thead>                
-                <tbody>
-                    <tr className="text-white border-1">
-                        <th className="border-1">
-                            ID kereső
-                        </th>
-                        <th className="border-1">
-                            Email kereső
-                        </th>
-                        <th className="border-1">
-                            
-                        </th>
-                        <th className="border-1">
-                            Státusz kereső
-                        </th>
-                        <th className="border-1">
-                            Jogosultság kereső
-                        </th>
-                        <th className="border-1">
-                            Megjegyzés kereső
+            .then(data => {
+                const formattedData = data.map(d => ({
+                    userID: d.userID,
+                    email: d.email,
+                    creation_date: d.creation_date,
+                    account_status: d.account_status,
+                    role: d.role,
+                    Megjegyzes: d.Megjegyzes,
+                }));
+                setRowData(formattedData); 
+            })
+            .catch((error) => {
+                console.error("Error fetching user data:", error);
+            });
+    }, [formData]); 
 
-                        </th>
-                        <th className="border-1">
-                            
-                        </th>
-                    </tr>
-                    <>
-                        {data.map(row => (
+    return (
+        <div className="container text-center" style={{ width: "100%", maxWidth: "95%", margin: "0 auto" }}>
+            <br></br><h1>Felhasználók listája</h1><br></br><br></br>
+            <div className="table-responsive" style={{ overflowX: "auto" }}>
+                <table className="table table-bordered" style={{ width: "100%" }}>
+                    <thead>
+                        <tr className="text-white border-1">
+                            <th className="border-1">ID</th>
+                            <th className="border-1">Email</th>
+                            <th className="border-1">Regisztráció időpontja</th>
+                            <th className="border-1">Felhasználó státusza</th>
+                            <th className="border-1">Jogosultság</th>
+                            <th className="border-1">Megjegyzés</th>
+                            <th className="border-1">Műveletek</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr className="text-white border-1">
+                            <th className="border-1">
+                                <input type="text" name="userID" onChange={handleChange} value={formData.userID} />
+                            </th>
+                            <th className="border-1">
+                                <input type="text" name="email" onChange={handleChange} value={formData.email} />
+                            </th>
+                            <th className="border-1"></th>
+                            <th className="border-1">
+                                <input type="text" name="account_status" onChange={handleChange} value={formData.account_status} />
+                            </th>
+                            <th className="border-1">
+                                <input type="text" name="role" onChange={handleChange} value={formData.role} />
+                            </th>
+                            <th className="border-1">
+                                <input type="text" name="Megjegyzes" onChange={handleChange} value={formData.Megjegyzes} />
+                            </th>
+                            <th className="border-1"></th>
+                        </tr>
+                        {rowData.map(row => (
                             <tr key={row.userID} className="text-white border-1">
                                 <td className="border-1">{row.userID}</td>
                                 <td className="border-1">{row.email}</td>
@@ -84,39 +79,20 @@ function GetUsersTable() {
                                 <td className="border-1">{row.role}</td>
                                 <td className="border-1">{row.Megjegyzes}</td>
                                 <td className="border-1">
-                                    <a href="/account/manage/editUser/${row.userID}">Módosítás</a> <br></br>
-                                    <a href="/">Részletek</a> <br></br>
-                                    <a href="/">Törlés</a>
+                                    <a href={`/account/profile/${row.userID}`}>Profil</a> <br></br>
+                                    <a href={`/account/manage/editUser/${row.userID}`}>Módosítás</a> <br></br>                                    
                                 </td>
                             </tr>
                         ))}
-                    </>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
+}
 
-}
 function UserListAdmin() {
-    const [formData, setFormData] = useState({ userID: "", email: "", account_status: "", role: "", Megjegyzes: "" });
-    const handleQuery = async (e) => {
-        e.preventDefault();
-        try {
-            const response = await fetch(("https://localhost:7153/api/Auth/"), {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-                credentials: "include"
-            });
-        }
-        catch (err) {
-            console.log(err.status + " " + err.message);
-        }
-    };
-    return (
-        <GetUsersTable />
-    )
+    return <GetUsersTable />;
 }
-               
 
 export default UserListAdmin;

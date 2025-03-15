@@ -29,6 +29,7 @@ using Microsoft.DotNet.MSIdentity.Shared;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Net;
 using ReactApp1.Server.Models.User.Response;
+using Org.BouncyCastle.Ocsp;
 
 namespace ReactApp1.Server.Controllers
 {
@@ -98,10 +99,10 @@ namespace ReactApp1.Server.Controllers
             return Ok(new GetUserResponseObject(await authService.GetUserAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))));
         }
         [Authorize(Roles = "Admin")]
-        [HttpGet("getAllUsers")]
-        public async Task<ActionResult<List<GetUserResponseObject?>>> GetAllUsers()
+        [HttpPost("queryUsers")]
+        public async Task<ActionResult<List<GetUserResponseObject?>>> QueryUsers(GetUserQueryFilter request)
         {
-            var users = await authService.GetAllUsersAsync();
+            List<User> users = await authService.GetQueryUsersAsync(request);
             var userResponses = new List<GetUserResponseObject>();
             foreach(User user in users)
             {

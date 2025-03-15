@@ -2,6 +2,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { Outlet } from "react-router-dom";
+import PageNotFound from "../errors/PageNotFound.jsx";
 function AdminChecker() {
     
     const [isAdmin, setIsAdmin] = useState(null);
@@ -24,7 +25,9 @@ function AdminChecker() {
         );
     }
     else {
-        window.open("/","_self");
+        return (
+            <PageNotFound/>
+        )
     }
    
 }

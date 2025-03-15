@@ -21,6 +21,7 @@ using NuGet.Common;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
+using ReactApp1.Server.Models.User.Response;
 
 //https://www.youtube.com/watch?v=6EEltKS8AwA
 
@@ -72,6 +73,31 @@ namespace ReactApp1.Server.Services
         public async Task<List<User>?> GetAllUsersAsync()
         {
             return await context.Users.ToListAsync();
+        }
+        public async Task<List<User>?> GetQueryUsersAsync(GetUserQueryFilter request)
+        {
+            var users = await context.Users.ToListAsync();
+            if (!string.IsNullOrEmpty(request.userID)&&int.TryParse(request.userID, out int r))
+            {
+                users=await users.ToAsyncEnumerable().WhereAwait(async user => user.userID.ToString().StartsWith(request.userID)).ToListAsync();
+            }
+            if (!string.IsNullOrEmpty(request.email))
+            {
+                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.email.StartsWith(request.email)).ToListAsync();
+            }
+            if (!string.IsNullOrEmpty(request.account_status) && int.TryParse(request.account_status, out int s))
+            {
+                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.account_status.ToString().StartsWith(request.account_status)).ToListAsync();
+            }
+            if (!string.IsNullOrEmpty(request.role))
+            {
+                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.role.StartsWith(request.role)).ToListAsync();
+            }
+            if (!string.IsNullOrEmpty(request.Megjegyzes))
+            {
+                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.Megjegyzes.Contains(request.Megjegyzes)).ToListAsync();
+            }
+            return users;
         }
         public async Task<bool?> EditUserAsync(EditUserDto request, int pid)
         {

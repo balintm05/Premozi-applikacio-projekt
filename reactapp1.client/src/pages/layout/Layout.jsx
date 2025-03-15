@@ -88,7 +88,7 @@ export default function Layout() {
                                     <a style={{ color: "silver" }} className="nav-link" href="/">Film</a>
                                 </li>
                             </ul>
-                            <div className="text-light my-2 my-lg-0 mr-sm-0 my-sm-0 ">
+                            <div className="text-light my-2 my-lg-0 mr-sm-0 my-sm-0 ">  
                                 <IsAdmin/>
                                 <ButtonToggle />
                             </div>
@@ -96,7 +96,7 @@ export default function Layout() {
                     </div>
                 </nav>
             </header>
-            <div className="container bg-dark text-light">
+            <div style={{ width: "90vw", maxWidth: "1800px", margin: "0 auto" }} className="container bg-dark text-light text-center">
                 <main role="main" className="pb-3">
                     <Outlet />
                 </main>
