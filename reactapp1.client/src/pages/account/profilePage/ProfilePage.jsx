@@ -64,8 +64,6 @@ function ProfilePage() {
                 }
                 const result = await response.json();
                 setIsAdmin(result.isLoggedIn);
-
-                // Fetch data based on admin status
                 if (result.isLoggedIn) {
                     await fetchAdmin();
                 } else {
@@ -79,7 +77,7 @@ function ProfilePage() {
         };
 
         checkAdminStatus();
-    }, []); // Add `id` as a dependency
+    }, []);
 
     if (loading) {
         return <div></div>;
