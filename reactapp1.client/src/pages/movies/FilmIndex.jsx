@@ -16,32 +16,71 @@ function Musorok() {
                 setLoading(false);
             })
             .catch(error => {
-                console.error("Hiba az adatok bet�lt�sekor:", error);
+                console.error("Hiba az adatok betöltésekor:", error);
                 setLoading(false);
             });
     }, []);
 
     if (loading) {
-        return <p>Bet�lt�s...</p>;
+        return <p>Betöltés...</p>;
     }
 
     return (
         <div className="container">
-            <h1>M�sorok</h1>
+            <h1>Műsorok</h1>
             <table className="table table-bordered table-dark">
                 <thead>
                     <tr>
-                        <th>C�m</th>
-                        <th>Le�r�s</th>
-                        <th>Id�tartam</th>
+                        <th>Cím</th>
+                        <th>Kategória</th>
+                        <th>Műfaj</th>
+                        <th>Korhatár</th>
+                        <th>Játékidő</th>
+                        <th>Gyártó</th>
+                        <th>Rendező</th>
+                        <th>Szereplők</th>
+                        <th>Leírás</th>
+                        <th>Eredeti nyelv</th>
+                        <th>Eredeti cím</th>
+                        <th>Szinkron</th>
+                        <th>Trailer</th>
+                        <th>IMDB értékelés</th>
+                        <th>Ár</th>
+                        <th>Megjegyzés</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     {musorok.map((musor) => (
                         <tr key={musor.id}>
                             <td>{musor.cim}</td>
-                            <td>{musor.leiras}</td>
-                            <td>{musor.idotartam} perc</td>
+                            <td>{musor.kategoria}</td>
+                            <td>{musor.mufaj }</td>                           
+                            <td>{musor.korhatar }</td>
+                            <td>{musor.jatekido } perc</td>
+                            <td>{musor.gyarto }</td>
+                            <td>{musor.rendezo }</td>
+                            <td>{musor.szereplok }</td>
+                            <td>{musor.leiras }</td>
+                            <td>{musor.eredetiNyelv }</td>
+                            <td>{musor.eredetiCim }</td>
+                            <td>{musor.szinkron }</td>
+                            <td>{musor.trailerLink }</td>
+                            <td>{musor.imdb }</td>
+                            <td>{musor.alapAr }</td>
+                            <td>{musor.megjegyzes}</td>
+                            <td className="border-1">
+                                <a href={`/musor/manage/edit/${musor.id}`} className="mr-1">
+                                    <button className="btn my-2 btn-outline-light my-sm-0 text-light text-center bg-primary font-weight-bold text-white">
+                                        Profil
+                                    </button>
+                                </a>
+                                <a href={`/`}>
+                                    <button className="btn my-2 btn-outline-light my-sm-0 text-light font-weight-bold text-center bg-info text-white">
+                                        Módosítás
+                                    </button>
+                                </a>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

@@ -53,6 +53,8 @@ namespace ReactApp1.Server.Controllers
             authService.SetTokensInsideCookie(token,HttpContext);
             return Ok();
         }
+
+
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<Models.ErrorModel?>> Register(AuthUserDto request)
@@ -69,6 +71,8 @@ namespace ReactApp1.Server.Controllers
             authService.SetTokensInsideCookie(token, HttpContext);
             return Ok();
         }
+
+
         [AllowAnonymous]
         [HttpPost("refresh-token")]
         public async void RefreshToken()
@@ -92,18 +96,24 @@ namespace ReactApp1.Server.Controllers
             }
             
         }
+
+
         [Authorize]
         [HttpGet("getUser")]
         public async Task<ActionResult<GetUserResponseObject?>> GetUser()
         {
             return Ok(new GetUserResponseObject(await authService.GetUserAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)))));
         }
+
+
         [Authorize(Roles = "Admin")]
         [HttpGet("getUserAdmin/{id}")]
         public async Task<ActionResult<GetUserResponseObject?>> GetUserAdmin(int id)
         {
             return Ok(new GetUserResponseObject(await authService.GetUserAsync(id)));
         }
+
+
         [Authorize(Roles = "Admin")]
         [HttpPost("queryUsers")]
         public async Task<ActionResult<List<GetUserResponseObject?>>> QueryUsers(GetUserQueryFilter request)
@@ -120,10 +130,16 @@ namespace ReactApp1.Server.Controllers
                 {
                     userResponses.Add(new GetUserResponseObject(user) { accountStatus = "Felfüggesztett" });
                 }
-                userResponses.Add(new GetUserResponseObject(user) { accountStatus = "Aktív" });
+                if(user.accountStatus == 1)
+                {
+                    userResponses.Add(new GetUserResponseObject(user) { accountStatus = "Aktív" });
+                }
+                
             }
             return Ok(userResponses);
         }
+
+
         [Authorize]
         [HttpPatch("editUser")]
         public async Task<ActionResult<Models.ErrorModel>> EditUser(EditUserDto request)
@@ -136,6 +152,8 @@ namespace ReactApp1.Server.Controllers
             var isSuccessful = await authService.EditUserAsync(request, (int)id);
             return isSuccessful == true ? Ok(new Models.ErrorModel("Sikeres frissítés")) : BadRequest(new Models.ErrorModel("Az email cím nem megfelelő, nem történt változás"));
         }
+
+
         [Authorize(Roles = "Admin")]
         [HttpPatch("editUserAdmin")]
         public async Task<ActionResult<Models.ErrorModel?>> EditUserAdmin(EditUserAdminDto request)
@@ -146,6 +164,8 @@ namespace ReactApp1.Server.Controllers
             var isSuccessful = await authService.EditUserAdminAsync(request);
             return isSuccessful == true ? Ok(new Models.ErrorModel("Sikeres frissítés")) : BadRequest(new Models.ErrorModel("Nem megfelelő értékek lettek megadva, nem történt változás"));
         }
+
+
         [Authorize]
         [HttpPatch("editPassword")]
         public async Task<ActionResult<Models.ErrorModel?>> EditPassword(EditPasswordDto request)
@@ -158,16 +178,25 @@ namespace ReactApp1.Server.Controllers
             var isSuccessful = await authService.EditPasswordAsync(request, (int)id);
             return isSuccessful == true ? Ok(new Models.ErrorModel("Sikeres frissítés")) : BadRequest("A megadott jelszó nem megfelelő, nem történt változás");
         }
+
+
         [AllowAnonymous]
         [HttpPost("checkIfLoggedIn")]
-        public ActionResult<LoginState> CheckIfLoggedIn()
+        public async Task<ActionResult<LoginState>> CheckIfLoggedIn()
         {
             if (User.Identity.IsAuthenticated)
             {
+                if(await authService.checkIfStatusChanged(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier))))
+                {
+                    Logout();
+                    return Ok(new LoginState(false));
+                }
                 return Ok(new LoginState(true));
             }
             return Ok(new LoginState(false));
         }
+
+
         [Authorize]
         [HttpDelete("logout")]
         public ActionResult Logout()
@@ -176,6 +205,8 @@ namespace ReactApp1.Server.Controllers
             HttpContext.Response.Cookies.Delete("accessToken", new CookieOptions { Path = "/", Domain = "localhost" });
             return Ok();
         }
+
+
         [AllowAnonymous]
         [HttpPost("checkIfAdmin")]
         public ActionResult<LoginState> CheckIfAdmin()

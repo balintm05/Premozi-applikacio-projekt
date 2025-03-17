@@ -36,9 +36,14 @@ namespace ReactApp1.Server.Services
             {
                 return new TokenResponseDto { Error = new Models.ErrorModel("A megadott Email cím-jelszó kombinációval rendelkező felhasználó nem található") };
             };
+            if(user.accountStatus == 2)
+            {
+                return new TokenResponseDto { Error = new Models.ErrorModel("A fiók fel van függesztve") };
+            }
             return await CreateTokenResponse(user);
 
         }       
+
 
         public async Task<TokenResponseDto?> RegisterAsync(AuthUserDto request)
         {            
@@ -66,10 +71,14 @@ namespace ReactApp1.Server.Services
             await context.SaveChangesAsync();
             return await CreateTokenResponse(user);
         }        
+
+
         public async Task<User?> GetUserAsync(int pid)
         {
             return await context.Users.FindAsync(pid);
         }
+
+
         public async Task<List<User>?> GetQueryUsersAsync(GetUserQueryFilter request)
         {
             request.role = request.role == "none" ? "" : request.role;
@@ -97,6 +106,8 @@ namespace ReactApp1.Server.Services
             }
             return users;
         }
+
+
         public async Task<bool?> EditUserAsync(EditUserDto request, int pid)
         {
             if(!new EmailAddressAttribute().IsValid(request.email))
@@ -110,6 +121,8 @@ namespace ReactApp1.Server.Services
             await context.SaveChangesAsync();
             return true;
         }
+
+
         public async Task<bool?> EditUserAdminAsync(EditUserAdminDto request)
         {
             try
@@ -133,6 +146,8 @@ namespace ReactApp1.Server.Services
                 return false; 
             }
         }
+
+
         public async Task<bool?> EditPasswordAsync(EditPasswordDto request, int pid)
         {
             var user = await context.Users.FindAsync(pid);
@@ -154,6 +169,7 @@ namespace ReactApp1.Server.Services
 
 
 
+
         //token methods
 
         public async Task<TokenResponseDto?> RefreshTokenAsync(string refToken)
@@ -166,11 +182,13 @@ namespace ReactApp1.Server.Services
                 } : null;
         }
 
+
         private async Task<User?> ValidateRefreshTokenAsync(string refToken)
         {
             var user = context.Users.FirstAsync(u => u.refreshToken == refToken && u.refreshTokenExpiry > DateTime.UtcNow).Result;
             return user;
         }
+
 
         private async Task<TokenResponseDto> CreateTokenResponse(User? user)
         {
@@ -181,6 +199,7 @@ namespace ReactApp1.Server.Services
             };
         }
 
+
         private string GenerateRefreshToken()
         {
             var ranNum = new byte[32];
@@ -188,6 +207,7 @@ namespace ReactApp1.Server.Services
             rng.GetBytes(ranNum);
             return Convert.ToHexString(ranNum);
         }
+
 
         private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
         {
@@ -197,6 +217,7 @@ namespace ReactApp1.Server.Services
             await context.SaveChangesAsync();
             return rToken;
         }
+
 
         private string CreateToken(User user)
         {
@@ -219,9 +240,10 @@ namespace ReactApp1.Server.Services
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
 
-        public void SetTokensInsideCookie(TokenResponseDto token, HttpContext context)
+
+        public void SetTokensInsideCookie(TokenResponseDto token, HttpContext httpcontext)
         {
-            context.Response.Cookies.Append("accessToken", token.AccessToken, new CookieOptions
+            httpcontext.Response.Cookies.Append("accessToken", token.AccessToken, new CookieOptions
             {
                 Expires = DateTimeOffset.UtcNow.AddMinutes(5),
                 HttpOnly = true,
@@ -231,7 +253,7 @@ namespace ReactApp1.Server.Services
                 Path = "/",
                 Domain = "localhost"
             });
-            context.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
+            httpcontext.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
             {
                 Expires = DateTimeOffset.UtcNow.AddDays(1),
                 HttpOnly = true,
@@ -241,6 +263,17 @@ namespace ReactApp1.Server.Services
                 Path = "/",
                 Domain = "localhost"
             });
+        }
+
+        
+        public async Task<bool> checkIfStatusChanged(int id)
+        {
+            var user = await context.Users.FindAsync(id);
+            if(user.accountStatus == 2 || user.accountStatus == 3)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

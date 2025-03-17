@@ -3,7 +3,7 @@ import "../../../bootstrap/css/bootstrap.min.css";
 import React from "react";
 
 function GetUsersTable() {
-    const [formData, setFormData] = useState({ userID: "", email: "", accountStatus: "", role: "", Megjegyzes: "" });
+    const [formData, setFormData] = useState({ userID: "", email: "", accountStatus: "", role: "", megjegyzes: "" });
     const [rowData, setRowData] = useState([]); 
 
     const handleChange = (e) => {
@@ -26,7 +26,7 @@ function GetUsersTable() {
                     creationDate: d.creationDate,
                     accountStatus: d.accountStatus,
                     role: d.role,
-                    Megjegyzes: d.Megjegyzes,
+                    megjegyzes: d.megjegyzes,
                 }));
                 setRowData(formattedData); 
             })
@@ -77,7 +77,7 @@ function GetUsersTable() {
                                 
                             </th>
                             <th className="border-1">
-                                <input type="text" name="Megjegyzes" onChange={handleChange} value={formData.Megjegyzes} />
+                                <input type="text" name="megjegyzes" onChange={handleChange} value={formData.megjegyzes} />
                             </th>
                             <th className="border-1"></th>
                         </tr>
@@ -88,7 +88,7 @@ function GetUsersTable() {
                                 <td className="border-1">{row.creationDate}</td>
                                 <td className="border-1">{row.accountStatus}</td>
                                 <td className="border-1">{row.role}</td>
-                                <td className="border-1">{row.Megjegyzes}</td>
+                                <td className="border-1">{row.megjegyzes}</td>
                                 <td className="border-1">
                                     <a href={`/account/profile/details/${row.userID}`} className="mr-1">
                                         <button className="btn my-2 btn-outline-light my-sm-0 text-light text-center bg-primary font-weight-bold text-white">

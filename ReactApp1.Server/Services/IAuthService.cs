@@ -18,6 +18,7 @@ namespace ReactApp1.Server.Services
         Task<bool?> EditPasswordAsync(EditPasswordDto request, int pid);
         Task<TokenResponseDto?> RefreshTokenAsync(string refToken);
         void SetTokensInsideCookie(TokenResponseDto token, HttpContext context);
+        Task<bool> checkIfStatusChanged(int id);
         //just no
         //Task<HttpResponseMessage?> OkResponseSetTokenCookie(TokenResponseDto request);
     }

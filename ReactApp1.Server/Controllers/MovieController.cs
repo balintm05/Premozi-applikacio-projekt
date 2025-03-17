@@ -33,6 +33,7 @@ using ReactApp1.Server.Models.User.Response;
 using Org.BouncyCastle.Ocsp;
 using ReactApp1.Server.Models.Film.ManageFilm;
 using ReactApp1.Server.Models.Film;
+using Org.BouncyCastle.Asn1.Mozilla;
 
 namespace ReactApp1.Server.Controllers
 {
@@ -46,17 +47,44 @@ namespace ReactApp1.Server.Controllers
         {
             return Ok( await movieService.getMovies());
         }
-        //[Authorize(Roles = "Admin")]
+
+
+        [Authorize(Roles = "Admin")]
         [HttpPost("addMovie")]
-        public async Task<ActionResult<Models.ErrorModel?>> addMovie(AddFilmDto request)
+        public async Task<ActionResult<Models.ErrorModel?>> addMovie(ManageFilmDto request)
         {
             var err = await movieService.addMovie(request);
-            if (err != null) 
+            if (err.errorMessage == "Sikeres hozzáadás")
             {
-                return BadRequest(err);
+                return Ok(err);
             }
-            return Ok();
+            return BadRequest(err);
         }
 
+
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("editMovie")]
+        public async Task<ActionResult<Models.ErrorModel?>> editMovie(ManageFilmDto request)
+        {
+            var err = await movieService.editMovie(request);
+            if (err.errorMessage == "Sikeres módosítás")
+            {
+                return Ok(err);
+            }
+            return BadRequest(err);
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("deleteMovie")]
+        public async Task<ActionResult<Models.ErrorModel?>> deleteMovie(int id)
+        {
+            var err = await movieService.deleteMovie(id);
+            if (err.errorMessage == "Sikeres törlés")
+            {
+                return Ok(err);
+            }
+            return BadRequest(err);
+        }
     }
 }

@@ -45,6 +45,7 @@ namespace ReactApp1.Server.Models.Film
             TrailerLink = film.TrailerLink;
             IMDB = film.IMDB;
             AlapAr = film.AlapAr.ToString();
+            Megjegyzes = film.Megjegyzes;
         }
     }
 }

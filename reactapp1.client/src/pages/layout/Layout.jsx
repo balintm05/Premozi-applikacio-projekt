@@ -48,7 +48,7 @@ function ButtonToggle() {
                     <hr className="dropdown-divider" />
                 </li>
                 <li>
-                    <a className="dropdown-item" href="/" onClick={(e) => { e.preventDefault(); Logout(); }}>
+                    <a className="dropdown-item" href="/" onClick={() => { Logout(); }}>
                         Kijelentkezés
                     </a>
                 </li>
