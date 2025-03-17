@@ -68,6 +68,7 @@ var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
 builder.Services.AddDbContext<DataBaseContext>(options =>
     options.UseMySql(connectionString, serverVersion));
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
 
 var app = builder.Build();
 app.UseDefaultFiles();

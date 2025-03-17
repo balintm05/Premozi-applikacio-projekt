@@ -17,6 +17,7 @@ import { useState } from 'react';
 import AdminIndex from './pages/admin/AdminIndex.jsx';
 import ProfilePage from './pages/account/profilePage/ProfilePage.jsx';
 import UserEditor from './pages/account/accountManager/UserEditor.jsx';
+import Musorok from './pages/movies/FilmIndex.jsx';
 // import "flowbite/src/themes/default";
 //import './index.css' //Te itten nekem ne rondíts a kód jó légyszi köszike
 
@@ -35,13 +36,18 @@ export default function App() {
             <Routes>
                 <Route element={<Layout />}>
                     <Route index element={<Index />} />
-                    <Route path="/account/login" element={<Login />} />
-                    <Route path="/account/register" element={<Register />} />
-                    <Route path="/account/profile/details/:id?" element={<ProfilePage />} />
-                    <Route path="/account/profile/manage/edit/:id?" element={<UserEditor />} />
+                    <Route>
+                        <Route path="/account/login" element={<Login />} />
+                        <Route path="/account/register" element={<Register />} />
+                        <Route path="/account/profile/details/:id?" element={<ProfilePage />} />
+                        <Route path="/account/profile/manage/edit/:id?" element={<UserEditor />} />
+                    </Route>                   
                     <Route element={<AdminCheck />}>
-                        <Route path="/admin/index" element={<AdminIndex />}/>
+                        <Route path="/admin/" element={<AdminIndex />}/>
                         <Route path="/admin/users" element={<UserListAdmin />} />
+                    </Route>
+                    <Route>
+                        <Route path="/musor/" element={<Musorok />} />
                     </Route>
                     <Route path="*" element={<PageNotFound />} />
                 </Route>

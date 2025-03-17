@@ -93,7 +93,7 @@ export default function Layout() {
                                     <a style={{ color: "silver" }} className="nav-link" href="/">Privacy</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a style={{ color: "silver" }} className="nav-link" href="/">Film</a>
+                                    <a style={{ color: "silver" }} className="nav-link" href="/musor/">Film</a>
                                 </li>
                             </ul>
                             <div className="text-light my-2 my-lg-0 mr-sm-0 my-sm-0 ">  
