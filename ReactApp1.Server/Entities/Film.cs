@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using ReactApp1.Server.Models.Film.ManageFilm;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -30,9 +31,9 @@ namespace ReactApp1.Server.Entities
         [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező leírást megadni")]
         public string Leiras { get; set; }
         [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező eredeti nyelvet megadni")]
-        public string Eredeti_nyelv { get; set; }
+        public string EredetiNyelv { get; set; }
         [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező eredeti címet megadni")]
-        public string Eredeti_cim { get; set; }
+        public string EredetiCim { get; set; }
         [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező szinkront megadni")]
         public string Szinkron { get; set; }
         [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező trailer linket megadni")]
@@ -42,7 +43,6 @@ namespace ReactApp1.Server.Entities
         [Required, NotNull, Column(TypeName = "INT(11)"), DataType(DataType.Currency, ErrorMessage = "Kötelező árat megadni")]
         public int AlapAr { get; set; }
         [Column(TypeName = "longtext"), NotNull, DataType(DataType.Text, ErrorMessage = "Hiba történt a megjegyzés hozzáadása során")]
-        public string Megjegyzes { get; set; } = "Nincs megjegyzés";
-
+        public string Megjegyzes { get; set; } = "";
     }
 }

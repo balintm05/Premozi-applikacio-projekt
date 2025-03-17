@@ -28,7 +28,7 @@ function Musorok() {
     return (
         <div className="container">
             <h1>Mûsorok</h1>
-            <table className="table">
+            <table className="table table-bordered table-dark">
                 <thead>
                     <tr>
                         <th>Cím</th>

@@ -18,6 +18,8 @@ import AdminIndex from './pages/admin/AdminIndex.jsx';
 import ProfilePage from './pages/account/profilePage/ProfilePage.jsx';
 import UserEditor from './pages/account/accountManager/UserEditor.jsx';
 import Musorok from './pages/movies/FilmIndex.jsx';
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 // import "flowbite/src/themes/default";
 //import './index.css' //Te itten nekem ne rondíts a kód jó légyszi köszike
 

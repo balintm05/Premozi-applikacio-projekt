@@ -39,7 +39,7 @@ function GetUsersTable() {
         <div className="container text-center" style={{ width: "100%", maxWidth: "95%", margin: "0 auto" }}>
             <br></br><h1>Felhasználók listája</h1><br></br><br></br>
             <div className="table-responsive" style={{ overflowX: "auto" }}>
-                <table className="table table-bordered" style={{ width: "100%" }}>
+                <table className="table table-bordered table-dark" style={{ width: "100%" }}>
                     <thead>
                         <tr className="text-white border-1">
                             <th className="border-1">ID</th>

@@ -31,6 +31,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Net;
 using ReactApp1.Server.Models.User.Response;
 using Org.BouncyCastle.Ocsp;
+using ReactApp1.Server.Models.Film.ManageFilm;
+using ReactApp1.Server.Models.Film;
 
 namespace ReactApp1.Server.Controllers
 {
@@ -40,9 +42,20 @@ namespace ReactApp1.Server.Controllers
     {
         [AllowAnonymous]
         [HttpGet("getMovies")]
-        public async Task<ActionResult<Film>> getMovies() 
+        public async Task<ActionResult<List<GetFilmDto>?>> getMovies() 
         {
-            return Ok(movieService.getMovies());
+            return Ok( await movieService.getMovies());
+        }
+        //[Authorize(Roles = "Admin")]
+        [HttpPost("addMovie")]
+        public async Task<ActionResult<Models.ErrorModel?>> addMovie(AddFilmDto request)
+        {
+            var err = await movieService.addMovie(request);
+            if (err != null) 
+            {
+                return BadRequest(err);
+            }
+            return Ok();
         }
 
     }
