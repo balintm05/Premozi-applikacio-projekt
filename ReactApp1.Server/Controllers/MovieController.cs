@@ -49,7 +49,7 @@ namespace ReactApp1.Server.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost("addMovie")]
         public async Task<ActionResult<Models.ErrorModel?>> addMovie(ManageFilmDto request)
         {
@@ -62,7 +62,7 @@ namespace ReactApp1.Server.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPatch("editMovie")]
         public async Task<ActionResult<Models.ErrorModel?>> editMovie(ManageFilmDto request)
         {
@@ -75,7 +75,7 @@ namespace ReactApp1.Server.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("deleteMovie")]
         public async Task<ActionResult<Models.ErrorModel?>> deleteMovie(int id)
         {

@@ -28,48 +28,50 @@ function Musorok() {
     return (
         <div className="container">
             <h1>Műsorok</h1>
-            <table className="table table-bordered table-dark">
+            <table className="table table-dark">
                 <thead>
                     <tr>
-                        <th>Cím</th>
-                        <th>Kategória</th>
-                        <th>Műfaj</th>
-                        <th>Korhatár</th>
-                        <th>Játékidő</th>
-                        <th>Gyártó</th>
-                        <th>Rendező</th>
-                        <th>Szereplők</th>
-                        <th>Leírás</th>
-                        <th>Eredeti nyelv</th>
-                        <th>Eredeti cím</th>
-                        <th>Szinkron</th>
-                        <th>Trailer</th>
-                        <th>IMDB értékelés</th>
-                        <th>Ár</th>
-                        <th>Megjegyzés</th>
-                        <th></th>
+                        <th className="border border-secondary">ID</th>
+                        <th className="border border-secondary">Cím</th>
+                        <th className="border border-secondary">Kategória</th>
+                        <th className="border border-secondary">Műfaj</th>
+                        <th className="border border-secondary">Korhatár</th>
+                        <th className="border border-secondary">Játékidő</th>
+                        <th className="border border-secondary">Gyártó</th>
+                        <th className="border border-secondary">Rendező</th>
+                        <th className="border border-secondary">Szereplők</th>
+                        <th className="border border-secondary">Leírás</th>
+                        <th className="border border-secondary">Eredeti nyelv</th>
+                        <th className="border border-secondary">Eredeti cím</th>
+                        <th className="border border-secondary">Szinkron</th>
+                        <th className="border border-secondary">Trailer</th>
+                        <th className="border border-secondary">IMDB értékelés</th>
+                        <th className="border border-secondary">Ár</th>
+                        <th className="border border-secondary">Megjegyzés</th>
+                        <th className="border border-secondary"></th>
                     </tr>
                 </thead>
                 <tbody>
                     {musorok.map((musor) => (
                         <tr key={musor.id}>
-                            <td>{musor.cim}</td>
-                            <td>{musor.kategoria}</td>
-                            <td>{musor.mufaj }</td>                           
-                            <td>{musor.korhatar }</td>
-                            <td>{musor.jatekido } perc</td>
-                            <td>{musor.gyarto }</td>
-                            <td>{musor.rendezo }</td>
-                            <td>{musor.szereplok }</td>
-                            <td>{musor.leiras }</td>
-                            <td>{musor.eredetiNyelv }</td>
-                            <td>{musor.eredetiCim }</td>
-                            <td>{musor.szinkron }</td>
-                            <td>{musor.trailerLink }</td>
-                            <td>{musor.imdb }</td>
-                            <td>{musor.alapAr }</td>
-                            <td>{musor.megjegyzes}</td>
-                            <td className="border-1">
+                            <td className="border border-secondary">{musor.id}</td>
+                            <td className="border border-secondary">{musor.cim}</td>
+                            <td className="border border-secondary">{musor.kategoria}</td>
+                            <td className="border border-secondary">{musor.mufaj }</td>                           
+                            <td className="border border-secondary">{musor.korhatar }</td>
+                            <td className="border border-secondary">{musor.jatekido } perc</td>
+                            <td className="border border-secondary">{musor.gyarto }</td>
+                            <td className="border border-secondary">{musor.rendezo }</td>
+                            <td className="border border-secondary">{musor.szereplok }</td>
+                            <td className="border border-secondary">{musor.leiras }</td>
+                            <td className="border border-secondary">{musor.eredetiNyelv }</td>
+                            <td className="border border-secondary">{musor.eredetiCim }</td>
+                            <td className="border border-secondary">{musor.szinkron}</td>
+                            <td className="border border-secondary"> <a href={musor.trailerLink} target="_blank">Trailer</a></td>
+                            <td className="border border-secondary">{musor.imdb }</td>
+                            <td className="border border-secondary">{musor.alapAr }</td>
+                            <td className="border border-secondary">{musor.megjegyzes}</td>
+                            <td className="border border-secondary">
                                 <a href={`/musor/manage/edit/${musor.id}`} className="mr-1">
                                     <button className="btn my-2 btn-outline-light my-sm-0 text-light text-center bg-primary font-weight-bold text-white">
                                         Profil
@@ -85,6 +87,7 @@ function Musorok() {
                     ))}
                 </tbody>
             </table>
+            <br></br><br></br><br></br>
         </div>
     );
 }
