@@ -86,7 +86,7 @@ namespace ReactApp1.Server.Services
             var users = await context.Users.ToListAsync();
             if (!string.IsNullOrEmpty(request.userID)&&int.TryParse(request.userID, out int r))
             {
-                users=await users.ToAsyncEnumerable().WhereAwait(async user => user.userID.ToString().StartsWith(request.userID)).ToListAsync();
+                users=await users.ToAsyncEnumerable().WhereAwait(async user => user.userID.ToString().Equals(request.userID)).ToListAsync();
             }
             if (!string.IsNullOrEmpty(request.email))
             {

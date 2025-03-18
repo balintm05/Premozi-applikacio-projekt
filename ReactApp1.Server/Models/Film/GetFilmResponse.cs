@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ReactApp1.Server.Models.Film
 {
-    public class GetFilmDto
+    public class GetFilmResponse
     {
         public string? id { get; set; }
         public string? Cim { get; set; }
@@ -27,7 +27,7 @@ namespace ReactApp1.Server.Models.Film
         public string? AlapAr { get; set; }
         public string? Megjegyzes { get; set; }
         public ErrorModel? Error { get; set; }
-        public GetFilmDto(Entities.Film film)
+        public GetFilmResponse(Entities.Film film)
         {
             id = film.id.ToString();
             Cim = film.Cim;

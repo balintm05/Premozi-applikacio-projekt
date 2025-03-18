@@ -34,16 +34,82 @@ namespace ReactApp1.Server.Services
 {
     public class MovieService(DataBaseContext context, IConfiguration configuration):IMovieService
     {
-        public async Task<List<GetFilmDto>?> getMovies()
+        public async Task<List<GetFilmResponse>?> queryMovies(GetFilmQueryFilter request)
         {
-            var movies = await context.Film.ToListAsync();
-            var moviedtos = new List<GetFilmDto>();
-            foreach (var film in movies) 
+            try
             {
-                moviedtos.Add(new GetFilmDto(film));
+                var movies = await context.Film.ToListAsync();
+                if (!string.IsNullOrEmpty(request.id) && int.TryParse(request.id, out int r))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.id.ToString().Equals(request.id)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.Kategoria))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Kategoria.Contains(request.Kategoria)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.Mufaj))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Mufaj.Contains(request.Mufaj)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.Korhatar))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Korhatar.StartsWith(request.Korhatar)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.Jatekido) && int.TryParse(request.Jatekido, out int j))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Jatekido.ToString().StartsWith(request.Jatekido)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.Gyarto))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Gyarto.Contains(request.Gyarto)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.Rendezo))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Rendezo.Contains(request.Rendezo)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.Szereplok))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Szereplok.Contains(request.Szereplok)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.Leiras))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Leiras.Contains(request.Leiras)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.EredetiNyelv))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.EredetiNyelv.StartsWith(request.EredetiNyelv)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.EredetiCim))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.EredetiCim.StartsWith(request.EredetiCim)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.Szinkron))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Szinkron.StartsWith(request.Szinkron)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.IMDB))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.IMDB.StartsWith(request.IMDB)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.AlapAr)&& int.TryParse(request.AlapAr, out int a))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.AlapAr.ToString().StartsWith(request.AlapAr)).ToListAsync();
+                }
+                if (!string.IsNullOrEmpty(request.Megjegyzes))
+                {
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Megjegyzes.Contains(request.Megjegyzes)).ToListAsync();
+                }
+                var response = new List<GetFilmResponse>();
+                foreach (var movie in movies)
+                {
+                    response.Add(new GetFilmResponse(movie));
+                }
+                return response;
             }
-            return moviedtos;
-
+            catch(Exception ex) 
+            {
+                return null;
+            }
         }
 
 

@@ -17,7 +17,7 @@ import { useState } from 'react';
 import AdminIndex from './pages/admin/AdminIndex.jsx';
 import ProfilePage from './pages/account/profilePage/ProfilePage.jsx';
 import UserEditor from './pages/account/accountManager/UserEditor.jsx';
-import Musorok from './pages/movies/FilmIndex.jsx';
+import FilmListAdmin from './pages/admin/FilmListAdmin.jsx';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import "flowbite/src/themes/default";
@@ -47,9 +47,10 @@ export default function App() {
                     <Route element={<AdminCheck />}>
                         <Route path="/admin/" element={<AdminIndex />}/>
                         <Route path="/admin/users" element={<UserListAdmin />} />
+                        <Route path="/admin/filmek" element={<FilmListAdmin />} />
                     </Route>
                     <Route>
-                        <Route path="/musor/" element={<Musorok />} />
+                        
                     </Route>
                     <Route path="*" element={<PageNotFound />} />
                 </Route>

@@ -8,7 +8,6 @@ function GetUsersTable() {
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        console.log(JSON.stringify(formData));
     };
 
     useEffect(() => {

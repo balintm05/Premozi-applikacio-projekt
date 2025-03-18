@@ -42,16 +42,21 @@ namespace ReactApp1.Server.Controllers
     public class MovieController(IMovieService movieService) : Controller
     {
         [AllowAnonymous]
-        [HttpGet("getMovies")]
-        public async Task<ActionResult<List<GetFilmDto>?>> getMovies() 
+        [HttpPost("queryMovies")]
+        public async Task<ActionResult<dynamic>> QueryMovies(GetFilmQueryFilter request) 
         {
-            return Ok( await movieService.getMovies());
+            var movies = await movieService.queryMovies(request);
+            if (movies == null)
+            {
+                return BadRequest(new Models.ErrorModel("Hiba történt"));
+            }
+            return Ok( await movieService.queryMovies(request));
         }
 
 
         //[Authorize(Roles = "Admin")]
         [HttpPost("addMovie")]
-        public async Task<ActionResult<Models.ErrorModel?>> addMovie(ManageFilmDto request)
+        public async Task<ActionResult<Models.ErrorModel?>> AddMovie(ManageFilmDto request)
         {
             var err = await movieService.addMovie(request);
             if (err.errorMessage == "Sikeres hozzáadás")
@@ -64,7 +69,7 @@ namespace ReactApp1.Server.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpPatch("editMovie")]
-        public async Task<ActionResult<Models.ErrorModel?>> editMovie(ManageFilmDto request)
+        public async Task<ActionResult<Models.ErrorModel?>> EditMovie(ManageFilmDto request)
         {
             var err = await movieService.editMovie(request);
             if (err.errorMessage == "Sikeres módosítás")
@@ -77,7 +82,7 @@ namespace ReactApp1.Server.Controllers
 
         //[Authorize(Roles = "Admin")]
         [HttpDelete("deleteMovie")]
-        public async Task<ActionResult<Models.ErrorModel?>> deleteMovie(int id)
+        public async Task<ActionResult<Models.ErrorModel?>> DeleteMovie(int id)
         {
             var err = await movieService.deleteMovie(id);
             if (err.errorMessage == "Sikeres törlés")

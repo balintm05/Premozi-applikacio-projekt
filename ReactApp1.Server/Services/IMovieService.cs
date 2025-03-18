@@ -6,7 +6,7 @@ namespace ReactApp1.Server.Services
 {
     public interface IMovieService
     {
-        Task<List<GetFilmDto>?> getMovies();
+        Task<List<GetFilmResponse>?> queryMovies(GetFilmQueryFilter request);
         Task<Models.ErrorModel?> addMovie(ManageFilmDto request);
         Task<Models.ErrorModel?> editMovie(ManageFilmDto request);
         Task<Models.ErrorModel?> deleteMovie(int id);
