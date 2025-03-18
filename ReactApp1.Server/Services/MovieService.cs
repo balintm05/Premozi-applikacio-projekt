@@ -45,15 +45,15 @@ namespace ReactApp1.Server.Services
                 }
                 if (!string.IsNullOrEmpty(request.Kategoria))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Kategoria.Contains(request.Kategoria)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Kategoria.ToLower().Contains(request.Kategoria.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.Mufaj))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Mufaj.Contains(request.Mufaj)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Mufaj.ToLower().Contains(request.Mufaj.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.Korhatar))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Korhatar.StartsWith(request.Korhatar)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Korhatar.ToLower().StartsWith(request.Korhatar.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.Jatekido) && int.TryParse(request.Jatekido, out int j))
                 {
@@ -61,35 +61,35 @@ namespace ReactApp1.Server.Services
                 }
                 if (!string.IsNullOrEmpty(request.Gyarto))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Gyarto.Contains(request.Gyarto)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Gyarto.ToLower().Contains(request.Gyarto.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.Rendezo))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Rendezo.Contains(request.Rendezo)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Rendezo.ToLower().Contains(request.Rendezo.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.Szereplok))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Szereplok.Contains(request.Szereplok)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Szereplok.ToLower().Contains(request.Szereplok.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.Leiras))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Leiras.Contains(request.Leiras)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Leiras.ToLower().Contains(request.Leiras.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.EredetiNyelv))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.EredetiNyelv.StartsWith(request.EredetiNyelv)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.EredetiNyelv.ToLower().StartsWith(request.EredetiNyelv.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.EredetiCim))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.EredetiCim.StartsWith(request.EredetiCim)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.EredetiCim.ToLower().StartsWith(request.EredetiCim.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.Szinkron))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Szinkron.StartsWith(request.Szinkron)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Szinkron.ToLower().StartsWith(request.Szinkron.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.IMDB))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.IMDB.StartsWith(request.IMDB)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.IMDB.ToLower().StartsWith(request.IMDB.ToLower())).ToListAsync();
                 }
                 if (!string.IsNullOrEmpty(request.AlapAr)&& int.TryParse(request.AlapAr, out int a))
                 {
@@ -97,7 +97,7 @@ namespace ReactApp1.Server.Services
                 }
                 if (!string.IsNullOrEmpty(request.Megjegyzes))
                 {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Megjegyzes.Contains(request.Megjegyzes)).ToListAsync();
+                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => user.Megjegyzes.ToLower().Contains(request.Megjegyzes.ToLower())).ToListAsync();
                 }
                 var response = new List<GetFilmResponse>();
                 foreach (var movie in movies)

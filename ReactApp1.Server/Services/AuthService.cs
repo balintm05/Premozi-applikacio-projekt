@@ -86,23 +86,23 @@ namespace ReactApp1.Server.Services
             var users = await context.Users.ToListAsync();
             if (!string.IsNullOrEmpty(request.userID)&&int.TryParse(request.userID, out int r))
             {
-                users=await users.ToAsyncEnumerable().WhereAwait(async user => user.userID.ToString().Equals(request.userID)).ToListAsync();
+                users=await users.ToAsyncEnumerable().WhereAwait(async user => user.userID.ToString().ToLower().Equals(request.userID.ToLower())).ToListAsync();
             }
             if (!string.IsNullOrEmpty(request.email))
             {
-                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.email.StartsWith(request.email)).ToListAsync();
+                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.email.ToLower().StartsWith(request.email.ToLower())).ToListAsync();
             }
             if (!string.IsNullOrEmpty(request.accountStatus) && int.TryParse(request.accountStatus, out int s))
             {
-                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.accountStatus.ToString().Equals(request.accountStatus)).ToListAsync();
+                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.accountStatus.ToString().ToLower().Equals(request.accountStatus.ToLower())).ToListAsync();
             }
             if (!string.IsNullOrEmpty(request.role))
             {
-                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.role.Equals(request.role)).ToListAsync();
+                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.role.ToLower().Equals(request.role.ToLower())).ToListAsync();
             }
             if (!string.IsNullOrEmpty(request.Megjegyzes))
             {
-                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.Megjegyzes.Contains(request.Megjegyzes)).ToListAsync();
+                users = await users.ToAsyncEnumerable().WhereAwait(async user => user.Megjegyzes.ToLower().Contains(request.Megjegyzes.ToLower())).ToListAsync();
             }
             return users;
         }

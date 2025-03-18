@@ -41,7 +41,7 @@ namespace ReactApp1.Server.Controllers
     [ApiController]
     public class MovieController(IMovieService movieService) : Controller
     {
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpPost("queryMovies")]
         public async Task<ActionResult<dynamic>> QueryMovies(GetFilmQueryFilter request) 
         {
@@ -54,7 +54,7 @@ namespace ReactApp1.Server.Controllers
         }
 
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost("addMovie")]
         public async Task<ActionResult<Models.ErrorModel?>> AddMovie(ManageFilmDto request)
         {
@@ -67,7 +67,7 @@ namespace ReactApp1.Server.Controllers
         }
 
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPatch("editMovie")]
         public async Task<ActionResult<Models.ErrorModel?>> EditMovie(ManageFilmDto request)
         {
@@ -80,7 +80,7 @@ namespace ReactApp1.Server.Controllers
         }
 
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("deleteMovie")]
         public async Task<ActionResult<Models.ErrorModel?>> DeleteMovie(int id)
         {
