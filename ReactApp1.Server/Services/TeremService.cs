@@ -1,12 +1,10 @@
 ﻿using ReactApp1.Server.Data;
 using ReactApp1.Server.Data;
-using ReactApp1.Server.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using ReactApp1.Server.Data;
-using ReactApp1.Server.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -31,6 +29,8 @@ using Humanizer;
 using Org.BouncyCastle.Ocsp;
 using ReactApp1.Server.Models.Film;
 using ReactApp1.Server.Models.Terem;
+using ReactApp1.Server.Entities.Terem;
+
 
 namespace ReactApp1.Server.Services
 {
@@ -38,7 +38,7 @@ namespace ReactApp1.Server.Services
     {
         public async Task<List<GetTeremResponse>?> getTerem()
         {
-            var termek = await context.Terem.ToListAsync();
+            var termek = await context.Terem.Include(x => x.Szekek).ToListAsync();
             var szekek = await context.Szekek.ToListAsync();
             var response = new List<GetTeremResponse>();           
             foreach (var terem in termek)
@@ -46,6 +46,17 @@ namespace ReactApp1.Server.Services
                 response.Add(new GetTeremResponse(terem));
             }
             return response;
+        }
+        public async Task<GetTeremResponse?> getTerem(int id)
+        {
+            var terem = await context.Terem.FindAsync(id);
+            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == id).ToListAsync();
+            var response = new List<GetTeremResponse>();
+            if (terem == null)
+            {
+                return new GetTeremResponse("Nincs ilyen id-jű terem az adatbázisban");
+            }
+            return new GetTeremResponse(terem);
         }
         public async Task<Models.ErrorModel?> addTerem(ManageTeremDto request)
         {
@@ -58,8 +69,8 @@ namespace ReactApp1.Server.Services
                 bool o = int.TryParse(request.Oszlopok, out int oszlopok);
                 if (s && o)
                 {
-                    await context.AddAsync(terem);
-                    CreateSzekek(sorok, oszlopok, terem);
+                    await context.Terem.AddAsync(terem);
+                    await CreateSzekek(sorok, oszlopok, terem);
                     await context.SaveChangesAsync();
                     return new Models.ErrorModel("Sikeres hozzáadás");
                 }
@@ -85,41 +96,57 @@ namespace ReactApp1.Server.Services
             {
                 patchDoc.Replace(terem => terem.Nev, request.Nev);
             }
-            patchDoc.ApplyTo(terem);
-            await context.AddAsync(terem);
-            int.TryParse(request.Sorok, out int s);
-            int.TryParse(request.Oszlopok, out int o);           
-            if (s != terem.Szekek.Where(x=> x.X == 0).Count() || o != terem.Szekek.Where(x => x.Y == 0).Count())
+            if (!string.IsNullOrEmpty(request.Megjegyzes))
             {
-                DeleteExistingSzekek(terem);
-                CreateSzekek(s, o, terem);
+                patchDoc.Replace(terem => terem.Megjegyzes, request.Megjegyzes);
+            }
+            patchDoc.ApplyTo(terem);
+            int.TryParse(request.Sorok, out int sorok);
+            int.TryParse(request.Oszlopok, out int oszlopok);           
+            if (!(sorok == terem.Szekek.Where(x=> x.X == 0).Count() && oszlopok == terem.Szekek.Where(x => x.Y == 0).Count()))
+            {
+                await DeleteExistingSzekek(terem);
+                await CreateSzekek(sorok, oszlopok, terem);
             }
             await context.SaveChangesAsync();
             return new Models.ErrorModel("Sikeres módosítás");
         }
         public async Task<Models.ErrorModel?> deleteTerem(int id)
         {
+            var terem = await context.Terem.FindAsync(id);
+            if (terem == null)
+            {
+                return new Models.ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
+            }
+            context.Terem.Remove(terem);
+            await context.SaveChangesAsync();
+            return new Models.ErrorModel("Sikeres törlés"); ;
+        }
+        public async Task<Models.ErrorModel?> EditSzekek(List<Szekek> szekekUpdate)
+        {
+            var szekekOld = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == szekekUpdate[0].Teremid).ToListAsync();
             return null;
         }
-        private async void CreateSzekek(int sorok, int oszlopok, Terem terem)
+        private async Task CreateSzekek(int sorok, int oszlopok, Terem terem)
         {
             var szekek = new List<Szekek>();
             for (int x = 0; x < sorok; x++)
             {
                 for (int y = 0; y < oszlopok; y++)
                 {
-                    szekek.Add(new Szekek { Terem = terem, X = x, Y = y });
+                    szekek.Add(new Szekek { Terem = terem, Teremid = terem.id, X = x, Y = y });
                 }
             }            
             foreach (var szek in szekek)
             {
-                await context.AddAsync(szek);
+                await context.Szekek.AddAsync(szek);
             }
         }
-        private async void DeleteExistingSzekek(Terem terem)
+        private async Task DeleteExistingSzekek(Terem terem)
         {
-            var szekek = await context.Terem.FindAsync(terem.id);
-            context.Remove(szekek);
+            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == terem.id).ToListAsync();
+            context.RemoveRange(szekek);
+            await context.SaveChangesAsync();
         }
     }
 }

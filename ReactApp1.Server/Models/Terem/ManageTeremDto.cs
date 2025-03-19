@@ -13,5 +13,6 @@ namespace ReactApp1.Server.Models.Terem
         public string? Nev { get; set; }
         public string? Sorok { get; set; }
         public string? Oszlopok { get; set; }
+        public string? Megjegyzes { get; set; }
     }
 }

@@ -12,8 +12,8 @@ using ReactApp1.Server.Data;
 namespace ReactApp1.Server.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20250319110555_bruh")]
-    partial class bruh
+    [Migration("20250319213034_OkThisIsFrTheLastOne")]
+    partial class OkThisIsFrTheLastOne
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -100,41 +100,52 @@ namespace ReactApp1.Server.Migrations
                     b.ToTable("Film");
                 });
 
-            modelBuilder.Entity("ReactApp1.Server.Entities.Rendeles", b =>
+            modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.FoglalasAdatok", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<string>("Hely")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<DateTime>("FoglalasIdopontja")
+                        .HasColumnType("DateTime");
 
-                    b.Property<string>("Megjegyzes")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("Statusz")
-                        .HasColumnType("int(1)");
-
-                    b.Property<int>("Vetitesid")
-                        .HasColumnType("int(5)");
-
-                    b.Property<int>("userID")
+                    b.Property<int>("UserID")
                         .HasColumnType("int(11)");
 
                     b.HasKey("id");
 
-                    b.HasIndex("Vetitesid");
+                    b.HasIndex("UserID");
 
-                    b.HasIndex("userID");
-
-                    b.ToTable("Rendeles");
+                    b.ToTable("FoglalasAdatok");
                 });
 
-            modelBuilder.Entity("ReactApp1.Server.Entities.Szekek", b =>
+            modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.FoglaltSzekek", b =>
+                {
+                    b.Property<int>("Teremid")
+                        .HasColumnType("int");
+
+                    b.Property<int>("X")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Y")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Vetitesid")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FoglalasAdatokid")
+                        .HasColumnType("int");
+
+                    b.HasKey("Teremid", "X", "Y", "Vetitesid");
+
+                    b.HasIndex("FoglalasAdatokid");
+
+                    b.ToTable("FoglaltSzekek");
+                });
+
+            modelBuilder.Entity("ReactApp1.Server.Entities.Terem.Szekek", b =>
                 {
                     b.Property<int>("Teremid")
                         .HasColumnType("int(5)");
@@ -157,7 +168,7 @@ namespace ReactApp1.Server.Migrations
                     b.ToTable("Szekek");
                 });
 
-            modelBuilder.Entity("ReactApp1.Server.Entities.Terem", b =>
+            modelBuilder.Entity("ReactApp1.Server.Entities.Terem.Terem", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -221,7 +232,7 @@ namespace ReactApp1.Server.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ReactApp1.Server.Entities.Vetites", b =>
+            modelBuilder.Entity("ReactApp1.Server.Entities.Vetites.Vetites", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -251,28 +262,55 @@ namespace ReactApp1.Server.Migrations
                     b.ToTable("Vetites");
                 });
 
-            modelBuilder.Entity("ReactApp1.Server.Entities.Rendeles", b =>
+            modelBuilder.Entity("ReactApp1.Server.Entities.Vetites.VetitesSzekek", b =>
                 {
-                    b.HasOne("ReactApp1.Server.Entities.Vetites", "Vetites")
-                        .WithMany()
-                        .HasForeignKey("Vetitesid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("Teremid")
+                        .HasColumnType("int(5)");
 
+                    b.Property<int>("X")
+                        .HasColumnType("int(2)");
+
+                    b.Property<int>("Y")
+                        .HasColumnType("int(2)");
+
+                    b.Property<int>("Vetitesid")
+                        .HasColumnType("int(5)");
+
+                    b.Property<int>("FoglalasAllapot")
+                        .HasColumnType("int");
+
+                    b.HasKey("Teremid", "X", "Y", "Vetitesid");
+
+                    b.HasIndex("Vetitesid");
+
+                    b.ToTable("VetitesSzekek");
+                });
+
+            modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.FoglalasAdatok", b =>
+                {
                     b.HasOne("ReactApp1.Server.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("userID")
+                        .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
-
-                    b.Navigation("Vetites");
                 });
 
-            modelBuilder.Entity("ReactApp1.Server.Entities.Szekek", b =>
+            modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.FoglaltSzekek", b =>
                 {
-                    b.HasOne("ReactApp1.Server.Entities.Terem", "Terem")
+                    b.HasOne("ReactApp1.Server.Entities.Foglalas.FoglalasAdatok", "FoglalasAdatok")
+                        .WithMany()
+                        .HasForeignKey("FoglalasAdatokid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FoglalasAdatok");
+                });
+
+            modelBuilder.Entity("ReactApp1.Server.Entities.Terem.Szekek", b =>
+                {
+                    b.HasOne("ReactApp1.Server.Entities.Terem.Terem", "Terem")
                         .WithMany("Szekek")
                         .HasForeignKey("Teremid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -281,7 +319,7 @@ namespace ReactApp1.Server.Migrations
                     b.Navigation("Terem");
                 });
 
-            modelBuilder.Entity("ReactApp1.Server.Entities.Vetites", b =>
+            modelBuilder.Entity("ReactApp1.Server.Entities.Vetites.Vetites", b =>
                 {
                     b.HasOne("ReactApp1.Server.Entities.Film", "Film")
                         .WithMany()
@@ -289,7 +327,7 @@ namespace ReactApp1.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ReactApp1.Server.Entities.Terem", "Terem")
+                    b.HasOne("ReactApp1.Server.Entities.Terem.Terem", "Terem")
                         .WithMany()
                         .HasForeignKey("Teremid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -300,7 +338,40 @@ namespace ReactApp1.Server.Migrations
                     b.Navigation("Terem");
                 });
 
-            modelBuilder.Entity("ReactApp1.Server.Entities.Terem", b =>
+            modelBuilder.Entity("ReactApp1.Server.Entities.Vetites.VetitesSzekek", b =>
+                {
+                    b.HasOne("ReactApp1.Server.Entities.Vetites.Vetites", "Vetites")
+                        .WithMany()
+                        .HasForeignKey("Vetitesid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ReactApp1.Server.Entities.Terem.Szekek", "Szekek")
+                        .WithMany()
+                        .HasForeignKey("Teremid", "X", "Y")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ReactApp1.Server.Entities.Foglalas.FoglaltSzekek", "FoglaltSzekek")
+                        .WithOne("VetitesSzekek")
+                        .HasForeignKey("ReactApp1.Server.Entities.Vetites.VetitesSzekek", "Teremid", "X", "Y", "Vetitesid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FoglaltSzekek");
+
+                    b.Navigation("Szekek");
+
+                    b.Navigation("Vetites");
+                });
+
+            modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.FoglaltSzekek", b =>
+                {
+                    b.Navigation("VetitesSzekek")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ReactApp1.Server.Entities.Terem.Terem", b =>
                 {
                     b.Navigation("Szekek");
                 });

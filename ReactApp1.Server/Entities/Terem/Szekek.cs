@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 
-namespace ReactApp1.Server.Entities
+namespace ReactApp1.Server.Entities.Terem
 {
     [PrimaryKey("Teremid", "X", "Y")]
     public class Szekek

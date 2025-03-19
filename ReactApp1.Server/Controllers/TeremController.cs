@@ -48,24 +48,49 @@ namespace ReactApp1.Server.Controllers
         {
             return await teremService.getTerem();
         }
+        [AllowAnonymous]
+        [HttpGet("getTerem/{id}")]
+        public async Task<ActionResult<GetTeremResponse?>> GetTerem(int id)
+        {
+            var err = await teremService.getTerem(id);
+            if(err.error!=null)
+            {
+                return BadRequest(err);
+            }
+            return Ok(err);
+        }
         //[Authorize(Roles ="Admin")]
         [HttpPost("addTerem")]
         public async Task<ActionResult<Models.ErrorModel?>> AddTerem(ManageTeremDto request)
         {
             var err = await teremService.addTerem(request);
-            return err;
+            if (err != null)
+            {
+                return BadRequest(err);
+            }
+            return Ok(err);
         }
         //[Authorize(Roles = "Admin")]
-        [HttpPost("editTerem")]
+        [HttpPatch("editTerem")]
         public async Task<ActionResult<Models.ErrorModel?>> EditTerem(ManageTeremDto request)
         {
-            return new Models.ErrorModel("Bruh");
+            var err = await teremService.editTerem(request);
+            if (err != null)
+            {
+                return BadRequest(err);
+            }
+            return Ok(err);
         }
         //[Authorize(Roles ="Admin")]
         [HttpDelete("deleteTerem/{id}")]
         public async Task<ActionResult<Models.ErrorModel?>> deleteTerem(int id)
         {
-            return new Models.ErrorModel("Bruh");
+            var err = await teremService.deleteTerem(id);
+            if (err != null)
+            {
+                return BadRequest(err);
+            }
+            return Ok(err);
         }
     }
 }

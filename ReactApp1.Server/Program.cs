@@ -73,6 +73,7 @@ builder.Services.AddDbContext<DataBaseContext>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<ITeremService, TeremService>();
+builder.Services.AddScoped<IVetitesService, VetitesService>();
 builder.Services.AddControllers()
                .AddNewtonsoftJson(options =>
                {

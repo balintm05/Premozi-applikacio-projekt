@@ -1,5 +1,4 @@
-﻿using ReactApp1.Server.Entities;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -14,7 +13,7 @@ namespace ReactApp1.Server.Models.Rendeles
         public int? Statusz { get; set; }
         public string? Megjegyzes { get; set; }
         public virtual Entities.User? User { get; set; }
-        public virtual Entities.Vetites? Vetites { get; set; }
+        public virtual Entities.Vetites.Vetites? Vetites { get; set; }
         public ErrorModel? Error { get; set; }
     }
 }

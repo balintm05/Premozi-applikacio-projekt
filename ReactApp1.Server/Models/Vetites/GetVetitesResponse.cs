@@ -8,12 +8,13 @@ using System.Text;
 
 namespace ReactApp1.Server.Models.Vetites
 {
-    public class VetitesDto
+    public class GetVetitesResponse
     {
+        public int id {  get; set; }
         public DateTime? Idopont { get; set; }
-        public string? Megjegyzes { get; set; } = "Nincs megjegyzés";
-        public virtual Entities.Film? Film { get; set; }
-        public virtual Entities.Terem? Terem { get; set; }
+        public string? Megjegyzes { get; set; }
+        public int? Filmid { get; set; }
+        public int? Teremid { get; set; }
         public ErrorModel? Error { get; set; }
     }
 }

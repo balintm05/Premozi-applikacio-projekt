@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ReactApp1.Server.Entities
+namespace ReactApp1.Server.Entities.Terem
 {
     public class Terem
     {
