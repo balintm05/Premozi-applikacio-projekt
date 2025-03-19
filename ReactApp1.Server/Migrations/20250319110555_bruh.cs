@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ReactApp1.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class _103pcbalintinit : Migration
+    public partial class bruh : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,9 +38,9 @@ namespace ReactApp1.Server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Leiras = table.Column<string>(type: "TEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Eredeti_nyelv = table.Column<string>(type: "TEXT", nullable: false)
+                    EredetiNyelv = table.Column<string>(type: "TEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Eredeti_cim = table.Column<string>(type: "TEXT", nullable: false)
+                    EredetiCim = table.Column<string>(type: "TEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Szinkron = table.Column<string>(type: "TEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -64,11 +64,7 @@ namespace ReactApp1.Server.Migrations
                 {
                     id = table.Column<int>(type: "int(5)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Ferohely = table.Column<int>(type: "int(3)", nullable: false),
-                    Tipus = table.Column<string>(type: "text", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Sorok = table.Column<int>(type: "int(3)", nullable: false),
-                    Allapot = table.Column<string>(type: "longtext", nullable: false)
+                    Nev = table.Column<string>(type: "text", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Megjegyzes = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
@@ -89,7 +85,7 @@ namespace ReactApp1.Server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     passwordHash = table.Column<string>(type: "char(84)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    creation_date = table.Column<DateTime>(type: "DateTime", nullable: false),
+                    creationDate = table.Column<DateTime>(type: "DateTime", nullable: false),
                     accountStatus = table.Column<int>(type: "int(1)", maxLength: 1, nullable: false),
                     role = table.Column<string>(type: "varchar(30)", maxLength: 1, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -102,7 +98,31 @@ namespace ReactApp1.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.userID);
-                    table.UniqueConstraint("UK_Users_email", x => x.email);
+                    table.UniqueConstraint("UK_Users_Email", x => x.email);
+                    table.UniqueConstraint("UK_Users_RefToken", x => x.refreshToken);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Szekek",
+                columns: table => new
+                {
+                    Teremid = table.Column<int>(type: "int(5)", nullable: false),
+                    X = table.Column<int>(type: "int(2)", nullable: false),
+                    Y = table.Column<int>(type: "int(2)", nullable: false),
+                    Allapot = table.Column<int>(type: "int(1)", nullable: false),
+                    Megjegyzes = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Szekek", x => new { x.Teremid, x.X, x.Y });
+                    table.ForeignKey(
+                        name: "FK_Szekek_Terem_Teremid",
+                        column: x => x.Teremid,
+                        principalTable: "Terem",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -194,6 +214,9 @@ namespace ReactApp1.Server.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Rendeles");
+
+            migrationBuilder.DropTable(
+                name: "Szekek");
 
             migrationBuilder.DropTable(
                 name: "Users");

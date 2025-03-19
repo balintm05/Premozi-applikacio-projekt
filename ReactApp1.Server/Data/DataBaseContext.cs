@@ -10,9 +10,11 @@ namespace ReactApp1.Server.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Vetites> Vetites { get; set; }
         public DbSet<Rendeles> Rendeles { get; set; }
+        public DbSet<Szekek> Szekek { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Terem>().HasMany(e => e.Szekek).WithOne(e => e.Terem).HasForeignKey(e=>e.Teremid).IsRequired();
+            modelBuilder.Entity<Szekek>().HasOne(e => e.Terem).WithMany(e => e.Szekek).HasForeignKey(e => e.Teremid).IsRequired();
         }
     }
 }

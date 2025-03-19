@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 using NuGet.Common;
 using ReactApp1.Server.Data;
 using ReactApp1.Server.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +72,13 @@ builder.Services.AddDbContext<DataBaseContext>(options =>
     options.UseMySql(connectionString, serverVersion));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<ITeremService, TeremService>();
+builder.Services.AddControllers()
+               .AddNewtonsoftJson(options =>
+               {
+                   options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                   options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+               });
 
 var app = builder.Build();
 app.UseDefaultFiles();

@@ -113,6 +113,18 @@ namespace ReactApp1.Server.Services
         }
 
 
+        public async Task<List<GetFilmResponse>?> getMovies()
+        {
+            var filmek = await context.Film.ToListAsync();
+            var response = new List<GetFilmResponse>();
+            foreach(Film film in filmek)
+            {
+                response.Add(new GetFilmResponse(film));
+            }
+            return response;
+        }
+
+
         public async Task<Models.ErrorModel?> addMovie(ManageFilmDto request)
         {
             try

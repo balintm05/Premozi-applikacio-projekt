@@ -54,6 +54,14 @@ namespace ReactApp1.Server.Controllers
         }
 
 
+        [AllowAnonymous]
+        [HttpGet("getMovies")]
+        public async Task<ActionResult<List<GetFilmResponse>?>> getMovies()
+        {
+            return await movieService.getMovies();
+        }
+
+
         [Authorize(Roles = "Admin")]
         [HttpPost("addMovie")]
         public async Task<ActionResult<Models.ErrorModel?>> AddMovie(ManageFilmDto request)

@@ -37,11 +37,11 @@ namespace ReactApp1.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Eredeti_cim")
+                    b.Property<string>("EredetiCim")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Eredeti_nyelv")
+                    b.Property<string>("EredetiNyelv")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -131,6 +131,29 @@ namespace ReactApp1.Server.Migrations
                     b.ToTable("Rendeles");
                 });
 
+            modelBuilder.Entity("ReactApp1.Server.Entities.Szekek", b =>
+                {
+                    b.Property<int>("Teremid")
+                        .HasColumnType("int(5)");
+
+                    b.Property<int>("X")
+                        .HasColumnType("int(2)");
+
+                    b.Property<int>("Y")
+                        .HasColumnType("int(2)");
+
+                    b.Property<int>("Allapot")
+                        .HasColumnType("int(1)");
+
+                    b.Property<string>("Megjegyzes")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Teremid", "X", "Y");
+
+                    b.ToTable("Szekek");
+                });
+
             modelBuilder.Entity("ReactApp1.Server.Entities.Terem", b =>
                 {
                     b.Property<int>("id")
@@ -139,21 +162,11 @@ namespace ReactApp1.Server.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<string>("Allapot")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<int>("Ferohely")
-                        .HasColumnType("int(3)");
-
                     b.Property<string>("Megjegyzes")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Sorok")
-                        .HasColumnType("int(3)");
-
-                    b.Property<string>("Tipus")
+                    b.Property<string>("Nev")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -178,7 +191,7 @@ namespace ReactApp1.Server.Migrations
                         .HasMaxLength(1)
                         .HasColumnType("int(1)");
 
-                    b.Property<DateTime>("creation_date")
+                    b.Property<DateTime>("creationDate")
                         .HasColumnType("DateTime");
 
                     b.Property<string>("email")
@@ -254,6 +267,17 @@ namespace ReactApp1.Server.Migrations
                     b.Navigation("Vetites");
                 });
 
+            modelBuilder.Entity("ReactApp1.Server.Entities.Szekek", b =>
+                {
+                    b.HasOne("ReactApp1.Server.Entities.Terem", "Terem")
+                        .WithMany("Szekek")
+                        .HasForeignKey("Teremid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Terem");
+                });
+
             modelBuilder.Entity("ReactApp1.Server.Entities.Vetites", b =>
                 {
                     b.HasOne("ReactApp1.Server.Entities.Film", "Film")
@@ -271,6 +295,11 @@ namespace ReactApp1.Server.Migrations
                     b.Navigation("Film");
 
                     b.Navigation("Terem");
+                });
+
+            modelBuilder.Entity("ReactApp1.Server.Entities.Terem", b =>
+                {
+                    b.Navigation("Szekek");
                 });
 #pragma warning restore 612, 618
         }
