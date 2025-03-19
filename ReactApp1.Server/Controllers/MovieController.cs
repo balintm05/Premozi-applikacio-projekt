@@ -89,7 +89,7 @@ namespace ReactApp1.Server.Controllers
 
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("deleteMovie")]
+        [HttpDelete("deleteMovie/{id}")]
         public async Task<ActionResult<Models.ErrorModel?>> DeleteMovie(int id)
         {
             var err = await movieService.deleteMovie(id);
