@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ReactApp1.Server.Data;
 
@@ -11,9 +12,11 @@ using ReactApp1.Server.Data;
 namespace ReactApp1.Server.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    partial class DataBaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250320191858_teehee")]
+    partial class teehee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -155,9 +158,7 @@ namespace ReactApp1.Server.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("LogTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("UTC_TIMESTAMP");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Path")
                         .IsRequired()
@@ -274,12 +275,6 @@ namespace ReactApp1.Server.Migrations
                         .HasColumnType("varchar(30)");
 
                     b.HasKey("userID");
-
-                    b.HasIndex("email")
-                        .IsUnique();
-
-                    b.HasIndex("refreshToken")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });

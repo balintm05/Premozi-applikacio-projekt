@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using ReactApp1.Server.Entities;
 using ReactApp1.Server.Models;
 using ReactApp1.Server.Models.JWT;
 using ReactApp1.Server.Models.User;
 using ReactApp1.Server.Models.User.EditUser;
 using ReactApp1.Server.Models.User.Response;
+using System.Security.Claims;
 
 namespace ReactApp1.Server.Services.Auth
 {
@@ -18,8 +20,8 @@ namespace ReactApp1.Server.Services.Auth
         Task<bool?> EditUserAdminAsync(EditUserAdminDto request);
         Task<bool?> EditPasswordAsync(EditPasswordDto request, int pid);
         Task<TokenResponseDto?> RefreshTokenAsync(string refToken);
-        void SetTokensInsideCookie(TokenResponseDto token, HttpContext context);
-        Task<bool> checkIfStatusChanged(int id);
+        void SetTokensInsideCookie(TokenResponseDto token, HttpContext httpcontext);
+        Task<bool> checkIfStatusChanged(ClaimsPrincipal User);
         Task<ErrorModel?> deleteUser(int id);
         Task logout(HttpContext httpcontext);
         //just no

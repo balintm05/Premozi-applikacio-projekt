@@ -16,7 +16,9 @@ function ButtonToggle() {
             credentials: 'include'
         })
             .then((response) => response.json())
-            .then((data) => setIsLoggedIn(data.isLoggedIn))
+            .then((data) => {
+                setIsLoggedIn(data.isLoggedIn)
+            })
             .catch((error) => console.error("Hiba a bejelentkezés ellenőrzésekor:", error));
     }, []);
 

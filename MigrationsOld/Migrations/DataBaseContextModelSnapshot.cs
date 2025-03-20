@@ -155,9 +155,7 @@ namespace ReactApp1.Server.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("LogTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasDefaultValueSql("UTC_TIMESTAMP");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Path")
                         .IsRequired()
@@ -274,12 +272,6 @@ namespace ReactApp1.Server.Migrations
                         .HasColumnType("varchar(30)");
 
                     b.HasKey("userID");
-
-                    b.HasIndex("email")
-                        .IsUnique();
-
-                    b.HasIndex("refreshToken")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });

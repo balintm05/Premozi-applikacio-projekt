@@ -17,43 +17,45 @@ namespace ReactApp1.Server.Data
         public DbSet<VetitesSzekek> VetitesSzekek { get; set; }
         public DbSet<Film> Film { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<HttpLog> HttpLogs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Composite Primary Keys
             modelBuilder.Entity<Szekek>()
                 .HasKey(s => new { s.Teremid, s.X, s.Y });
-
             modelBuilder.Entity<VetitesSzekek>()
                 .HasKey(vs => new { vs.Vetitesid, vs.Teremid, vs.X, vs.Y });
-
             modelBuilder.Entity<FoglaltSzekek>()
-                .HasKey(fs => new { fs.FoglalasAdatokid, fs.Vetitesid, fs.Teremid, fs.X, fs.Y });
-
-            // Relationships
+                .HasKey(fs => new { fs.FoglalasAdatokid, fs.Vetitesid, fs.Teremid, fs.X, fs.Y });            
             modelBuilder.Entity<Szekek>()
                 .HasOne(s => s.Terem)
                 .WithMany(t => t.Szekek)
                 .HasForeignKey(s => s.Teremid);
-
             modelBuilder.Entity<VetitesSzekek>()
                 .HasOne(vs => vs.Vetites)
                 .WithMany(v => v.VetitesSzekek)
                 .HasForeignKey(vs => vs.Vetitesid);
-
             modelBuilder.Entity<VetitesSzekek>()
                 .HasOne(vs => vs.Szekek)
                 .WithMany(s => s.VetitesSzekek)
                 .HasForeignKey(vs => new { vs.Teremid, vs.X, vs.Y });
-
             modelBuilder.Entity<FoglaltSzekek>()
                 .HasOne(fs => fs.FoglalasAdatok)
                 .WithMany(fa => fa.FoglaltSzekek)
                 .HasForeignKey(fs => fs.FoglalasAdatokid);
-
             modelBuilder.Entity<FoglaltSzekek>()
                 .HasOne(fs => fs.VetitesSzekek)
                 .WithMany(vs => vs.FoglaltSzekek)
                 .HasForeignKey(fs => new { fs.Vetitesid, fs.Teremid, fs.X, fs.Y });
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasIndex(u => u.email).IsUnique();
+                entity.HasIndex(u => u.refreshToken).IsUnique(); 
+            });
+            modelBuilder.Entity<HttpLog>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.LogTime).HasDefaultValueSql("UTC_TIMESTAMP");
+            });
             base.OnModelCreating(modelBuilder);
         }
     }

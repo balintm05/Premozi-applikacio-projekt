@@ -75,7 +75,7 @@ builder.Services.AddControllers()
 var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
-
+app.UseMiddleware<HttpLoggingMiddleware>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

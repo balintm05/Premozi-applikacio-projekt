@@ -290,11 +290,15 @@ namespace ReactApp1.Server.Services.Auth
         }
 
         
-        public async Task<bool> checkIfStatusChanged(int id)
+        public async Task<bool> checkIfStatusChanged(ClaimsPrincipal User)
         {
-            var user = await context.Users.FindAsync(id);
-            if(user == null || user.accountStatus == 2 || user.accountStatus == 3)
+            var user = await context.Users.FindAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
+            if(user == null || user.accountStatus == 2)
             {
+                return true;
+            }
+            if (user.role != User.FindFirstValue(ClaimTypes.Role))
+            {            
                 return true;
             }
             return false;
