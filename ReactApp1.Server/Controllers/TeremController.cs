@@ -53,7 +53,7 @@ namespace ReactApp1.Server.Controllers
         public async Task<ActionResult<GetTeremResponse?>> GetTerem(int id)
         {
             var err = await teremService.getTerem(id);
-            if(err.error!=null)
+            if(err.error.errorMessage != null)
             {
                 return BadRequest(err);
             }
@@ -64,33 +64,33 @@ namespace ReactApp1.Server.Controllers
         public async Task<ActionResult<Models.ErrorModel?>> AddTerem(ManageTeremDto request)
         {
             var err = await teremService.addTerem(request);
-            if (err != null)
+            if (err.errorMessage == "Sikeres hozzáadás")
             {
-                return BadRequest(err);
+                return Ok(err);
             }
-            return Ok(err);
+            return BadRequest(err);
         }
         //[Authorize(Roles = "Admin")]
         [HttpPatch("editTerem")]
         public async Task<ActionResult<Models.ErrorModel?>> EditTerem(ManageTeremDto request)
         {
             var err = await teremService.editTerem(request);
-            if (err != null)
+            if (err.errorMessage == "Sikeres módosítás")
             {
-                return BadRequest(err);
+                return Ok(err);
             }
-            return Ok(err);
+            return BadRequest(err);
         }
         //[Authorize(Roles ="Admin")]
         [HttpDelete("deleteTerem/{id}")]
         public async Task<ActionResult<Models.ErrorModel?>> deleteTerem(int id)
         {
             var err = await teremService.deleteTerem(id);
-            if (err != null)
+            if (err.errorMessage == "Sikeres törlés")
             {
-                return BadRequest(err);
+                return Ok(err);
             }
-            return Ok(err);
+            return BadRequest(err);
         }
     }
 }
