@@ -8,7 +8,6 @@ namespace ReactApp1.Server.Entities.Foglalas
     {
         [Key]
         public int id { get; set; }
-        public int UserID { get; set; }
         [Column(TypeName = "DateTime"), DataType(DataType.DateTime), Editable(false)]
         public DateTime FoglalasIdopontja { get; set; } = DateTime.UtcNow;
         public virtual User User { get; set; } = null!;

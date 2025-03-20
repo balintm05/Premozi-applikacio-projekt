@@ -19,49 +19,65 @@ namespace ReactApp1.Server.Data
         public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Terem>()
-                .HasMany(e => e.Szekek)
-                .WithOne(e => e.Terem)
-                .HasForeignKey(e => e.Teremid)
-                .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<Szekek>()
-                .HasKey(s => new { s.Teremid, s.X, s.Y });
-            modelBuilder.Entity<Szekek>()
-                .HasOne(s => s.Terem)
-                .WithMany(t => t.Szekek)
-                .HasForeignKey(s => s.Teremid)
-                .OnDelete(DeleteBehavior.Cascade);
+            base.OnModelCreating(modelBuilder);
+
+            // Configure the VetitesSzekek entity
             modelBuilder.Entity<VetitesSzekek>()
-                .HasKey(vs => new { vs.Teremid, vs.X, vs.Y, vs.Vetitesid });
+                .HasKey(vs => new { vs.Szekek, vs.Vetites });
+
             modelBuilder.Entity<VetitesSzekek>()
                 .HasOne(vs => vs.Szekek)
                 .WithMany()
-                .HasForeignKey(vs => new { vs.Teremid, vs.X, vs.Y })
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(vs => vs.Szekek);
+
             modelBuilder.Entity<VetitesSzekek>()
                 .HasOne(vs => vs.Vetites)
                 .WithMany()
-                .HasForeignKey(vs => vs.Vetitesid)
-                .OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<VetitesSzekek>()
-                .HasOne(vs => vs.FoglaltSzekek)
-                .WithOne(fs => fs.VetitesSzekek)
-                .HasForeignKey<FoglaltSzekek>(fs => new { fs.Teremid, fs.X, fs.Y, fs.Vetitesid })
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(vs => vs.Vetites);
+
+            // Configure the FoglaltSzekek entity
             modelBuilder.Entity<FoglaltSzekek>()
-                .HasKey(fs => new { fs.Teremid, fs.X, fs.Y, fs.Vetitesid });
+                .HasKey(fs => new { fs.FoglalasAdatok, fs.VetitesSzekek });
+
             modelBuilder.Entity<FoglaltSzekek>()
                 .HasOne(fs => fs.FoglalasAdatok)
                 .WithMany()
-                .HasForeignKey(fs => fs.FoglalasAdatokid)
-                .HasPrincipalKey(fs=>fs.id)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(fs => fs.FoglalasAdatok);
+
             modelBuilder.Entity<FoglaltSzekek>()
                 .HasOne(fs => fs.VetitesSzekek)
-                .WithOne(vs => vs.FoglaltSzekek)
-                .HasForeignKey<VetitesSzekek>(vs => new { vs.Teremid, vs.X, vs.Y, vs.Vetitesid })
-                .OnDelete(DeleteBehavior.Cascade);
-            base.OnModelCreating(modelBuilder);
+                .WithMany()
+                .HasForeignKey(fs => fs.VetitesSzekek);
+
+            // Configure the Szekek entity
+            modelBuilder.Entity<Szekek>()
+                .HasKey(s => new { s.Terem, s.X, s.Y });
+
+            modelBuilder.Entity<Szekek>()
+                .HasOne(s => s.Terem)
+                .WithMany(t => t.Szekek)
+                .HasForeignKey(s => s.Terem);
+
+            // Configure the Terem entity
+            modelBuilder.Entity<Terem>()
+                .HasKey(t => t.id);
+
+            // Configure the FoglalasAdatok entity
+            modelBuilder.Entity<FoglalasAdatok>()
+                .HasKey(fa => fa.id);
+
+            modelBuilder.Entity<FoglalasAdatok>()
+                .HasOne(fa => fa.User)
+                .WithMany()
+                .HasForeignKey(fa => fa.User);
+
+            // Configure the User entity
+            modelBuilder.Entity<User>()
+                .HasKey(u => u.userID);
+
+            // Configure the Film entity
+            modelBuilder.Entity<Film>()
+                .HasKey(f => f.id);
         }
     }
 }

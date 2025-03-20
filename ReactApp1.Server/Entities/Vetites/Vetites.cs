@@ -15,11 +15,7 @@ namespace ReactApp1.Server.Entities.Vetites
         [Column(TypeName = "DateTime"), NotNull, Required, DataType(DataType.Text, ErrorMessage = "Kötelező időpontot megadni")]
         public DateTime Idopont { get; set; }
         [Column(TypeName = "longtext"), NotNull, DataType(DataType.Text, ErrorMessage = "Hiba történt a megjegyzés hozzáadása során")]
-        public string Megjegyzes { get; set; } = "Nincs megjegyzés";
-        [Length(1, 11, ErrorMessage = "Kötelező film ID-t megadni")]
-        public int Filmid { get; set; }
-        [Length(1, 5, ErrorMessage = "Kötelező terem ID-t megadni")]
-        public int Teremid { get; set; }
+        public string Megjegyzes { get; set; } = "";
         public virtual Film Film { get; set; } = null!;
         public virtual Terem.Terem Terem { get; set; } = null!;
     }

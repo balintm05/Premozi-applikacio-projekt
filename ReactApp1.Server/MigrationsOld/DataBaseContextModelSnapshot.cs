@@ -94,7 +94,7 @@ namespace ReactApp1.Server.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Film");
+                    b.ToTable("Film", (string)null);
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.FoglalasAdatok", b =>
@@ -115,7 +115,7 @@ namespace ReactApp1.Server.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("FoglalasAdatok");
+                    b.ToTable("FoglalasAdatok", (string)null);
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.FoglaltSzekek", b =>
@@ -139,7 +139,7 @@ namespace ReactApp1.Server.Migrations
 
                     b.HasIndex("FoglalasAdatokid");
 
-                    b.ToTable("FoglaltSzekek");
+                    b.ToTable("FoglaltSzekek", (string)null);
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Terem.Szekek", b =>
@@ -162,7 +162,7 @@ namespace ReactApp1.Server.Migrations
 
                     b.HasKey("Teremid", "X", "Y");
 
-                    b.ToTable("Szekek");
+                    b.ToTable("Szekek", (string)null);
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Terem.Terem", b =>
@@ -183,7 +183,7 @@ namespace ReactApp1.Server.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Terem");
+                    b.ToTable("Terem", (string)null);
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.User", b =>
@@ -226,7 +226,7 @@ namespace ReactApp1.Server.Migrations
 
                     b.HasKey("userID");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Vetites.Vetites", b =>
@@ -256,7 +256,7 @@ namespace ReactApp1.Server.Migrations
 
                     b.HasIndex("Teremid");
 
-                    b.ToTable("Vetites");
+                    b.ToTable("Vetites", (string)null);
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Vetites.VetitesSzekek", b =>
@@ -280,7 +280,7 @@ namespace ReactApp1.Server.Migrations
 
                     b.HasIndex("Vetitesid");
 
-                    b.ToTable("VetitesSzekek");
+                    b.ToTable("VetitesSzekek", (string)null);
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.FoglalasAdatok", b =>

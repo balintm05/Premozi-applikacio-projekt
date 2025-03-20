@@ -10,11 +10,15 @@ namespace ReactApp1.Server.Models.Vetites
 {
     public class GetVetitesResponse
     {
-        public int id {  get; set; }
-        public DateTime? Idopont { get; set; }
-        public string? Megjegyzes { get; set; }
-        public int? Filmid { get; set; }
-        public int? Teremid { get; set; }
+        public Entities.Vetites.Vetites? Vetites { get; set; }
         public ErrorModel? Error { get; set; }
+        public GetVetitesResponse(Entities.Vetites.Vetites vetites)
+        {
+            Vetites = vetites;
+        }
+        public GetVetitesResponse(string err)
+        {
+            Error = new ErrorModel(err);
+        }
     }
 }
