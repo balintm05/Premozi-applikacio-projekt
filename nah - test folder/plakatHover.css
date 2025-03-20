@@ -1,0 +1,93 @@
+.egynap {
+    background: #222;
+    color: #fff;
+}
+
+.egynap:nth-child(2n) {
+    background: #333;
+}
+
+.egynap-szin {
+    background: #222 !important;
+}
+
+.leiras {
+  overflow: hidden;
+  position: relative;
+  line-height: 1.2em;
+  text-align: left;
+  margin-right: -1em;
+  padding-right: 1em;
+  margin-bottom: 0em;
+  cursor: pointer
+}
+
+.szukleiras {
+  max-height: 6em; 
+}
+
+.kat {
+    color: #aaa;
+}
+
+.ert {
+
+}
+
+.ora {
+    background: purple;
+    padding: 3px;
+    margin-right: 10px;
+}
+
+.film-plakat {
+    position: relative;
+    cursor: pointer
+}
+.plakat-kep,.youtube {
+    position: absolute;
+    top: 0;
+    left: 0;        
+}
+.film-plakat {
+    transition: transform .2s;
+}
+
+.film-plakat:hover {
+    transform: scale(1.05);
+}
+
+.vasarlas {
+    transition: transform .2s;
+}
+
+.vasarlas:hover {
+    transform: scale(1.15); 
+}
+        
+
+.youtube {
+    height: 100%;
+}
+.youtube img {
+    margin-top: 40%;
+    width: 50%;
+}
+
+
+.felirat {
+    background: #b1201b;
+    color: #fff; 
+    padding: 4px 5px;
+    font-variant-caps: petite-caps;
+    margin-bottom: 10px;
+    
+}    
+
+a:visited, a:visited, a:link  {
+    text-decoration: none;
+    color: #fff;
+}
+a:hover {
+    color: #eee;
+}
