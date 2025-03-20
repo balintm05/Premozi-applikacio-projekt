@@ -13,6 +13,7 @@ using ReactApp1.Server.Services.Auth;
 using ReactApp1.Server.Services.Film;
 using ReactApp1.Server.Services.Terem;
 using ReactApp1.Server.Services.Vetites;
+using ReactApp1.Server.Services.Foglalas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,22 +51,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     context.Token = accessToken;
                 }
                 return Task.CompletedTask;
-            },
-            /*OnAuthenticationFailed = context =>
-            {
-                Console.WriteLine($"OnAuthenticationFailed: {context.Exception.Message}");
-                return Task.CompletedTask;
-            },
-           OnTokenValidated = context =>
-           {
-               Console.WriteLine("OnTokenValidated");
-               return Task.CompletedTask;
-           },
-           OnChallenge = context =>
-           {
-               Console.WriteLine($"OnChallenge: {context.Error}");
-               return Task.CompletedTask;
-           }*/            
+            }   
         };
     });
     
@@ -78,6 +64,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<ITeremService, TeremService>();
 builder.Services.AddScoped<IVetitesService, VetitesService>();
+builder.Services.AddScoped<IFoglalasService, FoglalasService>();
 builder.Services.AddControllers()
                .AddNewtonsoftJson(options =>
                {
