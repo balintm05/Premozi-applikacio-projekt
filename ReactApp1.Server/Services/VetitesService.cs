@@ -33,6 +33,8 @@ using Humanizer;
 using Org.BouncyCastle.Ocsp;
 using ReactApp1.Server.Models.Film;
 using ReactApp1.Server.Models.Terem;
+using ReactApp1.Server.Entities.Terem;
+using ReactApp1.Server.Entities.Vetites;
 
 namespace ReactApp1.Server.Services
 {
@@ -59,6 +61,7 @@ namespace ReactApp1.Server.Services
             }
             return new GetVetitesResponse(vetites);
         }
+        //ne tudjon overlappelni csináld majd meg 
         public async Task<ErrorModel> addVetites(ManageVetitesDto request)
         {            
             var vetites = new Entities.Vetites.Vetites();
@@ -84,7 +87,6 @@ namespace ReactApp1.Server.Services
             {
                 return new ErrorModel("Nem található ilyen id-jű film az adatbázisban");
             }
-            Console.WriteLine("{0}, {1}, {2}", fid, tid, ido);
             vetites.Filmid = fid;
             vetites.Teremid = tid;
             vetites.Idopont = ido;
@@ -95,8 +97,61 @@ namespace ReactApp1.Server.Services
         }
         public async Task<ErrorModel?> editVetites(ManageVetitesDto request)
         {
-            var vetites = await context.Vetites.FindAsync(request.id);
-            return null;
+            var vetites = await context.Vetites.FindAsync(int.Parse(request.id));
+            if (vetites == null)
+            {
+                return new Models.ErrorModel("Nem található ilyen id-jű vetítés az adatbázisban");
+            }
+            var patchDoc = new JsonPatchDocument<Vetites>();
+            var fidb = int.TryParse(request.Filmid, out int fid);
+            var tidb = int.TryParse(request.Teremid, out int tid);
+            var didb = DateTime.TryParse(request.Idopont, out DateTime ido);
+            if (!(fidb && tidb))
+            {
+                return new ErrorModel("Számot kell megadni a film és terem id-hez");
+            }
+            if (!didb)
+            {
+                return new ErrorModel("Valid dátumot kell megadni");
+            }
+            if (request.Megjegyzes!=null && vetites.Megjegyzes != request.Megjegyzes)
+            {
+                patchDoc.Replace(v => v.Megjegyzes , request.Megjegyzes);
+            }
+            patchDoc.ApplyTo(vetites);
+            if (vetites.Teremid != tid)
+            {
+                var terem = await context.Terem.ToAsyncEnumerable().WhereAwait(async x => x.id == tid).ToListAsync();
+                if(terem == null)
+                {
+                    return new ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
+                }
+                vetites.Teremid = tid;
+                await DeleteExistingVSzekek(vetites);
+                await CreateVSzekek(vetites);
+            }
+            if (vetites.Filmid != fid)
+            {
+                var film = await context.Film.ToAsyncEnumerable().WhereAwait(async x => x.id == fid).ToListAsync();
+                if (film == null)
+                {
+                    return new ErrorModel("Nem található ilyen id-jű film az adatbázisban");
+                }
+                vetites.Filmid = fid;           
+            }
+            await context.SaveChangesAsync();
+            return new ErrorModel("Sikeres módosítás");
+        }
+        public async Task<ErrorModel> deleteVetites(int id)
+        {
+            var vetites = await context.Vetites.FindAsync(id);
+            if (vetites == null)
+            {
+                return new Models.ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
+            }
+            context.Vetites.Remove(vetites);
+            await context.SaveChangesAsync();
+            return new Models.ErrorModel("Sikeres törlés");
         }
         private async Task CreateVSzekek(Entities.Vetites.Vetites vetites)
         {
@@ -117,6 +172,7 @@ namespace ReactApp1.Server.Services
             {
                 await context.VetitesSzekek.AddAsync(szek);
             }
+            await context.SaveChangesAsync();
         }
         private async Task DeleteExistingVSzekek(Entities.Vetites.Vetites vetites)
         {

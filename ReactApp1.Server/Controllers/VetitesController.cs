@@ -61,26 +61,42 @@ namespace ReactApp1.Server.Controllers
             var err = await vetitesService.getVetites(id);
             if (err != null)
             {
-                return BadRequest(err);
+                return Ok(err);
             }
-            return Ok(err);
+            return BadRequest(err);
         }
         //[Authorize(Roles ="Admin")]
         [HttpPost("addVetites")]
         public async Task<ActionResult<List<ErrorModel>?>> AddVetites(ManageVetitesDto request)
         {
             var err = await vetitesService.addVetites(request);
-            if (err != null)
+            if (err.errorMessage=="Sikeres hozzáadás")
             {
-                return BadRequest(err);
+                return Ok(err);
             }
-            return Ok(err);
+            return BadRequest(err);
         }
         //[Authorize(Roles ="Admin")]
         [HttpPatch("editVetites")]
         public async Task<ActionResult<ErrorModel>?> EditVetites(ManageVetitesDto request)
         {
-            return null;
+            var err = await vetitesService.editVetites(request);
+            if (err.errorMessage == "Sikeres módosítás")
+            {
+                return Ok(err);
+            }
+            return BadRequest(err);
+        }
+        //[Authorize(Roles ="Admin")]
+        [HttpDelete("deleteVetites/{id}")]
+        public async Task<ActionResult<ErrorModel>?> DeleteVetites(int id)
+        {
+            var err = await vetitesService.deleteVetites(id);
+            if (err.errorMessage == "Sikeres törlés")
+            {
+                return Ok(err);
+            }
+            return BadRequest(err);
         }
     }
 }
