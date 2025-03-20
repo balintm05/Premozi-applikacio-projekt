@@ -42,7 +42,7 @@ namespace ReactApp1.Server.Services.Vetites
     {
         public async Task<List<GetVetitesResponse>?> getVetites()
         {
-            var vetitesek = await context.Vetites.ToListAsync();
+            var vetitesek = await context.Vetites.Include(x=>x.Film).Include(x=>x.Terem).Include(x=>x.VetitesSzekek).ThenInclude(vs=>vs.Szekek).ToListAsync();
             var vetitesszekek = await context.VetitesSzekek.ToListAsync();
             var response = new List<GetVetitesResponse>();
             foreach(var vetites in vetitesek)

@@ -165,11 +165,11 @@ namespace ReactApp1.Server.Migrations
 
                     b.Property<string>("QueryString")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("LONGTEXT");
 
                     b.Property<string>("RequestBody")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("LONGTEXT");
 
                     b.Property<string>("RequestHeaders")
                         .IsRequired()
@@ -177,11 +177,11 @@ namespace ReactApp1.Server.Migrations
 
                     b.Property<string>("ResponseBody")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("LONGTEXT");
 
                     b.Property<string>("ResponseHeaders")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("LONGTEXT");
 
                     b.Property<string>("Schema")
                         .IsRequired()

@@ -297,7 +297,7 @@ namespace ReactApp1.Server.Services.Auth
             {
                 return true;
             }
-            if (user.role != User.FindFirstValue(ClaimTypes.Role))
+            if (user.role != User.FindFirstValue(ClaimTypes.Role)||user.email!=User.FindFirstValue(ClaimTypes.Email))
             {            
                 return true;
             }

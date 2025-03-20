@@ -70,15 +70,15 @@ namespace ReactApp1.Server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Path = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    QueryString = table.Column<string>(type: "longtext", nullable: false)
+                    QueryString = table.Column<string>(type: "LONGTEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     RequestHeaders = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    RequestBody = table.Column<string>(type: "longtext", nullable: false)
+                    RequestBody = table.Column<string>(type: "LONGTEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ResponseHeaders = table.Column<string>(type: "longtext", nullable: false)
+                    ResponseHeaders = table.Column<string>(type: "LONGTEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    ResponseBody = table.Column<string>(type: "longtext", nullable: false)
+                    ResponseBody = table.Column<string>(type: "LONGTEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     StatusCode = table.Column<int>(type: "int", nullable: false),
                     LogTime = table.Column<DateTime>(type: "datetime(6)", nullable: false, defaultValueSql: "UTC_TIMESTAMP")

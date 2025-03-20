@@ -149,7 +149,7 @@ namespace ReactApp1.Server.Controllers
             int? id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             if(id == null)
             {
-                return BadRequest("Hiba történt");
+                return BadRequest(new Models.ErrorModel("Hiba történt"));
             }
             var isSuccessful = await authService.EditUserAsync(request, (int)id);
             return isSuccessful == true ? Ok(new Models.ErrorModel("Sikeres frissítés")) : BadRequest(new Models.ErrorModel("Az email cím nem megfelelő, nem történt változás"));

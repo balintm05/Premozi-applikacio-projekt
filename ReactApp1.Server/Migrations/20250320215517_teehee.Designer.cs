@@ -12,7 +12,7 @@ using ReactApp1.Server.Data;
 namespace ReactApp1.Server.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20250320193704_teehee")]
+    [Migration("20250320215517_teehee")]
     partial class teehee
     {
         /// <inheritdoc />
@@ -168,11 +168,11 @@ namespace ReactApp1.Server.Migrations
 
                     b.Property<string>("QueryString")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("LONGTEXT");
 
                     b.Property<string>("RequestBody")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("LONGTEXT");
 
                     b.Property<string>("RequestHeaders")
                         .IsRequired()
@@ -180,11 +180,11 @@ namespace ReactApp1.Server.Migrations
 
                     b.Property<string>("ResponseBody")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("LONGTEXT");
 
                     b.Property<string>("ResponseHeaders")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("LONGTEXT");
 
                     b.Property<string>("Schema")
                         .IsRequired()
