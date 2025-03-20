@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using ReactApp1.Server.Entities.Vetites;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -19,5 +20,6 @@ namespace ReactApp1.Server.Entities.Terem
         public string Megjegyzes { get; set; } = "";
 
         public ICollection<Szekek> Szekek { get; set; } = new List<Szekek>();
+        public ICollection<Vetites.Vetites> Vetites { get;  } = new List<Vetites.Vetites>();
     }
 }

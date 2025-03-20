@@ -23,11 +23,12 @@ namespace ReactApp1.Server.Services
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
-
+        //context.Request.Path.StartsWithSegments("/api/")
         public async Task InvokeAsync(HttpContext context)
         {
             if (context.Request.Path.StartsWithSegments("/api/Auth/refresh-token") || context.Request.Path.StartsWithSegments("/api/Auth/getUser") || context.Request.Path.StartsWithSegments("/api/Auth/getUserAdmin") || context.Request.Path.StartsWithSegments("/api/Auth/queryUsers") ||
-                context.Request.Path.StartsWithSegments("/api/Auth/checkIfLoggedIn") || context.Request.Path.StartsWithSegments("/api/Auth/checkIfAdmin"))
+                context.Request.Path.StartsWithSegments("/api/Auth/checkIfLoggedIn") || context.Request.Path.StartsWithSegments("/api/Auth/checkIfAdmin")|| context.Request.Path.StartsWithSegments("/api/Film/get")|| context.Request.Path.StartsWithSegments("/api/Film/query")||
+                context.Request.Path.StartsWithSegments("/api/Terem/get")|| context.Request.Path.StartsWithSegments("/api/Vetites/get"))
             {
                 await _next(context);
                 return;
