@@ -56,11 +56,21 @@ namespace ReactApp1.Server.Controllers
 
         [AllowAnonymous]
         [HttpGet("getMovies")]
-        public async Task<ActionResult<List<GetFilmResponse>?>> getMovies()
+        public async Task<ActionResult<List<GetFilmResponse>?>> GetMovies()
         {
             return await movieService.getMovies();
         }
-
+        [AllowAnonymous]
+        [HttpGet("getMovies/{id}")]
+        public async Task<ActionResult<GetFilmResponse?>> GetMovies(int id)
+        {
+            var err = await movieService.getMovies(id);
+            if (err.Error!=null)
+            {
+                return BadRequest(err);
+            }
+            return Ok(err);
+        }
 
         //[Authorize(Roles = "Admin")]
         [HttpPost("addMovie")]

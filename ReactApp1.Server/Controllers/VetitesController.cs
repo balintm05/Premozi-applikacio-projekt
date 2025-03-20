@@ -59,11 +59,11 @@ namespace ReactApp1.Server.Controllers
         public async Task<ActionResult<List<Models.Vetites.GetVetitesResponse>?>> GetVetites(int id)
         {
             var err = await vetitesService.getVetites(id);
-            if (err != null)
+            if (err.Error != null)
             {
-                return Ok(err);
+                return BadRequest(err);
             }
-            return BadRequest(err);
+            return Ok(err);
         }
         //[Authorize(Roles ="Admin")]
         [HttpPost("addVetites")]

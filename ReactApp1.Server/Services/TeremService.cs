@@ -50,7 +50,7 @@ namespace ReactApp1.Server.Services
         public async Task<GetTeremResponse?> getTerem(int id)
         {
             var terem = await context.Terem.FindAsync(id);
-            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == id).ToListAsync();
+            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == id).ToListAsync();
             var response = new List<GetTeremResponse>();
             if (terem == null)
             {

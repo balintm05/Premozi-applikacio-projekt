@@ -53,7 +53,7 @@ namespace ReactApp1.Server.Controllers
         public async Task<ActionResult<GetTeremResponse?>> GetTerem(int id)
         {
             var err = await teremService.getTerem(id);
-            if(err.error.errorMessage != null)
+            if(err.error != null)
             {
                 return BadRequest(err);
             }

@@ -47,5 +47,9 @@ namespace ReactApp1.Server.Models.Film
             AlapAr = film.AlapAr.ToString();
             Megjegyzes = film.Megjegyzes;
         }
+        public GetFilmResponse(string err)
+        {
+            Error = new ErrorModel(err);
+        }
     }
 }

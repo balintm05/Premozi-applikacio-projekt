@@ -139,6 +139,10 @@ namespace ReactApp1.Server.Services
                 }
                 vetites.Filmid = fid;           
             }
+            if(vetites.Idopont != ido)
+            {
+                vetites.Idopont = ido;
+            }
             await context.SaveChangesAsync();
             return new ErrorModel("Sikeres módosítás");
         }

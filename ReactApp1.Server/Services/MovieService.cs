@@ -29,6 +29,8 @@ using ReactApp1.Server.Models.Film.ManageFilm;
 using Humanizer;
 using Org.BouncyCastle.Ocsp;
 using ReactApp1.Server.Models.Film;
+using ReactApp1.Server.Entities.Terem;
+using ReactApp1.Server.Models.Terem;
 
 namespace ReactApp1.Server.Services
 {
@@ -123,9 +125,18 @@ namespace ReactApp1.Server.Services
             }
             return response;
         }
+        public async Task<GetFilmResponse?> getMovies(int id)
+        {
+            var film = await context.Film.FindAsync(id);
+            if (film == null)
+            {
+                return new GetFilmResponse("Nincs ilyen id-jű film az adatbázisban");
+            }
+            return new GetFilmResponse(film);
+        }
+       
 
-
-        public async Task<Models.ErrorModel?> addMovie(ManageFilmDto request)
+    public async Task<Models.ErrorModel?> addMovie(ManageFilmDto request)
         {
             try
             {
