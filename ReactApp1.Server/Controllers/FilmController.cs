@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using ReactApp1.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Web;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -34,37 +33,38 @@ using Org.BouncyCastle.Ocsp;
 using ReactApp1.Server.Models.Film.ManageFilm;
 using ReactApp1.Server.Models.Film;
 using Org.BouncyCastle.Asn1.Mozilla;
+using ReactApp1.Server.Services.Film;
 
 namespace ReactApp1.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MovieController(IMovieService movieService) : Controller
+    public class FilmController(IFilmService filmService) : Controller
     {
         [Authorize(Roles = "Admin")]
-        [HttpPost("queryMovies")]
-        public async Task<ActionResult<dynamic>> QueryMovies(GetFilmQueryFilter request) 
+        [HttpPost("query")]
+        public async Task<ActionResult<dynamic>> QueryFilm(GetFilmQueryFilter request) 
         {
-            var movies = await movieService.queryMovies(request);
+            var movies = await filmService.queryFilm(request);
             if (movies == null)
             {
                 return BadRequest(new Models.ErrorModel("Hiba történt"));
             }
-            return Ok( await movieService.queryMovies(request));
+            return Ok( await filmService.queryFilm(request));
         }
 
 
         [AllowAnonymous]
-        [HttpGet("getMovies")]
-        public async Task<ActionResult<List<GetFilmResponse>?>> GetMovies()
+        [HttpGet("get")]
+        public async Task<ActionResult<List<GetFilmResponse>?>> GetFilm()
         {
-            return await movieService.getMovies();
+            return await filmService.getFilm();
         }
         [AllowAnonymous]
-        [HttpGet("getMovies/{id}")]
-        public async Task<ActionResult<GetFilmResponse?>> GetMovies(int id)
+        [HttpGet("get/{id}")]
+        public async Task<ActionResult<GetFilmResponse?>> GetFilm(int id)
         {
-            var err = await movieService.getMovies(id);
+            var err = await filmService.getFilm(id);
             if (err.Error!=null)
             {
                 return BadRequest(err);
@@ -73,10 +73,10 @@ namespace ReactApp1.Server.Controllers
         }
 
         //[Authorize(Roles = "Admin")]
-        [HttpPost("addMovie")]
-        public async Task<ActionResult<Models.ErrorModel?>> AddMovie(ManageFilmDto request)
+        [HttpPost("add")]
+        public async Task<ActionResult<Models.ErrorModel?>> AddFilm(ManageFilmDto request)
         {
-            var err = await movieService.addMovie(request);
+            var err = await filmService.addFilm(request);
             if (err.errorMessage == "Sikeres hozzáadás")
             {
                 return Ok(err);
@@ -86,10 +86,10 @@ namespace ReactApp1.Server.Controllers
 
 
         //[Authorize(Roles = "Admin")]
-        [HttpPatch("editMovie")]
-        public async Task<ActionResult<Models.ErrorModel?>> EditMovie(ManageFilmDto request)
+        [HttpPatch("edit")]
+        public async Task<ActionResult<Models.ErrorModel?>> EditFilm(ManageFilmDto request)
         {
-            var err = await movieService.editMovie(request);
+            var err = await filmService.editFilm(request);
             if (err.errorMessage == "Sikeres módosítás")
             {
                 return Ok(err);
@@ -99,10 +99,10 @@ namespace ReactApp1.Server.Controllers
 
 
         //[Authorize(Roles = "Admin")]
-        [HttpDelete("deleteMovie/{id}")]
-        public async Task<ActionResult<Models.ErrorModel?>> DeleteMovie(int id)
+        [HttpDelete("delete/{id}")]
+        public async Task<ActionResult<Models.ErrorModel?>> DeleteFilm(int id)
         {
-            var err = await movieService.deleteMovie(id);
+            var err = await filmService.deleteFilm(id);
             if (err.errorMessage == "Sikeres törlés")
             {
                 return Ok(err);

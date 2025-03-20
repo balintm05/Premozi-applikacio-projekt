@@ -10,7 +10,7 @@ function FilmListAdmin() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
     useEffect(() => {
-        fetch("https://localhost:7153/api/Movie/queryMovies", {
+        fetch("https://localhost:7153/api/Film/query", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: 'include',

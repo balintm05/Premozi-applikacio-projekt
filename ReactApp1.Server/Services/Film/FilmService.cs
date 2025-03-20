@@ -32,11 +32,11 @@ using ReactApp1.Server.Models.Film;
 using ReactApp1.Server.Entities.Terem;
 using ReactApp1.Server.Models.Terem;
 
-namespace ReactApp1.Server.Services
+namespace ReactApp1.Server.Services.Film
 {
-    public class MovieService(DataBaseContext context, IConfiguration configuration):IMovieService
+    public class FilmService(DataBaseContext context, IConfiguration configuration):IFilmService
     {
-        public async Task<List<GetFilmResponse>?> queryMovies(GetFilmQueryFilter request)
+        public async Task<List<GetFilmResponse>?> queryFilm(GetFilmQueryFilter request)
         {
             try
             {
@@ -115,17 +115,17 @@ namespace ReactApp1.Server.Services
         }
 
 
-        public async Task<List<GetFilmResponse>?> getMovies()
+        public async Task<List<GetFilmResponse>?> getFilm()
         {
             var filmek = await context.Film.ToListAsync();
             var response = new List<GetFilmResponse>();
-            foreach(Film film in filmek)
+            foreach(Entities.Film film in filmek)
             {
                 response.Add(new GetFilmResponse(film));
             }
             return response;
         }
-        public async Task<GetFilmResponse?> getMovies(int id)
+        public async Task<GetFilmResponse?> getFilm(int id)
         {
             var film = await context.Film.FindAsync(id);
             if (film == null)
@@ -136,11 +136,11 @@ namespace ReactApp1.Server.Services
         }
        
 
-    public async Task<Models.ErrorModel?> addMovie(ManageFilmDto request)
+    public async Task<Models.ErrorModel?> addFilm(ManageFilmDto request)
         {
             try
             {
-                var movie = new Film();
+                var movie = new Entities.Film();
                 movie.Cim = request.Cim;
                 movie.Kategoria = request.Kategoria;
                 movie.Mufaj = request.Mufaj;
@@ -168,7 +168,7 @@ namespace ReactApp1.Server.Services
         }
 
 
-        public async Task<Models.ErrorModel?> editMovie(ManageFilmDto request)
+        public async Task<Models.ErrorModel?> editFilm(ManageFilmDto request)
         {
             try
             {
@@ -177,7 +177,7 @@ namespace ReactApp1.Server.Services
                 {
                     throw new Exception("Nem található ilyen id-jű film");
                 }
-                var patchDoc = new JsonPatchDocument<Film>();
+                var patchDoc = new JsonPatchDocument<Entities.Film>();
                 if (!string.IsNullOrEmpty(request.Cim))
                 {
                     patchDoc.Replace(movie => movie.Cim, request.Cim);
@@ -256,7 +256,7 @@ namespace ReactApp1.Server.Services
         }
 
 
-        public async Task<Models.ErrorModel?> deleteMovie(int id)
+        public async Task<Models.ErrorModel?> deleteFilm(int id)
         {
             try
             {

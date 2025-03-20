@@ -9,6 +9,10 @@ using ReactApp1.Server.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using static Org.BouncyCastle.Math.EC.ECCurve;
+using ReactApp1.Server.Services.Auth;
+using ReactApp1.Server.Services.Film;
+using ReactApp1.Server.Services.Terem;
+using ReactApp1.Server.Services.Vetites;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -71,7 +75,7 @@ var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
 builder.Services.AddDbContext<DataBaseContext>(options =>
     options.UseMySql(connectionString, serverVersion));
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<ITeremService, TeremService>();
 builder.Services.AddScoped<IVetitesService, VetitesService>();
 builder.Services.AddControllers()

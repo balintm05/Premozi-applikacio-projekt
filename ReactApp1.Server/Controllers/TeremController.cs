@@ -43,13 +43,13 @@ namespace ReactApp1.Server.Controllers
     public class TeremController(ITeremService teremService) : Controller
     {
         [AllowAnonymous]
-        [HttpGet("getTerem")]
+        [HttpGet("get")]
         public async Task<ActionResult<List<GetTeremResponse>?>> GetTerem()
         {
             return await teremService.getTerem();
         }
         [AllowAnonymous]
-        [HttpGet("getTerem/{id}")]
+        [HttpGet("get/{id}")]
         public async Task<ActionResult<GetTeremResponse?>> GetTerem(int id)
         {
             var err = await teremService.getTerem(id);
@@ -60,7 +60,7 @@ namespace ReactApp1.Server.Controllers
             return Ok(err);
         }
         //[Authorize(Roles ="Admin")]
-        [HttpPost("addTerem")]
+        [HttpPost("add")]
         public async Task<ActionResult<Models.ErrorModel?>> AddTerem(ManageTeremDto request)
         {
             var err = await teremService.addTerem(request);
@@ -71,7 +71,7 @@ namespace ReactApp1.Server.Controllers
             return BadRequest(err);
         }
         //[Authorize(Roles = "Admin")]
-        [HttpPatch("editTerem")]
+        [HttpPatch("edit")]
         public async Task<ActionResult<Models.ErrorModel?>> EditTerem(ManageTeremDto request)
         {
             var err = await teremService.editTerem(request);
@@ -82,7 +82,7 @@ namespace ReactApp1.Server.Controllers
             return BadRequest(err);
         }
         //[Authorize(Roles ="Admin")]
-        [HttpDelete("deleteTerem/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult<Models.ErrorModel?>> deleteTerem(int id)
         {
             var err = await teremService.deleteTerem(id);

@@ -10,7 +10,6 @@ using System.Text.RegularExpressions;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using ReactApp1.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Web;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -30,6 +29,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Net;
 using ReactApp1.Server.Models.User.Response;
 using Org.BouncyCastle.Ocsp;
+using ReactApp1.Server.Models;
+using System.Threading.Tasks;
+using ReactApp1.Server.Services.Auth;
 
 namespace ReactApp1.Server.Controllers
 {
@@ -199,10 +201,9 @@ namespace ReactApp1.Server.Controllers
 
         [Authorize]
         [HttpDelete("logout")]
-        public ActionResult Logout()
+        public async Task<ActionResult> Logout()
         {
-            HttpContext.Response.Cookies.Delete("refreshToken", new CookieOptions { Path = "/", Domain = "localhost"});
-            HttpContext.Response.Cookies.Delete("accessToken", new CookieOptions { Path = "/", Domain = "localhost" });
+            await authService.logout(HttpContext);
             return Ok();
         }
 
@@ -216,6 +217,31 @@ namespace ReactApp1.Server.Controllers
                 return Ok(new LoginState(true));
             }
             return Ok(new LoginState(false));
+        }
+        [Authorize]
+        [HttpDelete("deleteUser/{id}")]
+        public async Task<ActionResult<Models.ErrorModel?>> DeleteUser(int id)
+        {
+            ErrorModel? err;
+            var a = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int uid);
+            if (a && (User.FindFirstValue(ClaimTypes.Role) == "Admin" || uid == id))
+            {
+                err = await authService.deleteUser(id);
+
+            }
+            else
+            {
+                err = new ErrorModel("Nincs jogosultsága törölni ezt a fiókot");
+            }
+            if (err.errorMessage == "Sikeres törlés")
+            {
+                if(uid == id)
+                {
+                    await authService.logout(HttpContext);
+                }
+                return Ok(err);
+            }
+            return BadRequest(err);
         }
     }
 }

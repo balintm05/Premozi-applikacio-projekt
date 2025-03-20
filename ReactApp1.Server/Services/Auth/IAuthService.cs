@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using ReactApp1.Server.Entities;
+using ReactApp1.Server.Models;
 using ReactApp1.Server.Models.JWT;
 using ReactApp1.Server.Models.User;
 using ReactApp1.Server.Models.User.EditUser;
 using ReactApp1.Server.Models.User.Response;
 
-namespace ReactApp1.Server.Services
+namespace ReactApp1.Server.Services.Auth
 {
     public interface IAuthService
     {       
@@ -19,6 +20,8 @@ namespace ReactApp1.Server.Services
         Task<TokenResponseDto?> RefreshTokenAsync(string refToken);
         void SetTokensInsideCookie(TokenResponseDto token, HttpContext context);
         Task<bool> checkIfStatusChanged(int id);
+        Task<ErrorModel?> deleteUser(int id);
+        Task logout(HttpContext httpcontext);
         //just no
         //Task<HttpResponseMessage?> OkResponseSetTokenCookie(TokenResponseDto request);
     }

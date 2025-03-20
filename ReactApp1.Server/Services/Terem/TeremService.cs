@@ -32,7 +32,7 @@ using ReactApp1.Server.Models.Terem;
 using ReactApp1.Server.Entities.Terem;
 
 
-namespace ReactApp1.Server.Services
+namespace ReactApp1.Server.Services.Terem
 {
     public class TeremService(DataBaseContext context, IConfiguration configuration):ITeremService
     {
@@ -62,7 +62,7 @@ namespace ReactApp1.Server.Services
         {
             try
             {
-                var terem = new Terem();
+                var terem = new Entities.Terem.Terem();
                 var szekek = new List<Szekek>();
                 terem.Nev = request.Nev;
                 bool s = int.TryParse(request.Sorok, out int sorok);
@@ -91,7 +91,7 @@ namespace ReactApp1.Server.Services
             {
                 return new Models.ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
             }
-            var patchDoc = new JsonPatchDocument<Terem>();
+            var patchDoc = new JsonPatchDocument<Entities.Terem.Terem>();
             if (!string.IsNullOrEmpty(request.Nev))
             {
                 patchDoc.Replace(terem => terem.Nev, request.Nev);
@@ -127,7 +127,7 @@ namespace ReactApp1.Server.Services
             var szekekOld = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == szekekUpdate[0].Teremid).ToListAsync();
             return null;
         }
-        private async Task CreateSzekek(int sorok, int oszlopok, Terem terem)
+        private async Task CreateSzekek(int sorok, int oszlopok, Entities.Terem.Terem terem)
         {
             var szekek = new List<Szekek>();
             for (int x = 0; x < sorok; x++)
@@ -142,7 +142,7 @@ namespace ReactApp1.Server.Services
                 await context.Szekek.AddAsync(szek);
             }
         }
-        private async Task DeleteExistingSzekek(Terem terem)
+        private async Task DeleteExistingSzekek(Entities.Terem.Terem terem)
         {
             var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == terem.id).ToListAsync();
             context.RemoveRange(szekek);

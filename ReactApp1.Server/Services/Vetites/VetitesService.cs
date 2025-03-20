@@ -36,7 +36,7 @@ using ReactApp1.Server.Models.Terem;
 using ReactApp1.Server.Entities.Terem;
 using ReactApp1.Server.Entities.Vetites;
 
-namespace ReactApp1.Server.Services
+namespace ReactApp1.Server.Services.Vetites
 {
     public class VetitesService(DataBaseContext context, IConfiguration configuration) : IVetitesService
     {
@@ -65,7 +65,7 @@ namespace ReactApp1.Server.Services
         public async Task<ErrorModel> addVetites(ManageVetitesDto request)
         {            
             var vetites = new Entities.Vetites.Vetites();
-            var vetitesszekek = new List<Entities.Vetites.VetitesSzekek>();
+            var vetitesszekek = new List<VetitesSzekek>();
             var fidb = int.TryParse(request.Filmid, out int fid);
             var tidb = int.TryParse(request.Teremid, out int tid);
             var didb = DateTime.TryParse(request.Idopont, out DateTime ido);
@@ -93,16 +93,16 @@ namespace ReactApp1.Server.Services
             await context.Vetites.AddAsync(vetites);
             await CreateVSzekek(vetites);
             await context.SaveChangesAsync();
-            return new Models.ErrorModel("Sikeres hozzáadás");
+            return new ErrorModel("Sikeres hozzáadás");
         }
         public async Task<ErrorModel?> editVetites(ManageVetitesDto request)
         {
             var vetites = await context.Vetites.FindAsync(int.Parse(request.id));
             if (vetites == null)
             {
-                return new Models.ErrorModel("Nem található ilyen id-jű vetítés az adatbázisban");
+                return new ErrorModel("Nem található ilyen id-jű vetítés az adatbázisban");
             }
-            var patchDoc = new JsonPatchDocument<Vetites>();
+            var patchDoc = new JsonPatchDocument<Entities.Vetites.Vetites>();
             var fidb = int.TryParse(request.Filmid, out int fid);
             var tidb = int.TryParse(request.Teremid, out int tid);
             var didb = DateTime.TryParse(request.Idopont, out DateTime ido);
@@ -151,15 +151,15 @@ namespace ReactApp1.Server.Services
             var vetites = await context.Vetites.FindAsync(id);
             if (vetites == null)
             {
-                return new Models.ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
+                return new ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
             }
             context.Vetites.Remove(vetites);
             await context.SaveChangesAsync();
-            return new Models.ErrorModel("Sikeres törlés");
+            return new ErrorModel("Sikeres törlés");
         }
         private async Task CreateVSzekek(Entities.Vetites.Vetites vetites)
         {
-            var vszekek = new List<Entities.Vetites.VetitesSzekek>();
+            var vszekek = new List<VetitesSzekek>();
             var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == vetites.Teremid).ToListAsync();
             var sorok = szekek.Where(x => x.X == 0).Count();
             var oszlopok = szekek.Where(x => x.Y == 0).Count();
@@ -168,7 +168,7 @@ namespace ReactApp1.Server.Services
             {
                 for (int y = 0; y < oszlopok; y++)
                 {
-                    var t = new Entities.Vetites.VetitesSzekek { Vetites = vetites, Szekek = szekek[x * oszlopok + y]};                   
+                    var t = new VetitesSzekek { Vetites = vetites, Szekek = szekek[x * oszlopok + y]};                   
                     vszekek.Add(t);
                 }
             }

@@ -2,7 +2,7 @@
 using ReactApp1.Server.Models.Terem;
 using ReactApp1.Server.Models.Vetites;
 
-namespace ReactApp1.Server.Services
+namespace ReactApp1.Server.Services.Vetites
 {
     public interface IVetitesService
     {

@@ -22,10 +22,11 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using ReactApp1.Server.Models.User.Response;
+using ReactApp1.Server.Models;
 
 //https://www.youtube.com/watch?v=6EEltKS8AwA
 
-namespace ReactApp1.Server.Services
+namespace ReactApp1.Server.Services.Auth
 {
     public class AuthService(DataBaseContext context, IConfiguration configuration):IAuthService
     {
@@ -34,11 +35,11 @@ namespace ReactApp1.Server.Services
             var user = await context.Users.FirstOrDefaultAsync(x => x.email == request.email);
             if (user == null || new PasswordHasher<User>().VerifyHashedPassword(user, user.passwordHash, request.password) == PasswordVerificationResult.Failed)
             {
-                return new TokenResponseDto { Error = new Models.ErrorModel("A megadott Email cím-jelszó kombinációval rendelkező felhasználó nem található") };
+                return new TokenResponseDto { Error = new ErrorModel("A megadott Email cím-jelszó kombinációval rendelkező felhasználó nem található") };
             };
             if(user.accountStatus == 2)
             {
-                return new TokenResponseDto { Error = new Models.ErrorModel("A fiók fel van függesztve") };
+                return new TokenResponseDto { Error = new ErrorModel("A fiók fel van függesztve") };
             }
             return await CreateTokenResponse(user);
 
@@ -49,19 +50,19 @@ namespace ReactApp1.Server.Services
         {            
             if (await context.Users.AnyAsync(u => u.email == request.email))
             {
-                return new TokenResponseDto { Error = new Models.ErrorModel("Az Email címnek egyedinek kell lennie") };
+                return new TokenResponseDto { Error = new ErrorModel("Az Email címnek egyedinek kell lennie") };
             }
             if (!new EmailAddressAttribute().IsValid(request.email))
             {
-                return new TokenResponseDto { Error = new Models.ErrorModel("Az Email címnek validnak kell lennie") };
+                return new TokenResponseDto { Error = new ErrorModel("Az Email címnek validnak kell lennie") };
             }
             if (!(request.password.Length >= 6 && request.password.Length <= 30))
             {
-                return new TokenResponseDto { Error = new Models.ErrorModel("A jelszónak 6 és 30 karakter között kell lennie") };
+                return new TokenResponseDto { Error = new ErrorModel("A jelszónak 6 és 30 karakter között kell lennie") };
             }
             if (!new Regex("^[a-zA-Z0-9_.-]*$").IsMatch(request.password))
             {
-                return new TokenResponseDto { Error = new Models.ErrorModel("A jelszó csak alfanumerikus karakterekből állhat") };
+                return new TokenResponseDto { Error = new ErrorModel("A jelszó csak alfanumerikus karakterekből állhat") };
             }            
             var user = new User();
             var hashedPw = new PasswordHasher<User>().HashPassword(user, request.password);
@@ -163,7 +164,30 @@ namespace ReactApp1.Server.Services
             return true;
 
         }
-        
+
+
+        public async Task<ErrorModel?> deleteUser(int id)
+        {
+            try
+            {
+                context.Users.Remove(await context.Users.FindAsync(id));
+                await context.SaveChangesAsync();              
+                return new ErrorModel("Sikeres törlés");
+            }
+            catch (IndexOutOfRangeException ex)
+            {
+                return new ErrorModel("Nincs ilyen id-jű felhasználó");
+            }
+            catch (Exception ex)
+            {
+                return new ErrorModel(ex.Message);
+            }
+        }
+        public async Task logout(HttpContext httpContext)
+        {
+            httpContext.Response.Cookies.Delete("refreshToken", new CookieOptions { Path = "/", Domain = "localhost" });
+            httpContext.Response.Cookies.Delete("accessToken", new CookieOptions { Path = "/", Domain = "localhost" });
+        }
 
 
 
@@ -227,7 +251,7 @@ namespace ReactApp1.Server.Services
                 //new Claim(ClaimTypes.Email, user.email),
                 new Claim(ClaimTypes.Role, user.role.ToString())
             };
-            var Key = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
+            var Key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(configuration["AppSettings:Token"]));
             var credentials = new SigningCredentials(Key, SecurityAlgorithms.HmacSha512);
             var tokenDescriptor = new JwtSecurityToken(
@@ -269,7 +293,7 @@ namespace ReactApp1.Server.Services
         public async Task<bool> checkIfStatusChanged(int id)
         {
             var user = await context.Users.FindAsync(id);
-            if(user.accountStatus == 2 || user.accountStatus == 3)
+            if(user == null || user.accountStatus == 2 || user.accountStatus == 3)
             {
                 return true;
             }

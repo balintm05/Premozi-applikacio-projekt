@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ReactApp1.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,6 @@ using System.Text.RegularExpressions;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using ReactApp1.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Web;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -40,6 +38,7 @@ using Org.BouncyCastle.Asn1.Mozilla;
 using ReactApp1.Server.Models.Terem;
 using ReactApp1.Server.Models.Vetites;
 using ReactApp1.Server.Models;
+using ReactApp1.Server.Services.Vetites;
 
 namespace ReactApp1.Server.Controllers
 {
@@ -49,13 +48,13 @@ namespace ReactApp1.Server.Controllers
     {
 
         [AllowAnonymous]
-        [HttpGet("getVetites")]
+        [HttpGet("get")]
         public async Task<ActionResult<List<Models.Vetites.GetVetitesResponse>?>> GetVetites()
         {
             return await vetitesService.getVetites();
         }
         [AllowAnonymous]
-        [HttpGet("getVetites/{id}")]
+        [HttpGet("get/{id}")]
         public async Task<ActionResult<List<Models.Vetites.GetVetitesResponse>?>> GetVetites(int id)
         {
             var err = await vetitesService.getVetites(id);
@@ -66,7 +65,7 @@ namespace ReactApp1.Server.Controllers
             return Ok(err);
         }
         //[Authorize(Roles ="Admin")]
-        [HttpPost("addVetites")]
+        [HttpPost("add")]
         public async Task<ActionResult<List<ErrorModel>?>> AddVetites(ManageVetitesDto request)
         {
             var err = await vetitesService.addVetites(request);
@@ -77,7 +76,7 @@ namespace ReactApp1.Server.Controllers
             return BadRequest(err);
         }
         //[Authorize(Roles ="Admin")]
-        [HttpPatch("editVetites")]
+        [HttpPatch("edit")]
         public async Task<ActionResult<ErrorModel>?> EditVetites(ManageVetitesDto request)
         {
             var err = await vetitesService.editVetites(request);
@@ -88,7 +87,7 @@ namespace ReactApp1.Server.Controllers
             return BadRequest(err);
         }
         //[Authorize(Roles ="Admin")]
-        [HttpDelete("deleteVetites/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<ActionResult<ErrorModel>?> DeleteVetites(int id)
         {
             var err = await vetitesService.deleteVetites(id);
