@@ -50,7 +50,7 @@ namespace ReactApp1.Server.Services
         public async Task<GetTeremResponse?> getTerem(int id)
         {
             var terem = await context.Terem.FindAsync(id);
-            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == id).ToListAsync();
+            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == id).ToListAsync();
             var response = new List<GetTeremResponse>();
             if (terem == null)
             {
@@ -124,7 +124,7 @@ namespace ReactApp1.Server.Services
         }
         public async Task<Models.ErrorModel?> EditSzekek(List<Szekek> szekekUpdate)
         {
-            var szekekOld = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == szekekUpdate[0].Teremid).ToListAsync();
+            var szekekOld = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == szekekUpdate[0].Terem.id).ToListAsync();
             return null;
         }
         private async Task CreateSzekek(int sorok, int oszlopok, Terem terem)
@@ -134,7 +134,7 @@ namespace ReactApp1.Server.Services
             {
                 for (int y = 0; y < oszlopok; y++)
                 {
-                    szekek.Add(new Szekek { Terem = terem, Teremid = terem.id, X = x, Y = y });
+                    szekek.Add(new Szekek { Terem = terem, X = x, Y = y });
                 }
             }            
             foreach (var szek in szekek)
@@ -144,7 +144,7 @@ namespace ReactApp1.Server.Services
         }
         private async Task DeleteExistingSzekek(Terem terem)
         {
-            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == terem.id).ToListAsync();
+            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == terem.id).ToListAsync();
             context.RemoveRange(szekek);
             await context.SaveChangesAsync();
         }

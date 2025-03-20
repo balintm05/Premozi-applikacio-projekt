@@ -39,6 +39,7 @@ using ReactApp1.Server.Models.Film;
 using Org.BouncyCastle.Asn1.Mozilla;
 using ReactApp1.Server.Models.Terem;
 using ReactApp1.Server.Models.Vetites;
+using ReactApp1.Server.Models;
 
 namespace ReactApp1.Server.Controllers
 {
@@ -66,7 +67,7 @@ namespace ReactApp1.Server.Controllers
         }
         //[Authorize(Roles ="Admin")]
         [HttpPost("addVetites")]
-        public async Task<ActionResult<List<Models.Vetites.GetVetitesResponse>?>> AddVetites(ManageVetitesDto request)
+        public async Task<ActionResult<List<ErrorModel>?>> AddVetites(ManageVetitesDto request)
         {
             var err = await vetitesService.addVetites(request);
             if (err != null)
@@ -74,6 +75,12 @@ namespace ReactApp1.Server.Controllers
                 return BadRequest(err);
             }
             return Ok(err);
+        }
+        [Authorize(Roles ="Admin")]
+        [HttpPatch("editVetites")]
+        public async Task<ActionResult<ErrorModel>?> EditVetites(ManageVetitesDto request)
+        {
+            return null;
         }
     }
 }

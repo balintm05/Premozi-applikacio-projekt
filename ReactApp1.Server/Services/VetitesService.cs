@@ -1,6 +1,4 @@
 ﻿using ReactApp1.Server.Data;
-using ReactApp1.Server.Entities.Terem;
-using ReactApp1.Server.Entities.Vetites;
 using ReactApp1.Server.Models;
 using ReactApp1.Server.Models.Terem;
 using ReactApp1.Server.Models.Vetites;
@@ -35,7 +33,6 @@ using Humanizer;
 using Org.BouncyCastle.Ocsp;
 using ReactApp1.Server.Models.Film;
 using ReactApp1.Server.Models.Terem;
-using ReactApp1.Server.Entities.Terem;
 
 namespace ReactApp1.Server.Services
 {
@@ -64,8 +61,8 @@ namespace ReactApp1.Server.Services
         }
         public async Task<ErrorModel> addVetites(ManageVetitesDto request)
         {            
-            var vetites = new Vetites();
-            var vetitesszekek = new List<VetitesSzekek>();
+            var vetites = new Entities.Vetites.Vetites();
+            var vetitesszekek = new List<Entities.Vetites.VetitesSzekek>();
             var fidb = int.TryParse(request.Filmid, out int fid);
             var tidb = int.TryParse(request.Teremid, out int tid);
             var didb = DateTime.TryParse(request.Idopont, out DateTime ido);
@@ -87,25 +84,28 @@ namespace ReactApp1.Server.Services
             {
                 return new ErrorModel("Nem található ilyen id-jű film az adatbázisban");
             }
-            vetites.Film.id = fid;
-            vetites.Terem.id = tid;
+            Console.WriteLine("{0}, {1}, {2}", fid, tid, ido);
+            vetites.Filmid = fid;
+            vetites.Teremid = tid;
             vetites.Idopont = ido;
             await context.Vetites.AddAsync(vetites);
             await CreateVSzekek(vetites);
             await context.SaveChangesAsync();
             return new Models.ErrorModel("Sikeres hozzáadás");
         }
-        private async Task CreateVSzekek(Vetites vetites)
+        private async Task CreateVSzekek(Entities.Vetites.Vetites vetites)
         {
-            var vszekek = new List<VetitesSzekek>();
-            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == vetites.Terem.id).ToListAsync();
-            for (int x = 0; x < szekek.Where(x=>x.X==0).Count() ; x++)
+            var vszekek = new List<Entities.Vetites.VetitesSzekek>();
+            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == vetites.Teremid).ToListAsync();
+            var sorok = szekek.Where(x => x.X == 0).Count();
+            var oszlopok = szekek.Where(x => x.Y == 0).Count();
+            Console.WriteLine("{0}, {1}", sorok, oszlopok);
+            for (int x = 0; x < sorok; x++)
             {
-                for (int y = 0; y < szekek.Where(x => x.Y == 0).Count(); y++)
+                for (int y = 0; y < oszlopok; y++)
                 {
-                    var t = new VetitesSzekek { Vetites = vetites, Teremid = vetites.Terem.id, X = x, Y = y, Vetitesid = vetites.id };
+                    var t = new Entities.Vetites.VetitesSzekek { Vetites = vetites, Szekek = szekek[x * oszlopok + y]};                   
                     vszekek.Add(t);
-                    Console.WriteLine("{0}, {1}, {2}, {3}", t.Teremid, t.X, t.Y, t.Vetitesid);
                 }
             }
             foreach (var szek in vszekek)
@@ -113,7 +113,7 @@ namespace ReactApp1.Server.Services
                 await context.VetitesSzekek.AddAsync(szek);
             }
         }
-        private async Task DeleteExistingVSzekek(Vetites vetites)
+        private async Task DeleteExistingVSzekek(Entities.Vetites.Vetites vetites)
         {
             var szekek = await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x => x.Vetitesid == vetites.id).ToListAsync();
             context.RemoveRange(szekek);

@@ -19,65 +19,42 @@ namespace ReactApp1.Server.Data
         public DbSet<User> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-            // Configure the VetitesSzekek entity
-            modelBuilder.Entity<VetitesSzekek>()
-                .HasKey(vs => new { vs.Szekek, vs.Vetites });
-
-            modelBuilder.Entity<VetitesSzekek>()
-                .HasOne(vs => vs.Szekek)
-                .WithMany()
-                .HasForeignKey(vs => vs.Szekek);
-
-            modelBuilder.Entity<VetitesSzekek>()
-                .HasOne(vs => vs.Vetites)
-                .WithMany()
-                .HasForeignKey(vs => vs.Vetites);
-
-            // Configure the FoglaltSzekek entity
-            modelBuilder.Entity<FoglaltSzekek>()
-                .HasKey(fs => new { fs.FoglalasAdatok, fs.VetitesSzekek });
-
-            modelBuilder.Entity<FoglaltSzekek>()
-                .HasOne(fs => fs.FoglalasAdatok)
-                .WithMany()
-                .HasForeignKey(fs => fs.FoglalasAdatok);
-
-            modelBuilder.Entity<FoglaltSzekek>()
-                .HasOne(fs => fs.VetitesSzekek)
-                .WithMany()
-                .HasForeignKey(fs => fs.VetitesSzekek);
-
-            // Configure the Szekek entity
+            // Composite Primary Keys
             modelBuilder.Entity<Szekek>()
-                .HasKey(s => new { s.Terem, s.X, s.Y });
+                .HasKey(s => new { s.Teremid, s.X, s.Y });
 
+            modelBuilder.Entity<VetitesSzekek>()
+                .HasKey(vs => new { vs.Vetitesid, vs.Teremid, vs.X, vs.Y });
+
+            modelBuilder.Entity<FoglaltSzekek>()
+                .HasKey(fs => new { fs.FoglalasAdatokid, fs.Vetitesid, fs.Teremid, fs.X, fs.Y });
+
+            // Relationships
             modelBuilder.Entity<Szekek>()
                 .HasOne(s => s.Terem)
                 .WithMany(t => t.Szekek)
-                .HasForeignKey(s => s.Terem);
+                .HasForeignKey(s => s.Teremid);
 
-            // Configure the Terem entity
-            modelBuilder.Entity<Terem>()
-                .HasKey(t => t.id);
+            modelBuilder.Entity<VetitesSzekek>()
+                .HasOne(vs => vs.Vetites)
+                .WithMany(v => v.VetitesSzekek)
+                .HasForeignKey(vs => vs.Vetitesid);
 
-            // Configure the FoglalasAdatok entity
-            modelBuilder.Entity<FoglalasAdatok>()
-                .HasKey(fa => fa.id);
+            modelBuilder.Entity<VetitesSzekek>()
+                .HasOne(vs => vs.Szekek)
+                .WithMany(s => s.VetitesSzekek)
+                .HasForeignKey(vs => new { vs.Teremid, vs.X, vs.Y });
 
-            modelBuilder.Entity<FoglalasAdatok>()
-                .HasOne(fa => fa.User)
-                .WithMany()
-                .HasForeignKey(fa => fa.User);
+            modelBuilder.Entity<FoglaltSzekek>()
+                .HasOne(fs => fs.FoglalasAdatok)
+                .WithMany(fa => fa.FoglaltSzekek)
+                .HasForeignKey(fs => fs.FoglalasAdatokid);
 
-            // Configure the User entity
-            modelBuilder.Entity<User>()
-                .HasKey(u => u.userID);
-
-            // Configure the Film entity
-            modelBuilder.Entity<Film>()
-                .HasKey(f => f.id);
+            modelBuilder.Entity<FoglaltSzekek>()
+                .HasOne(fs => fs.VetitesSzekek)
+                .WithMany(vs => vs.FoglaltSzekek)
+                .HasForeignKey(fs => new { fs.Vetitesid, fs.Teremid, fs.X, fs.Y });
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

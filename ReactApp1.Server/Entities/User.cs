@@ -7,10 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using ReactApp1.Server.Entities.Terem;
+using ReactApp1.Server.Entities.Foglalas;
 
 namespace ReactApp1.Server.Entities
 {
-    [PrimaryKey("userID")]
     public class User
     {
         [Key, Column(TypeName = "int(11)"), DatabaseGenerated(DatabaseGeneratedOption.Identity), NotNull, Required, Editable(false)]
@@ -32,5 +33,6 @@ namespace ReactApp1.Server.Entities
         public string? refreshToken { get; set; }
         [Column(TypeName = "DateTime")]
         public DateTime? refreshTokenExpiry { get; set; }
+        public ICollection<FoglalasAdatok> Foglalasok { get; set; } = new List<FoglalasAdatok>();
     }
 }

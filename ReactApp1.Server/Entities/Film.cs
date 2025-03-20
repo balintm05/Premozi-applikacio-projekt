@@ -1,4 +1,6 @@
-﻿using ReactApp1.Server.Models.Film.ManageFilm;
+﻿using ReactApp1.Server.Entities.Foglalas;
+using ReactApp1.Server.Entities.Vetites;
+using ReactApp1.Server.Models.Film.ManageFilm;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,39 +12,57 @@ namespace ReactApp1.Server.Entities
 {
     public class Film
     {
-        [Key, Column(TypeName = "int(11)"), DatabaseGenerated(DatabaseGeneratedOption.Identity), NotNull, Required, Editable(false)]
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező címet megadni")]
+
+        [Required]
         public string Cim { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező kategóriát megadni")]
+
+        [Required]
         public string Kategoria { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező műfajt megadni")]
+
+        [Required]
         public string Mufaj { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező korhatárt megadni")]
+
+        [Required]
         public string Korhatar { get; set; }
-        [Required, NotNull, Column(TypeName = "INT(4)"), Length(1, 4, ErrorMessage = "Kötelező játékidőt megadni")]
+
+        [Required]
         public int Jatekido { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező gyártót megadni")]
+
+        [Required]
         public string Gyarto { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező rendezőt megadni")]
+
+        [Required]
         public string Rendezo { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező szereplőket megadni")]
+
+        [Required]
         public string Szereplok { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező leírást megadni")]
+
+        [Required]
         public string Leiras { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező eredeti nyelvet megadni")]
+
+        [Required]
         public string EredetiNyelv { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező eredeti címet megadni")]
+
+        [Required]
         public string EredetiCim { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező szinkront megadni")]
+
+        [Required]
         public string Szinkron { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező trailer linket megadni")]
+
+        [Required]
         public string TrailerLink { get; set; }
-        [Required, NotNull, Column(TypeName = "TEXT"), DataType(DataType.Text, ErrorMessage = "Kötelező IMDB értékelést megadni")]
+
+        [Required]
         public string IMDB { get; set; }
-        [Required, NotNull, Column(TypeName = "INT(11)"), DataType(DataType.Currency, ErrorMessage = "Kötelező árat megadni")]
+
+        [Required]
         public int AlapAr { get; set; }
-        [Column(TypeName = "longtext"), NotNull, DataType(DataType.Text, ErrorMessage = "Hiba történt a megjegyzés hozzáadása során")]
+
         public string Megjegyzes { get; set; } = "";
+
+        public ICollection<Vetites.Vetites> Vetitesek { get; set; } = new List<Vetites.Vetites>();
     }
 }
