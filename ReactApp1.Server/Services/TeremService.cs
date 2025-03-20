@@ -120,11 +120,11 @@ namespace ReactApp1.Server.Services
             }
             context.Terem.Remove(terem);
             await context.SaveChangesAsync();
-            return new Models.ErrorModel("Sikeres törlés"); ;
+            return new Models.ErrorModel("Sikeres törlés");
         }
         public async Task<Models.ErrorModel?> EditSzekek(List<Szekek> szekekUpdate)
         {
-            var szekekOld = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == szekekUpdate[0].Terem.id).ToListAsync();
+            var szekekOld = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == szekekUpdate[0].Teremid).ToListAsync();
             return null;
         }
         private async Task CreateSzekek(int sorok, int oszlopok, Terem terem)

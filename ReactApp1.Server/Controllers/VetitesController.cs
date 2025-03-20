@@ -76,7 +76,7 @@ namespace ReactApp1.Server.Controllers
             }
             return Ok(err);
         }
-        [Authorize(Roles ="Admin")]
+        //[Authorize(Roles ="Admin")]
         [HttpPatch("editVetites")]
         public async Task<ActionResult<ErrorModel>?> EditVetites(ManageVetitesDto request)
         {

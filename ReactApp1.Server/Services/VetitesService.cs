@@ -93,6 +93,11 @@ namespace ReactApp1.Server.Services
             await context.SaveChangesAsync();
             return new Models.ErrorModel("Sikeres hozzáadás");
         }
+        public async Task<ErrorModel?> editVetites(ManageVetitesDto request)
+        {
+            var vetites = await context.Vetites.FindAsync(request.id);
+            return null;
+        }
         private async Task CreateVSzekek(Entities.Vetites.Vetites vetites)
         {
             var vszekek = new List<Entities.Vetites.VetitesSzekek>();

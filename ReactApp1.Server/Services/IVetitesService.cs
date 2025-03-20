@@ -8,8 +8,8 @@ namespace ReactApp1.Server.Services
     {
         Task<List<GetVetitesResponse>?> getVetites();
         Task<GetVetitesResponse?> getVetites(int id);
-        Task<ErrorModel> addVetites(ManageVetitesDto request);
-        //Task<ErrorModel> editVetites(ManageVetitesDto request);
+        Task<ErrorModel?> addVetites(ManageVetitesDto request);
+        Task<ErrorModel?> editVetites(ManageVetitesDto request);
         //Task<ErrorModel> deleteVetites(int id);
     }
 }
