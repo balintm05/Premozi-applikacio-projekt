@@ -93,10 +93,6 @@ namespace ReactApp1.Server.Services.Film
                 {
                     movies = await movies.ToAsyncEnumerable().WhereAwait(async user => await ValueTask.FromResult(user.IMDB.ToLower().StartsWith(request.IMDB.ToLower()))).ToListAsync();
                 }
-                if (!string.IsNullOrEmpty(request.AlapAr)&& int.TryParse(request.AlapAr, out int a))
-                {
-                    movies = await movies.ToAsyncEnumerable().WhereAwait(async user => await ValueTask.FromResult(user.AlapAr.ToString().StartsWith(request.AlapAr))).ToListAsync();
-                }
                 if (!string.IsNullOrEmpty(request.Megjegyzes))
                 {
                     movies = await movies.ToAsyncEnumerable().WhereAwait(async user => await ValueTask.FromResult(user.Megjegyzes.ToLower().Contains(request.Megjegyzes.ToLower()))).ToListAsync();
@@ -136,7 +132,7 @@ namespace ReactApp1.Server.Services.Film
         }
        
 
-    public async Task<Models.ErrorModel?> addFilm(ManageFilmDto request)
+        public async Task<Models.ErrorModel?> addFilm(ManageFilmDto request)
         {
             try
             {
@@ -155,7 +151,6 @@ namespace ReactApp1.Server.Services.Film
                 movie.Szinkron = request.Szinkron;
                 movie.TrailerLink = request.TrailerLink;
                 movie.IMDB = request.IMDB;
-                movie.AlapAr = int.TryParse(request.AlapAr, out int a) ? a : throw new Exception("Nem számot adott meg");
                 movie.Megjegyzes = !string.IsNullOrEmpty(request.Megjegyzes) ? request.Megjegyzes : "";
                 await context.Film.AddAsync(movie);
                 await context.SaveChangesAsync();
@@ -236,10 +231,6 @@ namespace ReactApp1.Server.Services.Film
                 if (!string.IsNullOrEmpty(request.IMDB))
                 {
                     patchDoc.Replace(movie => movie.IMDB, request.IMDB);
-                }
-                if (!string.IsNullOrEmpty(request.AlapAr))
-                {
-                    patchDoc.Replace(movie => movie.AlapAr, int.TryParse(request.AlapAr, out int a) ? a : throw new Exception("Nem számot adott meg"));
                 }
                 if (!string.IsNullOrEmpty(request.Megjegyzes))
                 {

@@ -17,7 +17,6 @@
         public string?  Szinkron { get; set; }
         public string?  TrailerLink { get; set; }
         public string?  IMDB { get; set; }
-        public string? AlapAr { get; set; }
         public string? Megjegyzes { get; set; }
     }
 }

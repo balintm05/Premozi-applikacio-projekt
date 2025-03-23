@@ -24,7 +24,6 @@ namespace ReactApp1.Server.Models.Film
         public string? Szinkron { get; set; }
         public string? TrailerLink { get; set; }
         public string? IMDB { get; set; }
-        public string? AlapAr { get; set; }
         public string? Megjegyzes { get; set; }
         public ErrorModel? Error { get; set; }
         public GetFilmResponse(Entities.Film film)
@@ -44,7 +43,6 @@ namespace ReactApp1.Server.Models.Film
             Szinkron = film.Szinkron;
             TrailerLink = film.TrailerLink;
             IMDB = film.IMDB;
-            AlapAr = film.AlapAr.ToString();
             Megjegyzes = film.Megjegyzes;
         }
         public GetFilmResponse(string err)

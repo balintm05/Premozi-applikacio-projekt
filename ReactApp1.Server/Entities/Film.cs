@@ -58,9 +58,6 @@ namespace ReactApp1.Server.Entities
         [Required]
         public string IMDB { get; set; }
 
-        [Required]
-        public int AlapAr { get; set; }
-
         public string Megjegyzes { get; set; } = "";
 
         public ICollection<Vetites.Vetites> Vetitesek { get; set; } = new List<Vetites.Vetites>();

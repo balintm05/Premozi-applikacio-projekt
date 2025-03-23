@@ -1,11 +1,14 @@
 ﻿using ReactApp1.Server.Entities.Foglalas;
+using ReactApp1.Server.Models.Foglalas;
+using ReactApp1.Server.Models.Rendeles;
 
 namespace ReactApp1.Server.Services.Foglalas
 {
     public interface IFoglalasService
     {
-        Task<List<FoglalasAdatok>?> GetFoglalas();
-        Task<List<FoglalasAdatok>?> GetFoglalasByVetites(int vid);
-        Task<List<FoglalasAdatok>?> GetFoglalasByUser(int uid);
+        Task<List<GetFoglalasResponse>?> GetFoglalas();
+        Task<List<GetFoglalasResponse>?> GetFoglalasByVetites(int vid);
+        Task<List<GetFoglalasResponse>?> GetFoglalasByUser(int uid);
+        Task<Models.ErrorModel?> addFoglalas(ManageFoglalasDto request);
     }
 }

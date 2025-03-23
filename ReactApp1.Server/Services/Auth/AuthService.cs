@@ -274,8 +274,8 @@ namespace ReactApp1.Server.Services.Auth
                 IsEssential = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Path = "/",
-                Domain = "localhost"
+                Path = "",
+                Domain = "localhost",
             });
             httpcontext.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
             {
@@ -284,7 +284,7 @@ namespace ReactApp1.Server.Services.Auth
                 IsEssential = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Path = "/",
+                Path = "",
                 Domain = "localhost"
             });
         }

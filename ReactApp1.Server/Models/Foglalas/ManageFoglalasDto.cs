@@ -7,13 +7,14 @@ using System.Text;
 
 namespace ReactApp1.Server.Models.Rendeles
 {
-    public class RendelesDto
+    public class ManageFoglalasDto
     {
-        public int? Hely { get; set; }
-        public int? Statusz { get; set; }
-        public string? Megjegyzes { get; set; }
-        public virtual Entities.User? User { get; set; }
-        public virtual Entities.Vetites.Vetites? Vetites { get; set; }
+        public string? id {  get; set; }
+        public string? FoglalasIdopontja { get; set; }
+        public string? UserID {  get; set; }
+        public string? VetitesID { get; set; }
+        public List<string>? X {  get; set; }
+        public List<string>? Y { get; set; }
         public ErrorModel? Error { get; set; }
     }
 }

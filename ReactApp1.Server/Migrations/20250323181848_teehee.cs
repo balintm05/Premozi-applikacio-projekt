@@ -72,7 +72,7 @@ namespace ReactApp1.Server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     QueryString = table.Column<string>(type: "LONGTEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    RequestHeaders = table.Column<string>(type: "longtext", nullable: false)
+                    RequestHeaders = table.Column<string>(type: "LONGTEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     RequestBody = table.Column<string>(type: "LONGTEXT", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -236,11 +236,11 @@ namespace ReactApp1.Server.Migrations
                 name: "FoglaltSzekek",
                 columns: table => new
                 {
-                    FoglalasAdatokid = table.Column<int>(type: "int", nullable: false),
+                    Vetitesid = table.Column<int>(type: "int", nullable: false),
+                    Teremid = table.Column<int>(type: "int", nullable: false),
                     X = table.Column<int>(type: "int", nullable: false),
                     Y = table.Column<int>(type: "int", nullable: false),
-                    Vetitesid = table.Column<int>(type: "int", nullable: false),
-                    Teremid = table.Column<int>(type: "int", nullable: false)
+                    FoglalasAdatokid = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -268,7 +268,8 @@ namespace ReactApp1.Server.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_FoglaltSzekek_Vetitesid_Teremid_X_Y",
                 table: "FoglaltSzekek",
-                columns: new[] { "Vetitesid", "Teremid", "X", "Y" });
+                columns: new[] { "Vetitesid", "Teremid", "X", "Y" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_email",

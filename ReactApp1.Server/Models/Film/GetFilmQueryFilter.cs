@@ -23,7 +23,6 @@ namespace ReactApp1.Server.Models.Film
         public string? EredetiCim { get; set; }
         public string? Szinkron { get; set; }
         public string? IMDB { get; set; }
-        public string? AlapAr { get; set; }
         public string? Megjegyzes { get; set; }
     }
 }

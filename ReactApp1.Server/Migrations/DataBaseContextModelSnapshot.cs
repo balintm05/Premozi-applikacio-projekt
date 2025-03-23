@@ -137,7 +137,8 @@ namespace ReactApp1.Server.Migrations
 
                     b.HasKey("FoglalasAdatokid", "Vetitesid", "Teremid", "X", "Y");
 
-                    b.HasIndex("Vetitesid", "Teremid", "X", "Y");
+                    b.HasIndex("Vetitesid", "Teremid", "X", "Y")
+                        .IsUnique();
 
                     b.ToTable("FoglaltSzekek");
                 });
@@ -173,7 +174,7 @@ namespace ReactApp1.Server.Migrations
 
                     b.Property<string>("RequestHeaders")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("LONGTEXT");
 
                     b.Property<string>("ResponseBody")
                         .IsRequired()
@@ -358,8 +359,8 @@ namespace ReactApp1.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("ReactApp1.Server.Entities.Vetites.VetitesSzekek", "VetitesSzekek")
-                        .WithMany("FoglaltSzekek")
-                        .HasForeignKey("Vetitesid", "Teremid", "X", "Y")
+                        .WithOne("FoglaltSzekek")
+                        .HasForeignKey("ReactApp1.Server.Entities.Foglalas.FoglaltSzekek", "Vetitesid", "Teremid", "X", "Y")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -388,7 +389,7 @@ namespace ReactApp1.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("ReactApp1.Server.Entities.Terem.Terem", "Terem")
-                        .WithMany()
+                        .WithMany("Vetites")
                         .HasForeignKey("Teremid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -435,6 +436,8 @@ namespace ReactApp1.Server.Migrations
             modelBuilder.Entity("ReactApp1.Server.Entities.Terem.Terem", b =>
                 {
                     b.Navigation("Szekek");
+
+                    b.Navigation("Vetites");
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.User", b =>
@@ -449,7 +452,8 @@ namespace ReactApp1.Server.Migrations
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Vetites.VetitesSzekek", b =>
                 {
-                    b.Navigation("FoglaltSzekek");
+                    b.Navigation("FoglaltSzekek")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
