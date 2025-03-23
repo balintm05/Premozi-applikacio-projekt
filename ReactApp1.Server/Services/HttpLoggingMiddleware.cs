@@ -23,17 +23,17 @@ namespace ReactApp1.Server.Services
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
-        //context.Request.Path.StartsWithSegments("/api/")
         public async Task InvokeAsync(HttpContext context)
         {
             if (context.Request.Path.StartsWithSegments("/api/Auth/refresh-token") || context.Request.Path.StartsWithSegments("/api/Auth/getUser") || context.Request.Path.StartsWithSegments("/api/Auth/getUserAdmin") || context.Request.Path.StartsWithSegments("/api/Auth/queryUsers") ||
                 context.Request.Path.StartsWithSegments("/api/Auth/checkIfLoggedIn") || context.Request.Path.StartsWithSegments("/api/Auth/checkIfAdmin")|| context.Request.Path.StartsWithSegments("/api/Film/get")|| context.Request.Path.StartsWithSegments("/api/Film/query")||
-                context.Request.Path.StartsWithSegments("/api/Terem/get")|| context.Request.Path.StartsWithSegments("/api/Vetites/get"))
+                context.Request.Path.StartsWithSegments("/api/Terem/get")|| context.Request.Path.StartsWithSegments("/api/Vetites/get") || context.Request.Path.StartsWithSegments("/api/Foglalas/get") || context.Request.Path.StartsWithSegments("/api/Foglalas/getByVetites")||
+                context.Request.Path.StartsWithSegments("/api/Foglalas/getByUser"))
             {
                 await _next(context);
                 return;
             }
-            // Capture request details
+
             var request = context.Request;
             var requestBody = await ReadRequestBodyAsync(request);
 
@@ -47,7 +47,6 @@ namespace ReactApp1.Server.Services
                 redactedRequestHeaders = RedactSensitiveHeaders(request.Headers);
             }
 
-            // Create a scope to resolve scoped services
             using (var scope = _serviceProvider.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<DataBaseContext>();
@@ -63,20 +62,16 @@ namespace ReactApp1.Server.Services
                     LogTime = DateTime.UtcNow
                 };
 
-                // Capture the original response body stream
                 var originalResponseBodyStream = context.Response.Body;
 
                 using (var responseBodyStream = new MemoryStream())
                 {
                     context.Response.Body = responseBodyStream;
 
-                    // Call the next middleware in the pipeline
                     await _next(context);
 
-                    // Capture response details
                     var responseBody = await ReadResponseBodyAsync(context.Response);
 
-                    // Redact the response body and headers for specific endpoints
                     var redactedResponseBody = responseBody;
                     var redactedResponseHeaders = FormatHeaders(context.Response.Headers);
                     if (context.Request.Path.StartsWithSegments("/api/Auth/register") ||
@@ -90,11 +85,9 @@ namespace ReactApp1.Server.Services
                     httpLog.ResponseBody = redactedResponseBody;
                     httpLog.StatusCode = context.Response.StatusCode;
 
-                    // Save the log to the database
                     await dbContext.HttpLogs.AddAsync(httpLog);
                     await dbContext.SaveChangesAsync();
 
-                    // Copy the captured response body back to the original stream
                     responseBodyStream.Seek(0, SeekOrigin.Begin);
                     await responseBodyStream.CopyToAsync(originalResponseBodyStream);
                 }
@@ -108,7 +101,7 @@ namespace ReactApp1.Server.Services
             var buffer = new byte[Convert.ToInt32(request.ContentLength)];
             await body.ReadAsync(buffer, 0, buffer.Length);
             var bodyAsText = Encoding.UTF8.GetString(buffer);
-            request.Body.Position = 0; // Reset the stream position
+            request.Body.Position = 0; 
             return bodyAsText;
         }
 
@@ -116,7 +109,7 @@ namespace ReactApp1.Server.Services
         {
             response.Body.Seek(0, SeekOrigin.Begin);
             var bodyAsText = await new StreamReader(response.Body).ReadToEndAsync();
-            response.Body.Seek(0, SeekOrigin.Begin); // Reset the stream position
+            response.Body.Seek(0, SeekOrigin.Begin); 
             return bodyAsText;
         }
 
@@ -153,11 +146,8 @@ namespace ReactApp1.Server.Services
         {
             try
             {
-                // Parse the JSON body
                 var json = JsonDocument.Parse(body);
                 var root = json.RootElement;
-
-                // Redact sensitive fields
                 if (root.TryGetProperty("access_token", out var accessToken))
                 {
                     root = RedactProperty(root, "access_token");
@@ -175,7 +165,6 @@ namespace ReactApp1.Server.Services
             }
             catch
             {
-                // If the body is not JSON, return it as-is
                 return body;
             }
         }
@@ -191,7 +180,6 @@ namespace ReactApp1.Server.Services
                 }
                 else
                 {
-                    // Convert JsonElement to JsonNode
                     var node = JsonNode.Parse(property.Value.GetRawText());
                     jsonObject.Add(property.Name, node);
                 }

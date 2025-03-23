@@ -8,14 +8,34 @@ namespace ReactApp1.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class FoglalasController(IFoglalasService foglalasService) : ControllerBase
     {
-        [Authorize(Roles ="Admin")]
+        //[Authorize(Roles ="Admin")]
         [HttpGet("get")]
-        public async Task<ActionResult<FoglalasAdatok>?> GetFoglalas()
+        public async Task<ActionResult<List<FoglalasAdatok>>?> GetFoglalas()
         {
             var foglalasok = await foglalasService.GetFoglalas();
+            return Ok(foglalasok);
+        }
+        [HttpGet("getByVetites/{vid}")]
+        public async Task<ActionResult<List<FoglalasAdatok>>?> GetFoglalasByVetites(int vid)
+        {
+            var foglalasok = await foglalasService.GetFoglalasByVetites(vid);
+            if (foglalasok == null)
+            {
+                return BadRequest("Nem található foglalás ezzel a vetítés id-vel");
+            }
+            return Ok(foglalasok);
+        }
+        [HttpGet("getByUser/{uid}")]
+        public async Task<ActionResult<List<FoglalasAdatok>>?> GetFoglalasByUser(int uid)
+        {
+            var foglalasok = await foglalasService.GetFoglalasByVetites(uid);
+            if (foglalasok == null)
+            {
+                return BadRequest("Nem található foglalás ezzel a felhasználó id-vel");
+            }
             return Ok(foglalasok);
         }
 

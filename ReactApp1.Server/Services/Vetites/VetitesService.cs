@@ -55,7 +55,7 @@ namespace ReactApp1.Server.Services.Vetites
         public async Task<GetVetitesResponse?> getVetites(int id)
         {
             var vetites = await context.Vetites.FindAsync(id);
-            var szekek = await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x => x.Vetitesid == id).ToListAsync();
+            var szekek = await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Vetitesid == id)).ToListAsync();
             if (vetites == null)
             {
                 return new GetVetitesResponse("Nincs ilyen id-jű vetítés az adatbázisban");
@@ -78,8 +78,8 @@ namespace ReactApp1.Server.Services.Vetites
             {
                 return new ErrorModel("Valid dátumot kell megadni");
             }
-            var terem = await context.Terem.ToAsyncEnumerable().WhereAwait(async x => x.id == tid).ToListAsync();
-            var film = await context.Film.ToAsyncEnumerable().WhereAwait(async x => x.id == fid).ToListAsync();
+            var terem = await context.Terem.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == tid)).ToListAsync();
+            var film = await context.Film.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == fid)).ToListAsync();
             if (terem == null)
             {
                 return new ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
@@ -122,7 +122,7 @@ namespace ReactApp1.Server.Services.Vetites
             patchDoc.ApplyTo(vetites);
             if (vetites.Teremid != tid)
             {
-                var terem = await context.Terem.ToAsyncEnumerable().WhereAwait(async x => x.id == tid).ToListAsync();
+                var terem = await context.Terem.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == tid)).ToListAsync();
                 if(terem == null)
                 {
                     return new ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
@@ -133,7 +133,7 @@ namespace ReactApp1.Server.Services.Vetites
             }
             if (vetites.Filmid != fid)
             {
-                var film = await context.Film.ToAsyncEnumerable().WhereAwait(async x => x.id == fid).ToListAsync();
+                var film = await context.Film.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == fid)).ToListAsync();
                 if (film == null)
                 {
                     return new ErrorModel("Nem található ilyen id-jű film az adatbázisban");
@@ -161,7 +161,7 @@ namespace ReactApp1.Server.Services.Vetites
         private async Task CreateVSzekek(Entities.Vetites.Vetites vetites)
         {
             var vszekek = new List<VetitesSzekek>();
-            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == vetites.Teremid).ToListAsync();
+            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Teremid == vetites.Teremid)).ToListAsync();
             var sorok = szekek.Where(x => x.X == 0).Count();
             var oszlopok = szekek.Where(x => x.Y == 0).Count();
             Console.WriteLine("{0}, {1}", sorok, oszlopok);
@@ -181,7 +181,7 @@ namespace ReactApp1.Server.Services.Vetites
         }
         private async Task DeleteExistingVSzekek(Entities.Vetites.Vetites vetites)
         {
-            var szekek = await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x => x.Vetitesid == vetites.id).ToListAsync();
+            var szekek = await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Vetitesid == vetites.id)).ToListAsync();
             context.RemoveRange(szekek);
             await context.SaveChangesAsync();
         }

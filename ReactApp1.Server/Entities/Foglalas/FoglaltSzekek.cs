@@ -6,16 +6,17 @@ namespace ReactApp1.Server.Entities.Foglalas
 {
     public class FoglaltSzekek
     {
-        public int FoglalasAdatokid { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
+        // Foreign key properties (part of composite PK)
         public int Vetitesid { get; set; }
         public int Teremid { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
 
-        [ForeignKey(nameof(FoglalasAdatokid))]
-        public virtual FoglalasAdatok FoglalasAdatok { get; set; } = null!;
+        // Foreign key to FoglalasAdatok
+        public int FoglalasAdatokid { get; set; }
 
-        [ForeignKey(nameof(Vetitesid) + "," + nameof(Teremid) + "," + nameof(X) + "," + nameof(Y))]
-        public virtual VetitesSzekek VetitesSzekek { get; set; } = null!;
+        // Navigation properties
+        public virtual FoglalasAdatok FoglalasAdatok { get; set; }
+        public virtual VetitesSzekek VetitesSzekek { get; set; }
     }
 }

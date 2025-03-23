@@ -50,7 +50,7 @@ namespace ReactApp1.Server.Services.Terem
         public async Task<GetTeremResponse?> getTerem(int id)
         {
             var terem = await context.Terem.FindAsync(id);
-            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Teremid == id).ToListAsync();
+            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Teremid == id)).ToListAsync();
             var response = new List<GetTeremResponse>();
             if (terem == null)
             {
@@ -124,7 +124,7 @@ namespace ReactApp1.Server.Services.Terem
         }
         public async Task<Models.ErrorModel?> EditSzekek(List<Szekek> szekekUpdate)
         {
-            var szekekOld = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == szekekUpdate[0].Teremid).ToListAsync();
+            var szekekOld = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Terem.id == szekekUpdate[0].Teremid)).ToListAsync();
             return null;
         }
         private async Task CreateSzekek(int sorok, int oszlopok, Entities.Terem.Terem terem)
@@ -144,7 +144,7 @@ namespace ReactApp1.Server.Services.Terem
         }
         private async Task DeleteExistingSzekek(Entities.Terem.Terem terem)
         {
-            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => x.Terem.id == terem.id).ToListAsync();
+            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Terem.id == terem.id)).ToListAsync();
             context.RemoveRange(szekek);
             await context.SaveChangesAsync();
         }

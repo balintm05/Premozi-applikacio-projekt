@@ -14,9 +14,8 @@ namespace ReactApp1.Server.Entities.Foglalas
         public DateTime FoglalasIdopontja { get; set; } = DateTime.UtcNow;
 
         public int UserID { get; set; }
-        [ForeignKey(nameof(UserID))]
-        public virtual User User { get; set; } = null!;
-
+        [ForeignKey("UserID")]
+        public virtual User User { get; set; } = null!;        
         public ICollection<FoglaltSzekek> FoglaltSzekek { get; } = new List<FoglaltSzekek>();
     }
 }

@@ -15,13 +15,9 @@ namespace ReactApp1.Server.Entities.Vetites
 
         public int FoglalasAllapot { get; set; } = 0;
 
-        [ForeignKey(nameof(Vetitesid))]
         public virtual Vetites Vetites { get; set; } = null!;
 
-        [ForeignKey(nameof(Teremid) + "," + nameof(X) + "," + nameof(Y))]
         public virtual Szekek Szekek { get; set; } = null!;
-
-        public ICollection<FoglaltSzekek> FoglaltSzekek { get; } = new List<FoglaltSzekek>();
-
+        public virtual FoglaltSzekek FoglaltSzekek { get; set; }
     }
 }
