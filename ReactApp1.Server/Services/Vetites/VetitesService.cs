@@ -109,6 +109,7 @@ namespace ReactApp1.Server.Services.Vetites
         public async Task<ErrorModel?> editVetites(ManageVetitesDto request)
         {
             var vetites = await context.Vetites.FindAsync(int.Parse(request.id));
+            var filmek = await context.Film.ToListAsync();
             if (vetites == null)
             {
                 return new ErrorModel("Nem található ilyen id-jű vetítés az adatbázisban");
@@ -127,9 +128,8 @@ namespace ReactApp1.Server.Services.Vetites
             }
             if (request.Megjegyzes!=null && vetites.Megjegyzes != request.Megjegyzes)
             {
-                patchDoc.Replace(v => v.Megjegyzes , request.Megjegyzes);
+                patchDoc.Replace(vetites => vetites.Megjegyzes , request.Megjegyzes);
             }
-            patchDoc.ApplyTo(vetites);
             if (vetites.Teremid != tid)
             {
                 var terem = await context.Terem.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == tid)).ToListAsync();
@@ -137,7 +137,7 @@ namespace ReactApp1.Server.Services.Vetites
                 {
                     return new ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
                 }
-                vetites.Teremid = tid;
+                patchDoc.Replace(x=>x.Teremid , tid);
                 await DeleteExistingVSzekek(vetites);
                 await CreateVSzekek(vetites);
             }
@@ -148,12 +148,24 @@ namespace ReactApp1.Server.Services.Vetites
                 {
                     return new ErrorModel("Nem található ilyen id-jű film az adatbázisban");
                 }
-                vetites.Filmid = fid;           
+                patchDoc.Replace(vetites => vetites.Filmid, fid);         
             }
-            if(vetites.Idopont != ido)
+            if (ido < DateTime.Now)
             {
-                vetites.Idopont = ido;
+                return new ErrorModel("A vetítés nem lehet a múltban");
             }
+            if (vetites.Idopont != ido)
+            {
+                if (await context.Vetites.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Teremid == tid &&
+                x.Idopont <= vetites.Idopont.AddMinutes(vetites.Film.Jatekido) && x.Idopont.AddMinutes(filmek.Where(y => y.id == x.Filmid).First().Jatekido) >= vetites.Idopont
+                && x.id!=int.Parse(request.id)))
+                .AnyAsync())
+                {
+                    return new ErrorModel("Már szerepel ebben az időközben vetítés ebben a teremben az adatbázisban");
+                }
+                patchDoc.Replace(vetites => vetites.Idopont , ido);
+            }           
+            patchDoc.ApplyTo(vetites);
             await context.SaveChangesAsync();
             return new ErrorModel("Sikeres módosítás");
         }

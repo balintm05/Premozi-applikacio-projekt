@@ -28,7 +28,7 @@ namespace ReactApp1.Server.Services
             if (context.Request.Path.StartsWithSegments("/api/Auth/refresh-token") || context.Request.Path.StartsWithSegments("/api/Auth/getUser") || context.Request.Path.StartsWithSegments("/api/Auth/getUserAdmin") || context.Request.Path.StartsWithSegments("/api/Auth/queryUsers") ||
                 context.Request.Path.StartsWithSegments("/api/Auth/checkIfLoggedIn") || context.Request.Path.StartsWithSegments("/api/Auth/checkIfAdmin")|| context.Request.Path.StartsWithSegments("/api/Film/get")|| context.Request.Path.StartsWithSegments("/api/Film/query")||
                 context.Request.Path.StartsWithSegments("/api/Terem/get")|| context.Request.Path.StartsWithSegments("/api/Vetites/get") || context.Request.Path.StartsWithSegments("/api/Foglalas/get") || context.Request.Path.StartsWithSegments("/api/Foglalas/getByVetites")||
-                context.Request.Path.StartsWithSegments("/api/Foglalas/getByUser"))
+                context.Request.Path.StartsWithSegments("/api/Foglalas/getByUser") || context.Request.Path.StartsWithSegments("/swagger/v1/swagger.json") ||context.Request.Path.StartsWithSegments("/swagger/"))
             {
                 await _next(context);
                 return;

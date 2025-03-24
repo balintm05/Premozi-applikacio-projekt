@@ -10,5 +10,7 @@ namespace ReactApp1.Server.Services.Foglalas
         Task<List<GetFoglalasResponse>?> GetFoglalasByVetites(int vid);
         Task<List<GetFoglalasResponse>?> GetFoglalasByUser(int uid);
         Task<Models.ErrorModel?> addFoglalas(ManageFoglalasDto request);
+        Task<Models.ErrorModel?> editFoglalas(ManageFoglalasDto request);
+        Task<Models.ErrorModel?> deleteFoglalas(int id);
     }
 }

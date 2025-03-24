@@ -34,13 +34,13 @@ using ReactApp1.Server.Entities.Terem;
 
 namespace ReactApp1.Server.Services.Terem
 {
-    public class TeremService(DataBaseContext context, IConfiguration configuration):ITeremService
+    public class TeremService(DataBaseContext context, IConfiguration configuration) : ITeremService
     {
         public async Task<List<GetTeremResponse>?> getTerem()
         {
             var termek = await context.Terem.Include(x => x.Szekek).ToListAsync();
             var szekek = await context.Szekek.ToListAsync();
-            var response = new List<GetTeremResponse>();           
+            var response = new List<GetTeremResponse>();
             foreach (var terem in termek)
             {
                 response.Add(new GetTeremResponse(terem));
@@ -102,8 +102,8 @@ namespace ReactApp1.Server.Services.Terem
             }
             patchDoc.ApplyTo(terem);
             int.TryParse(request.Sorok, out int sorok);
-            int.TryParse(request.Oszlopok, out int oszlopok);           
-            if (!(sorok == terem.Szekek.Where(x=> x.X == 0).Count() && oszlopok == terem.Szekek.Where(x => x.Y == 0).Count()))
+            int.TryParse(request.Oszlopok, out int oszlopok);
+            if (!(sorok == terem.Szekek.Where(x => x.X == 0).Count() && oszlopok == terem.Szekek.Where(x => x.Y == 0).Count()))
             {
                 await DeleteExistingSzekek(terem);
                 await CreateSzekek(sorok, oszlopok, terem);
@@ -136,7 +136,7 @@ namespace ReactApp1.Server.Services.Terem
                 {
                     szekek.Add(new Szekek { Terem = terem, X = x, Y = y });
                 }
-            }            
+            }
             foreach (var szek in szekek)
             {
                 await context.Szekek.AddAsync(szek);
@@ -148,5 +148,8 @@ namespace ReactApp1.Server.Services.Terem
             context.RemoveRange(szekek);
             await context.SaveChangesAsync();
         }
+
+
+        //!!!!!!!!!! szék frissítő cucc ide majd (ami frissíti a hozzá tartozó vetítések állapotát is (0))
     }
 }
