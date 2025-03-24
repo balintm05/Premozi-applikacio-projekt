@@ -210,8 +210,7 @@ namespace ReactApp1.Server.Migrations
                     Vetitesid = table.Column<int>(type: "int", nullable: false),
                     X = table.Column<int>(type: "int", nullable: false),
                     Y = table.Column<int>(type: "int", nullable: false),
-                    FoglalasAllapot = table.Column<int>(type: "int", nullable: false),
-                    Allapot = table.Column<int>(type: "int", nullable: false)
+                    FoglalasAllapot = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

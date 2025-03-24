@@ -320,9 +320,6 @@ namespace ReactApp1.Server.Migrations
                     b.Property<int>("Y")
                         .HasColumnType("int");
 
-                    b.Property<int>("Allapot")
-                        .HasColumnType("int");
-
                     b.Property<int>("FoglalasAllapot")
                         .HasColumnType("int");
 

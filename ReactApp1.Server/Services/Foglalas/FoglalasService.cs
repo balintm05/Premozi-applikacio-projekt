@@ -61,7 +61,15 @@ namespace ReactApp1.Server.Services.Foglalas
         {
             var foglalas = new FoglalasAdatok();            
             var uidb = int.TryParse(request.UserID, out int uid);
-            var vidb = int.TryParse(request.VetitesID, out int vid);            
+            var vidb = int.TryParse(request.VetitesID, out int vid);
+            if(request.X.Count == 0 || request.Y.Count == 0)
+            {
+                return new Models.ErrorModel("Kötelező széket megadni");
+            }
+            if (request.X.Count != request.Y.Count)
+            {
+                return new Models.ErrorModel("Azonos számú koordinátát kell megadni");
+            }
             if (!uidb)
             {
                 return new Models.ErrorModel("A felhasználó id-nek számnak kell lennie");
@@ -82,15 +90,40 @@ namespace ReactApp1.Server.Services.Foglalas
             }
             foglalas.UserID = uid;
             await context.AddAsync(foglalas);
-            var vetitesszekek = await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Vetitesid == vid && request.X.Contains(x.X.ToString()) && request.X.Contains(x.Y.ToString()) )).ToListAsync();
+
+            var vetitesszekek = await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x =>
+            {
+                for(int i=0; i<request.X.Count; i++)
+                {
+                    if(x.Vetitesid == vid && request.X[i].Equals(x.X.ToString()) && request.Y[i].Equals(x.Y.ToString()))
+                    {
+                        return await ValueTask.FromResult(true);
+                    }                   
+                }
+                return await ValueTask.FromResult(false);
+            }).ToListAsync();
+
+            if (vetitesszekek.Count != request.X.Count)
+            {
+                return new Models.ErrorModel("Az egyik megadott hely nem található az adatbázisban");
+            }
+            if (await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.FoglalasAllapot==2)).AnyAsync())
+            {
+                return new Models.ErrorModel("Az egyik megadott hely már le lett foglalva");
+            }
             var foglaltszekek = new List<FoglaltSzekek>();    
             foreach(var h in vetitesszekek)
             {
-                foglaltszekek.Add(new FoglaltSzekek { FoglalasAdatok = foglalas, VetitesSzekek = h});
+                
+                var fsz = new FoglaltSzekek { FoglalasAdatok = foglalas, VetitesSzekek = h };
+                foglaltszekek.Add(fsz);
+                h.FoglaltSzekek = fsz;
+                h.FoglalasAllapot = 2;
             }
+            context.UpdateRange(vetitesszekek);
             await context.AddRangeAsync(foglaltszekek);
             await context.SaveChangesAsync();
-            return new Models.ErrorModel("");
+            return new Models.ErrorModel("Sikeres hozzáadás");
         }
     }
 }

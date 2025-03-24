@@ -185,8 +185,8 @@ namespace ReactApp1.Server.Services.Auth
         }
         public async Task logout(HttpContext httpContext)
         {
-            httpContext.Response.Cookies.Delete("refreshToken", new CookieOptions { Path = "/", Domain = "localhost" });
-            httpContext.Response.Cookies.Delete("accessToken", new CookieOptions { Path = "/", Domain = "localhost" });
+            httpContext.Response.Cookies.Delete("refreshToken", new CookieOptions { Path = "", Domain = "localhost" });
+            httpContext.Response.Cookies.Delete("accessToken", new CookieOptions { Path = "", Domain = "localhost" });
         }
 
 

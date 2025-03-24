@@ -12,8 +12,7 @@ namespace ReactApp1.Server.Entities.Vetites
         public int X { get; set; }
         public int Y { get; set; }
 
-        public int FoglalasAllapot { get; set; } = 0;
-        public int Allapot { get; set; }
+        public int FoglalasAllapot { get; set; } 
 
         public virtual Vetites Vetites { get; set; } = null!;
         public virtual FoglaltSzekek FoglaltSzekek { get; set; }

@@ -62,11 +62,11 @@ namespace ReactApp1.Server.Services.Vetites
             }
             return new GetVetitesResponse(vetites);
         }
-        //ne tudjon overlappelni csináld majd meg 
         public async Task<ErrorModel> addVetites(ManageVetitesDto request)
         {            
             var vetites = new Entities.Vetites.Vetites();
             var vetitesszekek = new List<VetitesSzekek>();
+            var filmek = await context.Film.ToListAsync();
             var fidb = int.TryParse(request.Filmid, out int fid);
             var tidb = int.TryParse(request.Teremid, out int tid);
             var didb = DateTime.TryParse(request.Idopont, out DateTime ido);
@@ -80,17 +80,27 @@ namespace ReactApp1.Server.Services.Vetites
             }
             var terem = await context.Terem.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == tid)).ToListAsync();
             var film = await context.Film.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == fid)).ToListAsync();
-            if (terem == null)
+            if (terem.Count==0)
             {
                 return new ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
             }
-            if(film == null)
+            if(film.Count==0)
             {
                 return new ErrorModel("Nem található ilyen id-jű film az adatbázisban");
             }
             vetites.Filmid = fid;
             vetites.Teremid = tid;
             vetites.Idopont = ido;
+            if(vetites.Idopont< DateTime.Now)
+            {
+                return new ErrorModel("A vetítés nem lehet a múltban");
+            }
+            if (await context.Vetites.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Teremid == tid && 
+                x.Idopont <= vetites.Idopont.AddMinutes(film[0].Jatekido) && x.Idopont.AddMinutes(filmek.Where(y => y.id == x.Filmid).First().Jatekido) >= vetites.Idopont))
+                .AnyAsync())
+            {
+                return new ErrorModel("Már szerepel ebben az időközben vetítés ebben a teremben az adatbázisban");
+            }
             await context.Vetites.AddAsync(vetites);
             await CreateVSzekek(vetites);
             await context.SaveChangesAsync();
@@ -169,7 +179,7 @@ namespace ReactApp1.Server.Services.Vetites
             {
                 for (int y = 0; y < oszlopok; y++)
                 {
-                    var t = new VetitesSzekek { Vetites = vetites, X = szekek[x * oszlopok + y].X, Y = szekek[x*oszlopok+y].Y , Allapot = szekek[x * oszlopok + y].Allapot};                   
+                    var t = new VetitesSzekek { Vetites = vetites, X = szekek[x * oszlopok + y].X, Y = szekek[x*oszlopok+y].Y , FoglalasAllapot = szekek[x * oszlopok + y].Allapot};                   
                     vszekek.Add(t);
                 }
             }

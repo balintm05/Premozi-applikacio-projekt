@@ -12,7 +12,7 @@ using ReactApp1.Server.Data;
 namespace ReactApp1.Server.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20250324102507_teehee")]
+    [Migration("20250324183557_teehee")]
     partial class teehee
     {
         /// <inheritdoc />
@@ -321,9 +321,6 @@ namespace ReactApp1.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Y")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Allapot")
                         .HasColumnType("int");
 
                     b.Property<int>("FoglalasAllapot")
