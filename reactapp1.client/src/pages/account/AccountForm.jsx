@@ -56,7 +56,7 @@ const AccountForm = () => {
                 credentials: "include"
             });
             if (response.status == 200) {
-                //window.open("/", "_self");
+                window.open("/", "_self");
             } 
             else {
                 const data = await response.json();

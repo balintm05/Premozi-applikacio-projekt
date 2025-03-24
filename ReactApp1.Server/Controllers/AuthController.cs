@@ -188,10 +188,10 @@ namespace ReactApp1.Server.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                var resp = await authService.checkIfStatusChanged(User, HttpContext);
+                var resp = await authService.checkIfStatusChanged(User);
                 if (resp)
                 {
-                    await Logout();
+                    await authService.logout(HttpContext);
                     return Ok(new LoginState(false));
                 }
                 return Ok(new LoginState(true));

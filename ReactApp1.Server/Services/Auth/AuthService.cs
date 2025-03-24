@@ -290,7 +290,7 @@ namespace ReactApp1.Server.Services.Auth
         }
 
         
-        public async Task<bool> checkIfStatusChanged(ClaimsPrincipal User, HttpContext httpContext)
+        public async Task<bool> checkIfStatusChanged(ClaimsPrincipal User)
         {
             var user = await context.Users.FindAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             if(user == null || user.accountStatus == 2)
@@ -301,7 +301,6 @@ namespace ReactApp1.Server.Services.Auth
             {            
                 return true;
             }
-            await logout(httpContext);
             return false;
         }
     }
