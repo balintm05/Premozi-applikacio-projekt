@@ -248,7 +248,7 @@ namespace ReactApp1.Server.Services.Auth
             var Claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.userID.ToString()),
-                //new Claim(ClaimTypes.Email, user.email),
+                new Claim(ClaimTypes.Email, user.email),
                 new Claim(ClaimTypes.Role, user.role.ToString())
             };
             var Key = new SymmetricSecurityKey(
@@ -290,7 +290,7 @@ namespace ReactApp1.Server.Services.Auth
         }
 
         
-        public async Task<bool> checkIfStatusChanged(ClaimsPrincipal User)
+        public async Task<bool> checkIfStatusChanged(ClaimsPrincipal User, HttpContext httpContext)
         {
             var user = await context.Users.FindAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             if(user == null || user.accountStatus == 2)
@@ -301,6 +301,7 @@ namespace ReactApp1.Server.Services.Auth
             {            
                 return true;
             }
+            await logout(httpContext);
             return false;
         }
     }

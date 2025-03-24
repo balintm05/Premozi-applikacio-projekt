@@ -48,7 +48,6 @@ namespace ReactApp1.Server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     IMDB = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    AlapAr = table.Column<int>(type: "int", nullable: false),
                     Megjegyzes = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
@@ -211,18 +210,12 @@ namespace ReactApp1.Server.Migrations
                     Vetitesid = table.Column<int>(type: "int", nullable: false),
                     X = table.Column<int>(type: "int", nullable: false),
                     Y = table.Column<int>(type: "int", nullable: false),
-                    Teremid = table.Column<int>(type: "int", nullable: false),
-                    FoglalasAllapot = table.Column<int>(type: "int", nullable: false)
+                    FoglalasAllapot = table.Column<int>(type: "int", nullable: false),
+                    Allapot = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VetitesSzekek", x => new { x.Vetitesid, x.Teremid, x.X, x.Y });
-                    table.ForeignKey(
-                        name: "FK_VetitesSzekek_Szekek_Teremid_X_Y",
-                        columns: x => new { x.Teremid, x.X, x.Y },
-                        principalTable: "Szekek",
-                        principalColumns: new[] { "Teremid", "X", "Y" },
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_VetitesSzekek", x => new { x.Vetitesid, x.X, x.Y });
                     table.ForeignKey(
                         name: "FK_VetitesSzekek_Vetites_Vetitesid",
                         column: x => x.Vetitesid,
@@ -237,14 +230,13 @@ namespace ReactApp1.Server.Migrations
                 columns: table => new
                 {
                     Vetitesid = table.Column<int>(type: "int", nullable: false),
-                    Teremid = table.Column<int>(type: "int", nullable: false),
                     X = table.Column<int>(type: "int", nullable: false),
                     Y = table.Column<int>(type: "int", nullable: false),
                     FoglalasAdatokid = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FoglaltSzekek", x => new { x.FoglalasAdatokid, x.Vetitesid, x.Teremid, x.X, x.Y });
+                    table.PrimaryKey("PK_FoglaltSzekek", x => new { x.FoglalasAdatokid, x.Vetitesid, x.X, x.Y });
                     table.ForeignKey(
                         name: "FK_FoglaltSzekek_FoglalasAdatok_FoglalasAdatokid",
                         column: x => x.FoglalasAdatokid,
@@ -252,10 +244,10 @@ namespace ReactApp1.Server.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FoglaltSzekek_VetitesSzekek_Vetitesid_Teremid_X_Y",
-                        columns: x => new { x.Vetitesid, x.Teremid, x.X, x.Y },
+                        name: "FK_FoglaltSzekek_VetitesSzekek_Vetitesid_X_Y",
+                        columns: x => new { x.Vetitesid, x.X, x.Y },
                         principalTable: "VetitesSzekek",
-                        principalColumns: new[] { "Vetitesid", "Teremid", "X", "Y" },
+                        principalColumns: new[] { "Vetitesid", "X", "Y" },
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -266,9 +258,9 @@ namespace ReactApp1.Server.Migrations
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FoglaltSzekek_Vetitesid_Teremid_X_Y",
+                name: "IX_FoglaltSzekek_Vetitesid_X_Y",
                 table: "FoglaltSzekek",
-                columns: new[] { "Vetitesid", "Teremid", "X", "Y" },
+                columns: new[] { "Vetitesid", "X", "Y" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -292,11 +284,6 @@ namespace ReactApp1.Server.Migrations
                 name: "IX_Vetites_Teremid",
                 table: "Vetites",
                 column: "Teremid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_VetitesSzekek_Teremid_X_Y",
-                table: "VetitesSzekek",
-                columns: new[] { "Teremid", "X", "Y" });
         }
 
         /// <inheritdoc />
@@ -309,6 +296,9 @@ namespace ReactApp1.Server.Migrations
                 name: "HttpLogs");
 
             migrationBuilder.DropTable(
+                name: "Szekek");
+
+            migrationBuilder.DropTable(
                 name: "FoglalasAdatok");
 
             migrationBuilder.DropTable(
@@ -316,9 +306,6 @@ namespace ReactApp1.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Szekek");
 
             migrationBuilder.DropTable(
                 name: "Vetites");

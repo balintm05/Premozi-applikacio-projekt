@@ -169,7 +169,7 @@ namespace ReactApp1.Server.Services.Vetites
             {
                 for (int y = 0; y < oszlopok; y++)
                 {
-                    var t = new VetitesSzekek { Vetites = vetites, Szekek = szekek[x * oszlopok + y]};                   
+                    var t = new VetitesSzekek { Vetites = vetites, X = szekek[x * oszlopok + y].X, Y = szekek[x*oszlopok*y].Y , Allapot = szekek[x * oszlopok * y].Allapot};                   
                     vszekek.Add(t);
                 }
             }

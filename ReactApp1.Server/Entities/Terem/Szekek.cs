@@ -17,7 +17,5 @@ namespace ReactApp1.Server.Entities.Terem
         public virtual Terem Terem { get; set; } = null!;
 
         public int Allapot { get; set; } = 1;
-
-        public ICollection<VetitesSzekek> VetitesSzekek { get; } = new List<VetitesSzekek>();
     }
 }

@@ -22,33 +22,26 @@ namespace ReactApp1.Server.Data
             modelBuilder.Entity<Szekek>(entity =>
             {
                 entity.HasKey(s => new { s.Teremid, s.X, s.Y });
-
-                entity.HasOne(s => s.Terem)
-                      .WithMany(t => t.Szekek)
-                      .HasForeignKey(s => s.Teremid);
             });
             modelBuilder.Entity<VetitesSzekek>(entity =>
             {
-                entity.HasKey(vs => new { vs.Vetitesid, vs.Teremid, vs.X, vs.Y });
+                entity.HasKey(vs => new { vs.Vetitesid, vs.X, vs.Y });
                 entity.HasOne(vs => vs.Vetites)
                       .WithMany(v => v.VetitesSzekek)
                       .HasForeignKey(vs => vs.Vetitesid);
-                entity.HasOne(vs => vs.Szekek)
-                      .WithMany(s => s.VetitesSzekek)
-                      .HasForeignKey(vs => new { vs.Teremid, vs.X, vs.Y });
                 entity.HasOne(vs => vs.FoglaltSzekek)
                       .WithOne(fs => fs.VetitesSzekek)
-                      .HasForeignKey<FoglaltSzekek>(fs => new { fs.Vetitesid, fs.Teremid, fs.X, fs.Y });
+                      .HasForeignKey<FoglaltSzekek>(fs => new { fs.Vetitesid, fs.X, fs.Y });
             });
             modelBuilder.Entity<FoglaltSzekek>(entity =>
             {
-                entity.HasKey(fs => new { fs.FoglalasAdatokid, fs.Vetitesid, fs.Teremid, fs.X, fs.Y });
+                entity.HasKey(fs => new { fs.FoglalasAdatokid, fs.Vetitesid, fs.X, fs.Y });
                 entity.HasOne(fs => fs.FoglalasAdatok)
                       .WithMany(fa => fa.FoglaltSzekek)
                       .HasForeignKey(fs => fs.FoglalasAdatokid);
                 entity.HasOne(fs => fs.VetitesSzekek)
                       .WithOne(vs => vs.FoglaltSzekek)
-                      .HasForeignKey<FoglaltSzekek>(fs => new { fs.Vetitesid, fs.Teremid, fs.X, fs.Y });
+                      .HasForeignKey<FoglaltSzekek>(fs => new { fs.Vetitesid, fs.X, fs.Y });
             });
             modelBuilder.Entity<User>(entity =>
             {

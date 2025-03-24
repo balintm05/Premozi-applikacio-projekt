@@ -12,7 +12,7 @@ using ReactApp1.Server.Data;
 namespace ReactApp1.Server.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20250323181848_teehee")]
+    [Migration("20250324082914_teehee")]
     partial class teehee
     {
         /// <inheritdoc />
@@ -32,9 +32,6 @@ namespace ReactApp1.Server.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<int>("AlapAr")
-                        .HasColumnType("int");
 
                     b.Property<string>("Cim")
                         .IsRequired()
@@ -129,18 +126,15 @@ namespace ReactApp1.Server.Migrations
                     b.Property<int>("Vetitesid")
                         .HasColumnType("int");
 
-                    b.Property<int>("Teremid")
-                        .HasColumnType("int");
-
                     b.Property<int>("X")
                         .HasColumnType("int");
 
                     b.Property<int>("Y")
                         .HasColumnType("int");
 
-                    b.HasKey("FoglalasAdatokid", "Vetitesid", "Teremid", "X", "Y");
+                    b.HasKey("FoglalasAdatokid", "Vetitesid", "X", "Y");
 
-                    b.HasIndex("Vetitesid", "Teremid", "X", "Y")
+                    b.HasIndex("Vetitesid", "X", "Y")
                         .IsUnique();
 
                     b.ToTable("FoglaltSzekek");
@@ -323,21 +317,19 @@ namespace ReactApp1.Server.Migrations
                     b.Property<int>("Vetitesid")
                         .HasColumnType("int");
 
-                    b.Property<int>("Teremid")
-                        .HasColumnType("int");
-
                     b.Property<int>("X")
                         .HasColumnType("int");
 
                     b.Property<int>("Y")
                         .HasColumnType("int");
 
+                    b.Property<int>("Allapot")
+                        .HasColumnType("int");
+
                     b.Property<int>("FoglalasAllapot")
                         .HasColumnType("int");
 
-                    b.HasKey("Vetitesid", "Teremid", "X", "Y");
-
-                    b.HasIndex("Teremid", "X", "Y");
+                    b.HasKey("Vetitesid", "X", "Y");
 
                     b.ToTable("VetitesSzekek");
                 });
@@ -363,7 +355,7 @@ namespace ReactApp1.Server.Migrations
 
                     b.HasOne("ReactApp1.Server.Entities.Vetites.VetitesSzekek", "VetitesSzekek")
                         .WithOne("FoglaltSzekek")
-                        .HasForeignKey("ReactApp1.Server.Entities.Foglalas.FoglaltSzekek", "Vetitesid", "Teremid", "X", "Y")
+                        .HasForeignKey("ReactApp1.Server.Entities.Foglalas.FoglaltSzekek", "Vetitesid", "X", "Y")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -410,14 +402,6 @@ namespace ReactApp1.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ReactApp1.Server.Entities.Terem.Szekek", "Szekek")
-                        .WithMany("VetitesSzekek")
-                        .HasForeignKey("Teremid", "X", "Y")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Szekek");
-
                     b.Navigation("Vetites");
                 });
 
@@ -429,11 +413,6 @@ namespace ReactApp1.Server.Migrations
             modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.FoglalasAdatok", b =>
                 {
                     b.Navigation("FoglaltSzekek");
-                });
-
-            modelBuilder.Entity("ReactApp1.Server.Entities.Terem.Szekek", b =>
-                {
-                    b.Navigation("VetitesSzekek");
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Terem.Terem", b =>
