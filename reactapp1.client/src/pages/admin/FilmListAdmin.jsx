@@ -12,9 +12,9 @@ function FilmListAdmin() {
     useEffect(() => {
         fetch("https://localhost:7153/api/Film/query", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include',
-            body: JSON.stringify(formData)
+            headers: { "Content-Type": "application/json" },           
+            body: JSON.stringify(formData),
+            credentials: "include"
         })
             .then(response => response.json())
             .then(data => {
@@ -47,7 +47,7 @@ function FilmListAdmin() {
     }, [formData]);
 
     if (loading) {
-        return <p>Betöltés...</p>;
+        return <p></p>;
     }
 
     return (

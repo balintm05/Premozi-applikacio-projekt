@@ -18,11 +18,7 @@ using ReactApp1.Server.Services.Foglalas;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddCors(options=> options.AddDefaultPolicy(
-    builder => 
-    {
-        builder.WithOrigins("https://localhost:60769").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
-    }));
+
 builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -54,7 +50,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }   
         };
     });
-    
+builder.Services.AddAuthorization();
+builder.Services.AddCors(options => options.AddDefaultPolicy(
+    builder =>
+    {
+        builder.WithOrigins("https://localhost:60769").AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+    }));
 
 var connectionString = builder.Configuration.GetConnectionString("MySqlConnectionString");
 var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
@@ -86,6 +87,8 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -34,6 +34,12 @@ using ReactApp1.Server.Models.Film.ManageFilm;
 using ReactApp1.Server.Models.Film;
 using Org.BouncyCastle.Asn1.Mozilla;
 using ReactApp1.Server.Services.Film;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Net.Http;
+using ReactApp1.Server.Models;
+using System.Threading.Tasks;
+using ReactApp1.Server.Services.Auth;
 
 namespace ReactApp1.Server.Controllers
 {

@@ -145,6 +145,10 @@ namespace ReactApp1.Server.Services.Foglalas
             {
                 return new Models.ErrorModel("Azonos számú koordinátát kell megadni");
             }
+            if (request.X.Count == 0)
+            {
+                return new ErrorModel("Kötelező széket megadni a foglaláshoz");
+            }
             if (!uidb)
             {
                 return new Models.ErrorModel("A felhasználó id-nek számnak kell lennie");
