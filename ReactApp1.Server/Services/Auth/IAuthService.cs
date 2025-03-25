@@ -24,6 +24,13 @@ namespace ReactApp1.Server.Services.Auth
         Task<bool> checkIfStatusChanged(ClaimsPrincipal User);
         Task<ErrorModel?> deleteUser(int id);
         Task logout(HttpContext httpcontext);
+        Task<TokenResponseDto> CreateTokenResponse(User? user);
+        Task<string> GenerateEmailConfirmationTokenAsync(User user);
+        Task<bool> ConfirmEmailAsync(int userId, string token);
+        Task<string> Generate2FATokenAsync(User user);
+        Task<bool> Verify2FATokenAsync(User user, string token);
+        Task<List<string>> Generate2FARecoveryCodesAsync(User user);
+        Task<User?> GetUserByEmailAsync(string email);
         //just no
         //Task<HttpResponseMessage?> OkResponseSetTokenCookie(TokenResponseDto request);
     }

@@ -50,6 +50,9 @@ namespace ReactApp1.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<int>("ImageID")
+                        .HasColumnType("int");
+
                     b.Property<int>("Jatekido")
                         .HasColumnType("int");
 
@@ -90,6 +93,8 @@ namespace ReactApp1.Server.Migrations
                         .HasColumnType("longtext");
 
                     b.HasKey("id");
+
+                    b.HasIndex("ImageID");
 
                     b.ToTable("Film");
                 });
@@ -190,6 +195,41 @@ namespace ReactApp1.Server.Migrations
                     b.ToTable("HttpLogs");
                 });
 
+            modelBuilder.Entity("ReactApp1.Server.Entities.Images", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("RelativePath")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Images");
+                });
+
             modelBuilder.Entity("ReactApp1.Server.Entities.Terem.Szekek", b =>
                 {
                     b.Property<int>("Teremid")
@@ -238,8 +278,26 @@ namespace ReactApp1.Server.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("userID"));
 
+                    b.Property<string>("EmailConfirmationToken")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("EmailConfirmationTokenExpiry")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Megjegyzes")
                         .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("TwoFactorRecoveryCodes")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TwoFactorSecret")
                         .HasColumnType("longtext");
 
                     b.Property<int>("accountStatus")
@@ -326,6 +384,17 @@ namespace ReactApp1.Server.Migrations
                     b.HasKey("Vetitesid", "X", "Y");
 
                     b.ToTable("VetitesSzekek");
+                });
+
+            modelBuilder.Entity("ReactApp1.Server.Entities.Film", b =>
+                {
+                    b.HasOne("ReactApp1.Server.Entities.Images", "Images")
+                        .WithMany()
+                        .HasForeignKey("ImageID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.FoglalasAdatok", b =>

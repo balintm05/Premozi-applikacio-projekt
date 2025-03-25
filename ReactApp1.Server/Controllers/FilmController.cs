@@ -47,7 +47,7 @@ namespace ReactApp1.Server.Controllers
     [ApiController]
     public class FilmController(IFilmService filmService) : Controller
     {
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         [HttpPost("query")]
         public async Task<ActionResult<dynamic>> QueryFilm(GetFilmQueryFilter request) 
         {
@@ -82,7 +82,7 @@ namespace ReactApp1.Server.Controllers
         [HttpPost("add")]
         public async Task<ActionResult<Models.ErrorModel?>> AddFilm(ManageFilmDto request)
         {
-            var err = await filmService.addFilm(request);
+            var err = await filmService.addFilm(request, HttpContext);
             if (err.errorMessage == "Sikeres hozzáadás")
             {
                 return Ok(err);
@@ -95,7 +95,7 @@ namespace ReactApp1.Server.Controllers
         [HttpPatch("edit")]
         public async Task<ActionResult<Models.ErrorModel?>> EditFilm(ManageFilmDto request)
         {
-            var err = await filmService.editFilm(request);
+            var err = await filmService.editFilm(request, HttpContext);
             if (err.errorMessage == "Sikeres módosítás")
             {
                 return Ok(err);

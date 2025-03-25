@@ -23,6 +23,8 @@ using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using ReactApp1.Server.Models.User.Response;
 using ReactApp1.Server.Models;
+using Org.BouncyCastle.Crypto.Generators;
+using System.Data.Entity;
 
 //https://www.youtube.com/watch?v=6EEltKS8AwA
 
@@ -214,7 +216,7 @@ namespace ReactApp1.Server.Services.Auth
         }
 
 
-        private async Task<TokenResponseDto> CreateTokenResponse(User? user)
+        public async Task<TokenResponseDto> CreateTokenResponse(User? user)
         {
             return new TokenResponseDto
             {
@@ -302,6 +304,67 @@ namespace ReactApp1.Server.Services.Auth
                 return true;
             }
             return false;
+        }
+        public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
+        {
+            var token = Guid.NewGuid().ToString() + DateTime.UtcNow.Ticks.ToString();
+            user.EmailConfirmationToken = BCrypt.Net.BCrypt.HashPassword(token);
+            user.EmailConfirmationTokenExpiry = DateTime.UtcNow.AddDays(1);
+            await context.SaveChangesAsync();
+            return token;
+        }
+
+        public async Task<bool> ConfirmEmailAsync(int userId, string token)
+        {
+            var user = await context.Users.FindAsync(userId);
+            if (user == null || user.EmailConfirmationTokenExpiry < DateTime.UtcNow)
+                return false;
+
+            if (BCrypt.Net.BCrypt.Verify(token, user.EmailConfirmationToken))
+            {
+                user.EmailConfirmed = true;
+                user.EmailConfirmationToken = null;
+                user.EmailConfirmationTokenExpiry = null;
+                await context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<string> Generate2FATokenAsync(User user)
+        {
+            var secretKey = Guid.NewGuid().ToString("N").Substring(0, 16);
+            user.TwoFactorSecret = secretKey;
+            await context.SaveChangesAsync();
+            return secretKey;
+        }
+
+        public async Task<bool> Verify2FATokenAsync(User user, string token)
+        {
+            if (string.IsNullOrEmpty(user.TwoFactorSecret))
+                return false;
+
+            // In production, replace with actual TOTP validation
+            if (token.Length == 6 && token.All(char.IsDigit))
+                return true;
+
+            return false;
+        }
+
+        public async Task<List<string>> Generate2FARecoveryCodesAsync(User user)
+        {
+            var codes = new List<string>();
+            for (int i = 0; i < 10; i++)
+                codes.Add(Guid.NewGuid().ToString("N").Substring(0, 8));
+
+            user.TwoFactorRecoveryCodes = System.Text.Json.JsonSerializer.Serialize(codes);
+            await context.SaveChangesAsync();
+            return codes;
+        }
+
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            return await context.Users.FirstOrDefaultAsync(u => u.email == email);
         }
     }
 }

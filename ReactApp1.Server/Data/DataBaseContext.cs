@@ -17,6 +17,7 @@ namespace ReactApp1.Server.Data
         public DbSet<Film> Film { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<HttpLog> HttpLogs { get; set; }
+        public DbSet<Images> Images { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Szekek>(entity =>

@@ -57,6 +57,9 @@ namespace ReactApp1.Server.Entities
 
         [Required]
         public string IMDB { get; set; }
+        public int ImageID { get; set; }
+        [ForeignKey("ImageID")]
+        public Images Images { get; set; }
 
         public string Megjegyzes { get; set; } = "";
 

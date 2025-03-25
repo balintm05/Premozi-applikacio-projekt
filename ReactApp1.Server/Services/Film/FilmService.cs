@@ -31,10 +31,13 @@ using Org.BouncyCastle.Ocsp;
 using ReactApp1.Server.Models.Film;
 using ReactApp1.Server.Entities.Terem;
 using ReactApp1.Server.Models.Terem;
+using Microsoft.Extensions.Hosting;
+using System.Text.Json.Nodes;
+using ReactApp1.Server.Models;
 
 namespace ReactApp1.Server.Services.Film
 {
-    public class FilmService(DataBaseContext context, IConfiguration configuration):IFilmService
+    public class FilmService(DataBaseContext context, IConfiguration configuration, IHttpClientFactory httpClientFactory) :IFilmService
     {
         public async Task<List<GetFilmResponse>?> queryFilm(GetFilmQueryFilter request)
         {
@@ -132,7 +135,7 @@ namespace ReactApp1.Server.Services.Film
         }
        
 
-        public async Task<Models.ErrorModel?> addFilm(ManageFilmDto request)
+        public async Task<Models.ErrorModel?> addFilm(ManageFilmDto request, HttpContext httpContext)
         {
             try
             {
@@ -152,6 +155,26 @@ namespace ReactApp1.Server.Services.Film
                 movie.TrailerLink = request.TrailerLink;
                 movie.IMDB = request.IMDB;
                 movie.Megjegyzes = !string.IsNullOrEmpty(request.Megjegyzes) ? request.Megjegyzes : "";
+                if (request.image == null)
+                {
+                    throw new Exception("Nem adott meg képet");
+                }
+                var httpClient = httpClientFactory.CreateClient("ImageUpload");
+                using var content = new MultipartFormDataContent();
+                using var fileStream = request.image.OpenReadStream();
+                content.Add(new StreamContent(fileStream), "file", request.image.FileName);
+                var response = await httpClient.PostAsync("api/image/upload", content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return new Models.ErrorModel($"Sikertelen fájlfeltöltés: {response.StatusCode} - {errorContent}");
+                }
+                var result = await response.Content.ReadFromJsonAsync<ImageUploadResponse>();
+                if (result == null)
+                {
+                    return new Models.ErrorModel("Sikertelen fájlfeldolgozás");
+                }
+                movie.ImageID = result.Id;
                 await context.Film.AddAsync(movie);
                 await context.SaveChangesAsync();
                 return new Models.ErrorModel("Sikeres hozzáadás");
@@ -159,11 +182,11 @@ namespace ReactApp1.Server.Services.Film
             catch (Exception ex) 
             {
                 return new Models.ErrorModel(ex.Message);
-            }            
+            }           
         }
 
 
-        public async Task<Models.ErrorModel?> editFilm(ManageFilmDto request)
+        public async Task<Models.ErrorModel?> editFilm(ManageFilmDto request, HttpContext httpContext)
         {
             try
             {
@@ -209,7 +232,6 @@ namespace ReactApp1.Server.Services.Film
                 if (!string.IsNullOrEmpty(request.Leiras))
                 {
                     patchDoc.Replace(movie => movie.Leiras, request.Leiras);
-
                 }
                 if (!string.IsNullOrEmpty(request.EredetiNyelv))
                 {
@@ -226,7 +248,6 @@ namespace ReactApp1.Server.Services.Film
                 if (!string.IsNullOrEmpty(request.TrailerLink))
                 {
                     patchDoc.Replace(movie => movie.TrailerLink, request.TrailerLink);
-
                 }
                 if (!string.IsNullOrEmpty(request.IMDB))
                 {
@@ -235,6 +256,24 @@ namespace ReactApp1.Server.Services.Film
                 if (!string.IsNullOrEmpty(request.Megjegyzes))
                 {
                     patchDoc.Replace(movie => movie.Megjegyzes, request.Megjegyzes);
+                }                
+                if (request.image != null)
+                {
+                    var httpClient = httpClientFactory.CreateClient("ImageUpload");
+                    using var content = new MultipartFormDataContent();
+                    using var fileStream = request.image.OpenReadStream();
+                    content.Add(new StreamContent(fileStream), "file", request.image.FileName);
+                    var response = await httpClient.PostAsync("/api/image/upload", content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var result = await response.Content.ReadFromJsonAsync<ImageUploadResponse>();
+                        patchDoc.Replace(movie => movie.ImageID, result.Id);
+                    }
+                    else
+                    {
+                        var error = await response.Content.ReadFromJsonAsync<ErrorModel>();
+                        return error;
+                    }
                 }
                 patchDoc.ApplyTo(movie);
                 await context.SaveChangesAsync();

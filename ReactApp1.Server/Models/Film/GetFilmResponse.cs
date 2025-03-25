@@ -24,6 +24,7 @@ namespace ReactApp1.Server.Models.Film
         public string? Szinkron { get; set; }
         public string? TrailerLink { get; set; }
         public string? IMDB { get; set; }
+        public string? ImageID {  get; set; }
         public string? Megjegyzes { get; set; }
         public ErrorModel? Error { get; set; }
         public GetFilmResponse(Entities.Film film)
@@ -42,6 +43,7 @@ namespace ReactApp1.Server.Models.Film
             EredetiCim = film.EredetiCim;
             Szinkron = film.Szinkron;
             TrailerLink = film.TrailerLink;
+            ImageID= film.ImageID.ToString();
             IMDB = film.IMDB;
             Megjegyzes = film.Megjegyzes;
         }
