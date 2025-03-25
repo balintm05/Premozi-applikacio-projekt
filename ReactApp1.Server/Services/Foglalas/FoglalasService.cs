@@ -216,11 +216,21 @@ namespace ReactApp1.Server.Services.Foglalas
         }
         public async Task<Models.ErrorModel?> deleteFoglalas(int id)
         {
-            var foglalas = await context.FoglalasAdatok.FindAsync(id);
+            var foglalas = await context.FoglalasAdatok.FindAsync(id);           
             if (foglalas == null)
             {
                 return new ErrorModel("Nem található az adatbázisban foglalás a megadott id-vel");
             }
+            var vetitesszekek = await context.VetitesSzekek.Include(x=>x.FoglaltSzekek).ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.FoglaltSzekek!=null&&x.FoglaltSzekek.FoglalasAdatokid==id)).ToListAsync();
+            if (vetitesszekek.Count == 0)
+            {
+                return new ErrorModel("Nem található ehhez a foglaláshoz tartozó székfoglalás");
+            }
+            foreach (var h in vetitesszekek)
+            {
+                h.FoglalasAllapot = 1;
+            }
+            context.UpdateRange(vetitesszekek);
             context.FoglalasAdatok.Remove(foglalas);
             await context.SaveChangesAsync();
             return new ErrorModel("Sikeres törlés");
