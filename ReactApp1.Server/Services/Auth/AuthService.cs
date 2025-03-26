@@ -24,7 +24,6 @@ using System.Net.Http.Headers;
 using ReactApp1.Server.Models.User.Response;
 using ReactApp1.Server.Models;
 using Org.BouncyCastle.Crypto.Generators;
-using System.Data.Entity;
 
 //https://www.youtube.com/watch?v=6EEltKS8AwA
 

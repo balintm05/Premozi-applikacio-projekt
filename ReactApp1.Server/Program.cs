@@ -17,13 +17,16 @@ using Microsoft.Extensions.FileProviders;
 using ReactApp1.Server.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCors(options => options.AddPolicy("ReactFrontend", policy =>
+builder.Services.AddCors(options =>
 {
-    policy.WithOrigins("https://localhost:60769")
-          .AllowAnyHeader()
-          .AllowAnyMethod()
-          .AllowCredentials();
-    }));
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("https://localhost:60769") 
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+               .AllowCredentials();
+    });
+});
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
@@ -103,7 +106,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseRouting();
-app.UseCors("ReactFrontend");
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import AccountForm from "./AccountForm";
+import AccountForm from "./AccountFormOld";
 
 /* eslint-disable no-unused-vars */
 export default function Register() {
