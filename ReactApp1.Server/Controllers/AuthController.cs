@@ -44,7 +44,7 @@ namespace ReactApp1.Server.Controllers
     {
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<Models.ErrorModel?>> Login(AuthUserDto request)
+        public async Task<ActionResult> Login(AuthUserDto request)
         {
             if (User.Identity.IsAuthenticated)
                 return BadRequest(new ErrorModel("Már be vagy jelentkezve"));
@@ -59,14 +59,19 @@ namespace ReactApp1.Server.Controllers
 
             if (user.TwoFactorEnabled)
             {
-                var tempToken = Guid.NewGuid().ToString();
-                HttpContext.Session.SetString("2fa_userId", user.userID.ToString());
-                HttpContext.Session.SetString("2fa_tempToken", tempToken);
-                return Ok(new { Requires2FA = true, TempToken = tempToken });
+                var success = await authService.StartEmail2FAFlowAsync(user.userID);
+                if (!success)
+                    return StatusCode(500, new ErrorModel("Nem sikerült elindítani a 2FA folyamatot"));
+
+                return Ok(new
+                {
+                    success = true,
+                    requires2FA = true,
+                    userId = user.userID
+                });
             }
 
             authService.SetTokensInsideCookie(tokenResponse, HttpContext);
-            await emailService.SendEmailAsync(user.email, "Belépés", "<h1>Sikeres bejelentkezés</h1>");
             return Ok();
         }
 
@@ -105,17 +110,100 @@ namespace ReactApp1.Server.Controllers
             {
                 var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
                 var result = await authService.ConfirmEmailAsync(userId, decodedToken);
-
-                return result
-                    ? Ok(new ErrorModel("Email cím megerősítve!"))
-                    : BadRequest(new ErrorModel("Érvénytelen vagy lejárt token."));
+                if (result)
+                {
+                    var jwttoken = await authService.CreateTokenResponse(await authService.GetUserAsync(userId));
+                    authService.SetTokensInsideCookie(jwttoken,HttpContext);
+                    return Ok(new ErrorModel("Email cím megerősítve!"));
+                }
+                else
+                {
+                    return BadRequest(new ErrorModel("Érvénytelen vagy lejárt token."));
+                }
             }
             catch
             {
                 return BadRequest(new ErrorModel("Hiba történt a megerősítés során."));
             }
         }
+        [AllowAnonymous]
+        [HttpPost("verify-email-2fa")]
+        public async Task<ActionResult> VerifyEmail2FA([FromBody] VerifyEmail2FADto request)
+        {
+            bool isValid = await authService.VerifyEmail2FACodeAsync(request.UserId, request.Code);
+            if (!isValid)
+                return BadRequest(new ErrorModel("Érvénytelen vagy lejárt kód"));
+
+            var user = await authService.GetUserAsync(request.UserId);
+            if (user == null)
+                return BadRequest(new ErrorModel("Érvénytelen felhasználó"));
+
+            var finalToken = await authService.CreateTokenResponse(user);
+            authService.SetTokensInsideCookie(finalToken, HttpContext);
+
+            return Ok();
+        }
+        [AllowAnonymous]
+        [HttpPost("resend-2fa-code")]
+        public async Task<ActionResult> Resend2FACode()
+        {
+            if (HttpContext.Session == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new ErrorModel("Session not available"));
+            }
+            var userId = HttpContext.Session.GetString("2fa_userId");
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest(new ErrorModel("No active 2FA session"));
+
+            var user = await authService.GetUserAsync(int.Parse(userId));
+            if (user == null) return NotFound();
+
+            var code = new Random().Next(100000, 999999).ToString();
+            await authService.StoreEmail2FACodeAsync(user.userID, code, 5);
+
+            await emailService.SendEmailAsync(
+                user.email,
+                "Your New 2FA Code",
+                $"<h3>New verification code: <strong>{code}</strong></h3>");
+
+            return Ok();
+        }
         [Authorize]
+        [HttpPost("enable-email-2fa")]
+        public async Task<ActionResult> EnableEmail2FA()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var success = await authService.EnableEmail2FAAsync(userId);
+
+            return success
+                ? Ok(new { success = true, message = "Kétlépcsős azonosítás engedélyezve" })
+                : BadRequest(new { success = false, message = "Nem sikerült engedélyezni a 2FA-t" });
+        }
+
+        [Authorize]
+        [HttpPost("disable-email-2fa")]
+        public async Task<ActionResult> DisableEmail2FA([FromBody] Disable2FADto dto)
+        {
+            var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var isAdmin = User.IsInRole("Admin");
+
+            // Admins can disable others' 2FA without password
+            if (dto.UserId != currentUserId && !isAdmin)
+                return Forbid();
+
+            // Regular users need to provide password to disable their own 2FA
+            var passwordRequired = dto.UserId == currentUserId && !isAdmin;
+            if (passwordRequired && string.IsNullOrEmpty(dto.Password))
+                return BadRequest(new { message = "Jelszó szükséges" });
+
+            var success = await authService.DisableEmail2FAAsync(dto.UserId, dto.Password);
+
+            return success
+                ? Ok(new { success = true, message = "Kétlépcsős azonosítás letiltva" })
+                : BadRequest(new { success = false, message = "Nem sikerült letiltani a 2FA-t" });
+        }
+        /*[Authorize]
         [HttpPost("enable-2fa")]
         public async Task<ActionResult> Enable2FA()
         {
@@ -154,7 +242,7 @@ namespace ReactApp1.Server.Controllers
             var finalToken = await authService.CreateTokenResponse(user);
             authService.SetTokensInsideCookie(finalToken, HttpContext);
             return Ok();
-        }
+        }*/
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]

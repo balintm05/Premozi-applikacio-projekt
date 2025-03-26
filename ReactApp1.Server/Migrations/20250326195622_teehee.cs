@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -192,6 +193,29 @@ namespace ReactApp1.Server.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Email2FACodes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Code = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserID = table.Column<int>(type: "int(11)", nullable: false),
+                    ExpiresAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Email2FACodes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Email2FACodes_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "userID",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "FoglalasAdatok",
                 columns: table => new
                 {
@@ -291,6 +315,11 @@ namespace ReactApp1.Server.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Email2FACodes_UserID",
+                table: "Email2FACodes",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Film_ImageID",
                 table: "Film",
                 column: "ImageID");
@@ -332,6 +361,9 @@ namespace ReactApp1.Server.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Email2FACodes");
+
             migrationBuilder.DropTable(
                 name: "FoglaltSzekek");
 

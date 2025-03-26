@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import "../../../bootstrap/css/bootstrap.min.css";
+import "../../bootstrap/css/bootstrap.min.css";
 import React from "react";
 
 function GetUsersTable() {

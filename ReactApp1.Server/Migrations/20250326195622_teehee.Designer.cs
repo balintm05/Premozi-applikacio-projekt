@@ -12,7 +12,7 @@ using ReactApp1.Server.Data;
 namespace ReactApp1.Server.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20250325214830_teehee")]
+    [Migration("20250326195622_teehee")]
     partial class teehee
     {
         /// <inheritdoc />
@@ -24,6 +24,31 @@ namespace ReactApp1.Server.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("ReactApp1.Server.Entities.Email2FACodes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("UserID")
+                        .HasColumnType("int(11)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Email2FACodes");
+                });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Film", b =>
                 {
@@ -387,6 +412,17 @@ namespace ReactApp1.Server.Migrations
                     b.HasKey("Vetitesid", "X", "Y");
 
                     b.ToTable("VetitesSzekek");
+                });
+
+            modelBuilder.Entity("ReactApp1.Server.Entities.Email2FACodes", b =>
+                {
+                    b.HasOne("ReactApp1.Server.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.Film", b =>

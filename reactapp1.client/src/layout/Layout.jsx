@@ -1,32 +1,13 @@
-/* eslint-disable no-unused-vars */
-import "../../../bootstrap/css/bootstrap.min.css";
 import { Outlet } from "react-router-dom";
 import "./Layout.css";
-import React from "react";
-import { useState, useEffect } from "react";
-import Logout from "../account/Logout.jsx";
+import React, { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import Logout from "../components/Logout.jsx";
 
 function ButtonToggle() {
-    const [isLoggedIn, setIsLoggedIn] = useState(null);
+    const { user } = useContext(AuthContext);
 
-    useEffect(() => {
-        fetch("https://localhost:7153/api/Auth/checkIfLoggedIn", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include'
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setIsLoggedIn(data.isLoggedIn)
-            })
-            .catch((error) => console.error("Hiba a bejelentkezés ellenőrzésekor:", error));
-    }, []);
-
-    if (isLoggedIn === null) {
-        return null;
-    }
-
-    return isLoggedIn === true ? (
+    return user ? (
         <li className="nav-item dropdown">
             <a
                 className="nav-link dropdown-toggle text-light"
@@ -39,18 +20,22 @@ function ButtonToggle() {
             >
                 Felhasználó
             </a>
-            <ul className="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarScrollingDropdown" >
+            <ul className="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarScrollingDropdown">
                 <li>
                     <a className="dropdown-item" href="/account/profile/details">Profil</a>
                 </li>
                 <li>
-                    <IsAdmin />
+                    {user.role === "Admin" && (
+                        <a className="dropdown-item" href="/admin/">
+                            Adminisztrátori funkciók
+                        </a>
+                    )}
                 </li>
                 <li>
                     <hr className="dropdown-divider" />
                 </li>
                 <li>
-                    <a className="dropdown-item" href="/" onClick={() => { Logout(); }}>
+                    <a className="dropdown-item" href="/logout">
                         Kijelentkezés
                     </a>
                 </li>
@@ -63,31 +48,6 @@ function ButtonToggle() {
             </button>
         </a>
     );
-}
-
-function IsAdmin() {
-    const [isAdmin, setIsAdmin] = useState(null);
-
-    useEffect(() => {
-        fetch("https://localhost:7153/api/Auth/checkIfAdmin", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: 'include'
-        })
-            .then((response) => response.json())
-            .then((data) => setIsAdmin(data.isLoggedIn))
-            .catch((error) => console.error("Hiba a bejelentkezés ellenőrzésekor:", error));
-    }, []);
-
-    if (isAdmin === null) {
-        return null;
-    }
-
-    return isAdmin === true ? (
-        <a className="dropdown-item" href="/admin/">
-            Adminisztrátori funkciók
-        </a>
-    ) : null;
 }
 
 export default function Layout() {
@@ -142,5 +102,3 @@ export default function Layout() {
         </div>
     );
 }
-
-export { IsAdmin };

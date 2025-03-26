@@ -24,12 +24,14 @@ using System.Net.Http.Headers;
 using ReactApp1.Server.Models.User.Response;
 using ReactApp1.Server.Models;
 using Org.BouncyCastle.Crypto.Generators;
+using ReactApp1.Server.Services.Email;
+//using System.Data.Entity;
 
 //https://www.youtube.com/watch?v=6EEltKS8AwA
 
 namespace ReactApp1.Server.Services.Auth
 {
-    public class AuthService(DataBaseContext context, IConfiguration configuration):IAuthService
+    public class AuthService(DataBaseContext context, IConfiguration configuration, IEmailService emailService):IAuthService
     {
         public async Task<TokenResponseDto?> LoginAsync(AuthUserDto request)
         {            
@@ -330,40 +332,95 @@ namespace ReactApp1.Server.Services.Auth
             return false;
         }
 
-        public async Task<string> Generate2FATokenAsync(User user)
-        {
-            var secretKey = Guid.NewGuid().ToString("N").Substring(0, 16);
-            user.TwoFactorSecret = secretKey;
-            await context.SaveChangesAsync();
-            return secretKey;
-        }
-
-        public async Task<bool> Verify2FATokenAsync(User user, string token)
-        {
-            if (string.IsNullOrEmpty(user.TwoFactorSecret))
-                return false;
-
-            // In production, replace with actual TOTP validation
-            if (token.Length == 6 && token.All(char.IsDigit))
-                return true;
-
-            return false;
-        }
-
-        public async Task<List<string>> Generate2FARecoveryCodesAsync(User user)
-        {
-            var codes = new List<string>();
-            for (int i = 0; i < 10; i++)
-                codes.Add(Guid.NewGuid().ToString("N").Substring(0, 8));
-
-            user.TwoFactorRecoveryCodes = System.Text.Json.JsonSerializer.Serialize(codes);
-            await context.SaveChangesAsync();
-            return codes;
-        }
+        
 
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await context.Users.FirstOrDefaultAsync(u => u.email == email);
         }
+        public async Task StoreEmail2FACodeAsync(int userId, string code, int expiryMinutes)
+        {
+            await context.Email2FACodes.AddAsync(new Email2FACodes
+            {
+                UserID = userId,
+                Code = code,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(expiryMinutes)
+            });
+            await context.SaveChangesAsync();
+        }
+
+        public async Task<bool> VerifyEmail2FACodeAsync(int userId, string code)
+        {
+            var storedCode = await context.Email2FACodes
+                .FirstOrDefaultAsync(x =>
+                    x.UserID == userId &&
+                    x.Code == code &&
+                    x.ExpiresAt > DateTime.UtcNow);
+            if (storedCode == null)
+            {
+                return false;
+            }
+            context.Email2FACodes.Remove(storedCode);
+            await context.SaveChangesAsync();
+            return true;
+        }
+        public async Task<bool> EnableEmail2FAAsync(int userId)
+        {
+            var user = await context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.TwoFactorEnabled = true;
+            await context.SaveChangesAsync();
+
+            var code = new Random().Next(100000, 999999).ToString();
+            await StoreEmail2FACodeAsync(userId, code, 5);
+
+            await emailService.SendEmailAsync(
+                user.email,
+                "Kétlépcsős azonosítás engedélyezve",
+                $"<h3>Kétlépcsős azonosítás engedélyezve</h3>" +
+                $"<p>Az Ön fiókjában mostantól kétlépcsős azonosítás van érvényben.</p>" +
+                $"<p>Bejelentkezéskor a következő kódot fogja megkapni: <strong>{code}</strong></p>");
+
+            return true;
+        }
+        public async Task<bool> DisableEmail2FAAsync(int userId, string? password = null)
+        {
+            var user = await context.Users.FindAsync(userId);
+            if (user == null) return false;
+            if (password != null)
+            {
+                var result = new PasswordHasher<User>().VerifyHashedPassword(user, user.passwordHash, password);
+                if (result != PasswordVerificationResult.Success)
+                    return false;
+            }
+
+            user.TwoFactorEnabled = false;
+            await context.SaveChangesAsync();
+
+            await emailService.SendEmailAsync(
+                user.email,
+                "Kétlépcsős azonosítás letiltva",
+                "<h3>Kétlépcsős azonosítás letiltva</h3>" +
+                "<p>Az Ön fiókjában a kétlépcsős azonosítás mostantól ki van kapcsolva.</p>");
+
+            return true;
+        }
+        public async Task<bool> StartEmail2FAFlowAsync(int userId)
+        {
+            var user = await context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            var code = new Random().Next(100000, 999999).ToString();
+            await StoreEmail2FACodeAsync(userId, code, 5);
+
+            await emailService.SendEmailAsync(
+                user.email,
+                "2FA Bejelentkezési kód",
+                $"<h3>Az Ön 2FA kódja: <strong>{code}</strong></h3><p>Ez a kód 5 percig érvényes.</p>");
+
+            return true;
+        }
+
     }
 }

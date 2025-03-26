@@ -27,10 +27,13 @@ namespace ReactApp1.Server.Services.Auth
         Task<TokenResponseDto> CreateTokenResponse(User? user);
         Task<string> GenerateEmailConfirmationTokenAsync(User user);
         Task<bool> ConfirmEmailAsync(int userId, string token);
-        Task<string> Generate2FATokenAsync(User user);
-        Task<bool> Verify2FATokenAsync(User user, string token);
-        Task<List<string>> Generate2FARecoveryCodesAsync(User user);
         Task<User?> GetUserByEmailAsync(string email);
+        Task StoreEmail2FACodeAsync(int userId, string code, int expiryMinutes);
+        Task<bool> VerifyEmail2FACodeAsync(int userId, string code);
+        Task<bool> EnableEmail2FAAsync(int userId);
+        Task<bool> DisableEmail2FAAsync(int userId, string? password = null);
+        Task<bool> StartEmail2FAFlowAsync(int userId);
+
         //just no
         //Task<HttpResponseMessage?> OkResponseSetTokenCookie(TokenResponseDto request);
     }

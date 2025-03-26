@@ -1,10 +1,13 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const Login = () => {
     const { login } = useContext(AuthContext);
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
     const title = "Bejelentkezés";
     document.title = title;
 
@@ -14,17 +17,26 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const result = await login(formData.email, formData.password);
-        if (result.success) {
-            window.open("/", "_self");
-        }
-        else {
-            setError(result.error||"Bejelentkezés hiba");
-        }
+        setIsLoading(true);
+        setError(null);
+
         try {
-            await login(formData.email, formData.password);
+            const result = await login(formData.email, formData.password);
+
+            if (result.success) {
+                if (result.requires2FA) {
+                    sessionStorage.setItem('2fa_userId', result.userId);
+                    navigate('/auth/2fa');
+                } else {
+                    navigate('/');
+                }
+            } else {
+                setError(result.error || "Bejelentkezési hiba");
+            }
         } catch (err) {
-            setError(err.response?.data?.errorMessage || "Hibás email vagy jelszó");
+            setError("Váratlan hiba történt");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -41,13 +53,14 @@ const Login = () => {
                             <div className="mb-3">
                                 <label className="text-dark font-weight-bold fw-bold">Email cím</label>
                                 <input
-                                    type="text"
+                                    type="email"
                                     className="form-control"
                                     name="email"
                                     placeholder="Email cím"
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
+                                    autoFocus
                                 />
                             </div>
                             <div className="mb-3">
@@ -63,9 +76,16 @@ const Login = () => {
                                 />
                             </div>
                             <div className="text-center">
-                                <button type="submit" className="btn btn-dark px-5 mb-5 w-100">{title}</button>
+                                <button
+                                    type="submit"
+                                    className="btn btn-dark px-5 mb-5 w-100"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? 'Betöltés...' : title}
+                                </button>
                             </div>
-                            <div className="form-text text-center mb-5 text-dark">Még nincs fiókja?
+                            <div className="form-text text-center mb-5 text-dark">
+                                Még nincs fiókja?
                                 <a href="/account/register" className="text-dark font-weight-bold fw-bold"> Regisztráció</a>
                             </div>
                         </form>

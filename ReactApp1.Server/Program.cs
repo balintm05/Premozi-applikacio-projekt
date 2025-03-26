@@ -74,6 +74,12 @@ builder.Services.AddAuthorization(options =>
             value == "True"
         ));
 });
+/*builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(20); 
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});*/
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailService, SendGridEmailService>();
 builder.Services.AddHttpClient();
@@ -108,6 +114,7 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseCors();
 app.UseHttpsRedirection();
+//app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

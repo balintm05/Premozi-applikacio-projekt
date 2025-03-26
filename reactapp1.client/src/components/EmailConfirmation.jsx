@@ -1,21 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import { api } from '../api/axiosConfig';
 
 const EmailConfirmation = () => {
     const [searchParams] = useSearchParams();
     const [message, setMessage] = useState('Folyamatban...');
+    const { api } = useContext(AuthContext);
 
     useEffect(() => {
         const confirmEmail = async () => {
+            const userId = searchParams.get('userId');
+            const token = searchParams.get('token');
+
             try {
-                const userId = searchParams.get('userId');
-                const token = searchParams.get('token');
-                await api.get(`/auth/confirm-email?userId=${userId}&token=${token}`);
-                setMessage('Email cím sikeresen megerõsítve!');
-            } catch (err) {
-                setMessage(err.response?.data?.errorMessage || 'Hiba történt az email megerõsítés során.');
+                const result = await api.get(`/auth/confirm-email?userId=${userId}&token=${token}`);
+                if (result.success) {
+                    setMessage('Email cím sikeresen megerõsítve!');
+                    window.open("/", "_self");
+                } else {
+                    setMessage(result.error || 'Hiba történt az email megerõsítés során.');
+                }
+            } catch (error) {
+                setMessage(error.response?.data?.errorMessage || 'Hiba történt az email megerõsítés során.');
             }
         };
         confirmEmail();
