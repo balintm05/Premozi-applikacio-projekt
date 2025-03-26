@@ -3,9 +3,11 @@
     public class LoginState
     {
         public bool IsLoggedIn { get; set; }
-        public LoginState(bool isLoggedIn)
+        public Entities.User? user { get; set; }
+        public LoginState(bool isLoggedIn, Entities.User? user)
         {
             IsLoggedIn = isLoggedIn;
+            this.user = user;
         }
     }
 }

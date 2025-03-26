@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import PageNotFound from "../pages/errors/PageNotFound.jsx";
+import PageNotFound from "../errors/PageNotFound.jsx";
 import { AuthContext } from "../context/AuthContext.jsx";
 
 function AdminChecker() {

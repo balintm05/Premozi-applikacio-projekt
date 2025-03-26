@@ -1,58 +1,83 @@
 import { Outlet } from "react-router-dom";
 import "./Layout.css";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Logout from "../components/Logout.jsx";
 
-function ButtonToggle() {
+function UserDropdown() {
     const { user } = useContext(AuthContext);
+    const [isOpen, setIsOpen] = useState(false);
 
-    return user ? (
-        <li className="nav-item dropdown">
-            <a
-                className="nav-link dropdown-toggle text-light"
-                href="#"
+    const toggleDropdown = () => setIsOpen(!isOpen);
+    const closeDropdown = () => setIsOpen(false);
+
+    if (!user) {
+        return (
+            <a href="/account/login">
+                <button
+                    style={{ backgroundColor: "rgb(50,50,50)" }}
+                    className="btn my-2 btn-outline-light my-sm-0 text-light text-center"
+                >
+                    Bejelentkezés
+                </button>
+            </a>
+        );
+    }
+
+    return (
+        <div className="nav-item dropdown">
+            <button
+                className="nav-link dropdown-toggle text-light bg-transparent border-0"
                 id="navbarScrollingDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                onClick={(e) => e.stopPropagation()}
+                onClick={toggleDropdown}
+                aria-expanded={isOpen}
             >
                 Felhasználó
-            </a>
-            <ul className="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarScrollingDropdown">
+            </button>
+            <ul
+                className={`dropdown-menu dropdown-menu-dark dropdown-menu-end ${isOpen ? 'show' : ''}`}
+                aria-labelledby="navbarScrollingDropdown"
+            >
                 <li>
-                    <a className="dropdown-item" href="/account/profile/details">Profil</a>
+                    <a
+                        className="dropdown-item"
+                        href="/account/profile/details"
+                        onClick={closeDropdown}
+                    >
+                        Profil
+                    </a>
                 </li>
-                <li>
-                    {user.role === "Admin" && (
-                        <a className="dropdown-item" href="/admin/">
+                {user.role === "Admin" && (
+                    <li>
+                        <a
+                            className="dropdown-item"
+                            href="/admin/"
+                            onClick={closeDropdown}
+                        >
                             Adminisztrátori funkciók
                         </a>
-                    )}
-                </li>
+                    </li>
+                )}
                 <li>
                     <hr className="dropdown-divider" />
                 </li>
                 <li>
-                    <a className="dropdown-item" href="/logout">
+                    <a
+                        className="dropdown-item"
+                        href="/logout"
+                        onClick={closeDropdown}
+                    >
                         Kijelentkezés
                     </a>
                 </li>
             </ul>
-        </li>
-    ) : (
-        <a href="/account/login">
-            <button style={{ backgroundColor: "rgb(50,50,50)" }} className="btn my-2 btn-outline-light my-sm-0 text-light text-center">
-                Bejelentkezés
-            </button>
-        </a>
+        </div>
     );
 }
 
 export default function Layout() {
     return (
-        <div style={{ backgroundColor: "black" }}>
+        <div style={{ backgroundColor: "black", minHeight: "100vh", position: "relative", paddingBottom: "60px" }}>
             <header>
                 <nav className="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
                     <div className="container-fluid">
@@ -82,7 +107,7 @@ export default function Layout() {
                             </ul>
                             <div className="text-light my-2 my-lg-0 mr-sm-0 my-sm-0">
                                 <ul className="navbar-nav">
-                                    <ButtonToggle />
+                                    <UserDropdown />
                                 </ul>
                             </div>
                         </div>

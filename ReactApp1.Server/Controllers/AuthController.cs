@@ -188,11 +188,9 @@ namespace ReactApp1.Server.Controllers
             var currentUserId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var isAdmin = User.IsInRole("Admin");
 
-            // Admins can disable others' 2FA without password
             if (dto.UserId != currentUserId && !isAdmin)
                 return Forbid();
 
-            // Regular users need to provide password to disable their own 2FA
             var passwordRequired = dto.UserId == currentUserId && !isAdmin;
             if (passwordRequired && string.IsNullOrEmpty(dto.Password))
                 return BadRequest(new { message = "Jelszó szükséges" });
@@ -203,50 +201,10 @@ namespace ReactApp1.Server.Controllers
                 ? Ok(new { success = true, message = "Kétlépcsős azonosítás letiltva" })
                 : BadRequest(new { success = false, message = "Nem sikerült letiltani a 2FA-t" });
         }
-        /*[Authorize]
-        [HttpPost("enable-2fa")]
-        public async Task<ActionResult> Enable2FA()
-        {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var user = await authService.GetUserAsync(userId);
-            if (user == null) return NotFound();
-
-            var secretKey = await authService.Generate2FATokenAsync(user);
-            var recoveryCodes = await authService.Generate2FARecoveryCodesAsync(user);
-            var qrCodeUrl = $"https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=otpauth://totp/YourApp:{user.email}?secret={secretKey}&issuer=YourApp";
-
-            await emailService.SendEmailAsync(
-                user.email,
-                "Kétlépcsős azonosítás beállítása",
-                $"<h1>2FA beállítása</h1><p>Kód: <strong>{secretKey}</strong></p><img src='{qrCodeUrl}'/><h2>Helyreállító kódok:</h2><ul>{string.Join("", recoveryCodes.Select(c => $"<li>{c}</li>"))}</ul>");
-
-            return Ok(new { secretKey, qrCodeUrl, recoveryCodes });
-        }
-        [AllowAnonymous]
-        [HttpPost("complete-2fa-login")]
-        public async Task<ActionResult> Complete2FALogin([FromBody] Complete2FALoginDto request)
-        {
-            var userId = HttpContext.Session.GetString("2fa_userId");
-            var tempToken = HttpContext.Session.GetString("2fa_tempToken");
-
-            if (string.IsNullOrEmpty(userId) || tempToken != request.TempToken)
-                return BadRequest(new ErrorModel("Érvénytelen munkafolyamat"));
-
-            var user = await authService.GetUserAsync(int.Parse(userId));
-            if (user == null || !await authService.Verify2FATokenAsync(user, request.Code))
-                return BadRequest(new ErrorModel("Érvénytelen kód"));
-
-            HttpContext.Session.Remove("2fa_userId");
-            HttpContext.Session.Remove("2fa_tempToken");
-
-            var finalToken = await authService.CreateTokenResponse(user);
-            authService.SetTokensInsideCookie(finalToken, HttpContext);
-            return Ok();
-        }*/
 
         [AllowAnonymous]
         [HttpPost("refresh-token")]
-        public async void RefreshToken()
+        public async Task RefreshToken()
         {
             try
             {
@@ -354,18 +312,19 @@ namespace ReactApp1.Server.Controllers
         [AllowAnonymous]
         [HttpPost("checkIfLoggedIn")]
         public async Task<ActionResult<LoginState>> CheckIfLoggedIn()
-        {
+        {            
             if (User.Identity.IsAuthenticated)
             {
+                var user = await authService.GetUserAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
                 var resp = await authService.checkIfStatusChanged(User);
                 if (resp)
                 {
                     await authService.logout(HttpContext);
-                    return Ok(new LoginState(false));
+                    return Ok(new LoginState(false, user));
                 }
-                return Ok(new LoginState(true));
+                return Ok(new LoginState(true, user));
             }
-            return Ok(new LoginState(false));
+            return Ok(new LoginState(false, null));
         }
 
 
@@ -380,13 +339,19 @@ namespace ReactApp1.Server.Controllers
 
         [AllowAnonymous]
         [HttpPost("checkIfAdmin")]
-        public ActionResult<LoginState> CheckIfAdmin()
+        public async Task<ActionResult<LoginState>> CheckIfAdmin()
         {
+            var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (id == null)
+            {
+                return Ok(new LoginState(false, null));
+            }
+            var user = await authService.GetUserAsync(id);
             if (User.Identity.IsAuthenticated && User.FindFirstValue(ClaimTypes.Role)=="Admin")
             {
-                return Ok(new LoginState(true));
+                return Ok(new LoginState(true, user));
             }
-            return Ok(new LoginState(false));
+            return Ok(new LoginState(false, user));
         }
         [Authorize]
         [HttpDelete("deleteUser/{id}")]

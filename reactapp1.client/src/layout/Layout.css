@@ -46,3 +46,33 @@ button.accept-policy {
     line-height: 60px;
     text-align:center;
 }
+.dropdown-menu {
+    transition: all 0.3s ease;
+}
+
+.nav-link.dropdown-toggle {
+    cursor: pointer;
+    background: none !important;
+}
+
+    .nav-link.dropdown-toggle:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+.dropdown-item {
+    transition: background-color 0.2s;
+}
+
+    .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}

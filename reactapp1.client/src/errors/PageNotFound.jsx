@@ -1,4 +1,4 @@
-import "../../../bootstrap/css/bootstrap.min.css";
+import "../../bootstrap/css/bootstrap.min.css";
 function PageNotFound() {
     return (
 

@@ -8,7 +8,7 @@ namespace ReactApp1.Server.Models.User
         public int UserId { get; set; }
 
         [Required]
-        [RegularExpression(@"^\d{6}$", ErrorMessage = "Code must be 6 digits")]
+        [RegularExpression(@"^\d{6}$")]
         public string Code { get; set; } = string.Empty;
     }
     public class Enable2FADto
@@ -20,8 +20,8 @@ namespace ReactApp1.Server.Models.User
     {
         [Required]
         public int UserId { get; set; }
-        [StringLength(30, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 30 characters")]
-        [RegularExpression(@"^[a-zA-Z0-9_.-]*$", ErrorMessage = "Password can only contain alphanumeric characters, dots, underscores and hyphens")]
+        [StringLength(30, MinimumLength = 6)]
+        [RegularExpression(@"^[a-zA-Z0-9_.-]*$")]
         public string? Password { get; set; }
     }
     public class AdminDisable2FADto

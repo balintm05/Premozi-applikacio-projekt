@@ -7,7 +7,7 @@ import Layout from "./layout/Layout.jsx";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Logout from "./components/Logout.jsx";
-import PageNotFound from "./pages/errors/PageNotFound.jsx";
+import PageNotFound from "./errors/PageNotFound.jsx";
 import UserListAdmin from "./admin/UserListAdmin.jsx";
 import AdminCheck from "./admin/AdminCheck.jsx";
 import AdminIndex from "./admin/AdminIndex.jsx";

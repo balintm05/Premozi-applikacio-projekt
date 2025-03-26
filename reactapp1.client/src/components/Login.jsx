@@ -1,15 +1,21 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const Login = () => {
-    const { login } = useContext(AuthContext);
+    const { user, login } = useContext(AuthContext);
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const title = "Bejelentkezés";
     document.title = title;
+
+    useEffect(() => {
+        if (user) {
+            navigate('/');
+        }
+    }, [user, navigate]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,6 +45,8 @@ const Login = () => {
             setIsLoading(false);
         }
     };
+
+    if (user) return null;
 
     return (
         <div className="container">
