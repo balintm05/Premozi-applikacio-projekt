@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom";
 import "./Layout.css";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
-import Logout from "../components/Logout.jsx";
+import { FaSun, FaMoon } from "react-icons/fa";
 
 function UserDropdown() {
-    const { user } = useContext(AuthContext);
+    const { user, logout } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDropdown = () => setIsOpen(!isOpen);
@@ -14,10 +14,7 @@ function UserDropdown() {
     if (!user) {
         return (
             <a href="/account/login">
-                <button
-                    style={{ backgroundColor: "rgb(50,50,50)" }}
-                    className="btn my-2 btn-outline-light my-sm-0 text-light text-center"
-                >
+                <button className="btn login-btn">
                     Bejelentkezés
                 </button>
             </a>
@@ -27,7 +24,7 @@ function UserDropdown() {
     return (
         <div className="nav-item dropdown">
             <button
-                className="nav-link dropdown-toggle text-light bg-transparent border-0"
+                className="nav-link dropdown-toggle user-dropdown"
                 id="navbarScrollingDropdown"
                 onClick={toggleDropdown}
                 aria-expanded={isOpen}
@@ -35,7 +32,7 @@ function UserDropdown() {
                 Felhasználó
             </button>
             <ul
-                className={`dropdown-menu dropdown-menu-dark dropdown-menu-end ${isOpen ? 'show' : ''}`}
+                className={`dropdown-menu dropdown-menu-end ${isOpen ? 'show' : ''}`}
                 aria-labelledby="navbarScrollingDropdown"
             >
                 <li>
@@ -64,8 +61,7 @@ function UserDropdown() {
                 <li>
                     <a
                         className="dropdown-item"
-                        href="/logout"
-                        onClick={closeDropdown}
+                        onClick={() => { closeDropdown(); logout(); }}
                     >
                         Kijelentkezés
                     </a>
@@ -74,14 +70,34 @@ function UserDropdown() {
         </div>
     );
 }
-
+export const ThemeContext = React.createContext();
 export default function Layout() {
+    const [darkMode, setDarkMode] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const savedMode = localStorage.getItem('darkMode');
+            if (savedMode !== null) return JSON.parse(savedMode);
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        return false;
+    });
+
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+        localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    }, [darkMode]);
+
+    const toggleTheme = () => {
+        setDarkMode(prevMode => !prevMode);
+    };
+
     return (
-        <div style={{ backgroundColor: "black", minHeight: "100vh", position: "relative", paddingBottom: "60px" }}>
+        <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
+            <div className={`app-container ${darkMode ? 'dark-mode' : 'light-mode'}`}>
             <header>
-                <nav className="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+                <nav className="navbar navbar-expand-sm navbar-toggleable-sm main-nav">
                     <div className="container-fluid">
-                        <a style={{ color: "white" }} className="navbar-brand" href="/">Premozi hivatalos weboldala</a>
+                        <a className="navbar-brand" href="/">Premozi hivatalos weboldala</a>
                         <button
                             className="navbar-toggler"
                             type="button"
@@ -96,34 +112,46 @@ export default function Layout() {
                         <div className="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                             <ul className="navbar-nav flex-grow-1">
                                 <li className="nav-item">
-                                    <a style={{ color: "silver" }} className="nav-link" href="/">Főoldal</a>
+                                    <a className="nav-link" href="/">Főoldal</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a style={{ color: "silver" }} className="nav-link" href="/">Privacy</a>
+                                    <a className="nav-link" href="/">Privacy</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a style={{ color: "silver" }} className="nav-link" href="/musor/">Film</a>
+                                    <a className="nav-link" href="/musor/">Film</a>
                                 </li>
                             </ul>
-                            <div className="text-light my-2 my-lg-0 mr-sm-0 my-sm-0">
-                                <ul className="navbar-nav">
-                                    <UserDropdown />
-                                </ul>
+                            <div className="d-flex align-items-center">
+                                <button
+                                    className="theme-toggle btn btn-link"
+                                    onClick={toggleTheme}
+                                    aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                                >
+                                    {darkMode ? (
+                                        <FaSun className="theme-icon" />
+                                    ) : (
+                                        <FaMoon className="theme-icon" />
+                                    )}
+                                </button>
+                                <UserDropdown />
                             </div>
                         </div>
                     </div>
                 </nav>
             </header>
-            <div style={{ width: "90vw", maxWidth: "1800px", margin: "0 auto" }} className="container bg-dark text-light text-center">
-                <main role="main" className="pb-3">
+
+            <div className="main-content">
+                <main role="main">
                     <Outlet />
                 </main>
             </div>
-            <footer className="border-top footer text-light bg-dark text-center">
+
+            <footer className="site-footer border-top py-3">
                 <div className="container">
                     &copy; 2025 - Premozi - <a href="/">Főoldal</a>
                 </div>
             </footer>
-        </div>
+            </div>
+        </ThemeContext.Provider>
     );
 }

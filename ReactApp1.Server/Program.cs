@@ -15,6 +15,7 @@ using ReactApp1.Server.Services.Vetites;
 using ReactApp1.Server.Services.Foglalas;
 using Microsoft.Extensions.FileProviders;
 using ReactApp1.Server.Services.Email;
+using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
@@ -24,7 +25,8 @@ builder.Services.AddCors(options =>
         builder.WithOrigins("https://localhost:60769") 
                .AllowAnyHeader()
                .AllowAnyMethod()
-               .AllowCredentials();
+               .AllowCredentials()
+               .WithExposedHeaders("set-cookie");
     });
 });
 builder.Services.AddControllers().AddNewtonsoftJson();
@@ -65,6 +67,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }   
         };
     });
+builder.Services.AddAuthorization();
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("InternalOnly", policy =>
@@ -74,12 +77,6 @@ builder.Services.AddAuthorization(options =>
             value == "True"
         ));
 });
-/*builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(20); 
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});*/
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailService, SendGridEmailService>();
 builder.Services.AddHttpClient();
@@ -103,18 +100,27 @@ builder.Services.AddHttpClient("ImageUpload", client =>
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
 });
 var app = builder.Build();
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.None,
+    HttpOnly = HttpOnlyPolicy.Always,
+    Secure = CookieSecurePolicy.Always
+});
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseMiddleware<HttpLoggingMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseRouting();
+
 app.UseCors();
+
 app.UseHttpsRedirection();
-//app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

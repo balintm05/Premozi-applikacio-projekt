@@ -8,7 +8,7 @@ const Register = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const title = "Regisztr·ciÛ";
+    const title = "Regisztr√°ci√≥";
     document.title = title;
 
     useEffect(() => {
@@ -29,12 +29,12 @@ const Register = () => {
         try {
             const result = await register(formData.email, formData.password);
             if (result.success) {
-                navigate('/account/login', { state: { message: "Sikeres regisztr·ciÛ, kÈrj¸k hitelesÌtse az email cÌmÈt" } });
+                navigate('/account/login', { state: { message: "Sikeres regisztr√°ci√≥, k√©rj√ºk hiteles√≠tse az email c√≠m√©t" } });
             } else {
-                setError(result.error || "Hiba tˆrtÈnt a regisztr·ciÛ sor·n");
+                setError(result.error || "Hiba t√∂rt√©nt a regisztr√°ci√≥ sor√°n");
             }
         } catch (err) {
-            setError("V·ratlan hiba tˆrtÈnt");
+            setError("V√°ratlan hiba t√∂rt√©nt");
         } finally {
             setIsLoading(false);
         }
@@ -54,12 +54,12 @@ const Register = () => {
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
                             <div className="mb-3">
-                                <label className="text-dark font-weight-bold fw-bold">Email cÌm</label>
+                                <label className="text-dark font-weight-bold fw-bold">Email c√≠m</label>
                                 <input
                                     type="email"
                                     className="form-control"
                                     name="email"
-                                    placeholder="Email cÌm"
+                                    placeholder="Email c√≠m"
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
@@ -67,12 +67,12 @@ const Register = () => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <label className="text-dark font-weight-bold fw-bold">JelszÛ</label>
+                                <label className="text-dark font-weight-bold fw-bold">Jelsz√≥</label>
                                 <input
                                     type="password"
                                     className="form-control"
                                     name="password"
-                                    placeholder="JelszÛ"
+                                    placeholder="Jelsz√≥"
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
@@ -84,12 +84,12 @@ const Register = () => {
                                     className="btn btn-dark px-5 mb-5 w-100"
                                     disabled={isLoading}
                                 >
-                                    {isLoading ? 'Regisztr·l·s...' : title}
+                                    {isLoading ? 'Regisztr√°l√°s...' : title}
                                 </button>
                             </div>
                             <div className="form-text text-center mb-5 text-dark">
-                                M·r van fiÛkja?
-                                <a href="/account/login" className="text-dark font-weight-bold fw-bold"> BejelentkezÈs</a>
+                                M√°r van fi√≥kja?
+                                <a href="/account/login" className="text-dark font-weight-bold fw-bold"> Bejelentkez√©s</a>
                             </div>
                         </form>
                     </div>

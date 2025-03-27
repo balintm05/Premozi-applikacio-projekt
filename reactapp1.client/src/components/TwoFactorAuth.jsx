@@ -1,8 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../layout/Layout';
+import ThemeWrapper  from '../layout/ThemeWrapper';
 
 const TwoFactorAuth = () => {
+    const { darkMode } = useContext(ThemeContext);
     const [code, setCode] = useState('');
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -14,7 +17,7 @@ const TwoFactorAuth = () => {
     useEffect(() => {
         const userId = sessionStorage.getItem('2fa_userId');
         if (!userId) {
-            setError('Nincs aktív 2FA munkamenet. Kérjük jelentkezzen be újra.');
+            setError('Nincs aktÃ­v 2FA munkamenet. KÃ©rjÃ¼k jelentkezzen be Ãºjra.');
             navigate('/account/login');
         }
     }, [navigate]);
@@ -42,10 +45,10 @@ const TwoFactorAuth = () => {
                 sessionStorage.removeItem('2fa_userId');
                 navigate('/');
             } else {
-                setError(response.error || 'Érvénytelen vagy lejárt kód');
+                setError(response.error || 'Ã‰rvÃ©nytelen vagy lejÃ¡rt kÃ³d');
             }
         } catch (err) {
-            setError(err.message || 'Hitelesítési hiba történt');
+            setError(err.message || 'HitelesÃ­tÃ©si hiba tÃ¶rtÃ©nt');
         } finally {
             setIsLoading(false);
         }
@@ -58,44 +61,47 @@ const TwoFactorAuth = () => {
             await resend2FACode(parseInt(userId));
             setError(null);
         } catch (err) {
-            setError(err.message || 'Nem sikerült új kódot küldeni');
+            setError(err.message || 'Nem sikerÃ¼lt Ãºj kÃ³dot kÃ¼ldeni');
         }
     };
-
+    const themeStyles = darkMode ? {
+        container: { backgroundColor: '#121212' },
+        card: { backgroundColor: '#1e1e1e', borderColor: '#333' },
+        text: { color: '#e0e0e0' },
+        input: { backgroundColor: '#2a2a2a', borderColor: '#3a3a3a', color: '#f0f0f0' },
+        button: { backgroundColor: '#4a6bdf' },
+        error: { backgroundColor: '#2d1a1a', borderColor: '#5c2b2b' }
+    } : {
+        container: { backgroundColor: '#f5f5f5' },
+        card: { backgroundColor: '#fff', borderColor: '#ddd' },
+        text: { color: '#333' },
+        input: { backgroundColor: '#fff', borderColor: '#ddd', color: '#333' },
+        button: { backgroundColor: '#007bff' },
+        error: { backgroundColor: '#fee2e2', borderColor: '#f8d7da' }
+    };
     return (
-        <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '100vh',
-            backgroundColor: '#f5f5f5'
-        }}>
+        <ThemeWrapper style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{
-                backgroundColor: 'white',
+                ...themeStyles.card,
                 padding: '2rem',
-                borderRadius: '8px',
-                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                borderRadius: '12px',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
                 width: '100%',
                 maxWidth: '400px'
             }}>
-                <h1 style={{
-                    fontSize: '1.5rem',
-                    marginBottom: '0.5rem',
-                    textAlign: 'center'
-                }}>Kétlépcsõs azonosítás</h1>
+                <h1 style={{ ...themeStyles.text, textAlign: 'center', marginBottom: '1rem' }}>
+                    KÃ©tlÃ©pcsÅ‘s azonosÃ­tÃ¡s
+                </h1>
 
-                <p style={{
-                    textAlign: 'center',
-                    color: '#666',
-                    marginBottom: '1.5rem'
-                }}>Adja meg az email címére küldött 6 számjegyû kódot</p>
+                <p style={{ ...themeStyles.text, textAlign: 'center', marginBottom: '1.5rem' }}>
+                    Adja meg az email cÃ­mÃ©re kÃ¼ldÃ¶tt 6 szÃ¡mjegyÅ± kÃ³dot
+                </p>
 
                 {error && (
                     <div style={{
-                        backgroundColor: '#fee2e2',
-                        color: '#b91c1c',
+                        ...themeStyles.error,
                         padding: '0.75rem',
-                        borderRadius: '4px',
+                        borderRadius: '6px',
                         marginBottom: '1rem'
                     }}>
                         {error}
@@ -104,11 +110,9 @@ const TwoFactorAuth = () => {
 
                 <form onSubmit={handleSubmit}>
                     <div style={{ marginBottom: '1.5rem' }}>
-                        <label htmlFor="code" style={{
-                            display: 'block',
-                            marginBottom: '0.5rem',
-                            fontWeight: '500'
-                        }}>Hitelesítõ kód</label>
+                        <label htmlFor="code" style={{ ...themeStyles.text, display: 'block', marginBottom: '0.5rem' }}>
+                            HitelesÃ­tÅ‘ kÃ³d
+                        </label>
                         <input
                             id="code"
                             type="text"
@@ -121,11 +125,11 @@ const TwoFactorAuth = () => {
                             required
                             autoFocus
                             style={{
+                                ...themeStyles.input,
                                 width: '100%',
                                 padding: '0.75rem',
-                                border: '1px solid #e2e8f0',
-                                borderRadius: '4px',
-                                fontSize: '1rem'
+                                borderRadius: '6px',
+                                outline: 'none'
                             }}
                         />
                     </div>
@@ -133,19 +137,17 @@ const TwoFactorAuth = () => {
                     <button
                         type="submit"
                         style={{
+                            ...themeStyles.button,
                             width: '100%',
                             padding: '0.75rem',
-                            backgroundColor: isLoading ? '#a0aec0' : '#3182ce',
-                            color: 'white',
                             border: 'none',
-                            borderRadius: '4px',
+                            borderRadius: '6px',
                             cursor: 'pointer',
-                            fontSize: '1rem',
-                            fontWeight: '500'
+                            opacity: isLoading ? 0.7 : 1
                         }}
                         disabled={isLoading || code.length !== 6}
                     >
-                        {isLoading ? 'Ellenõrzés...' : 'Hitelesítés'}
+                        {isLoading ? 'EllenÅ‘rzÃ©s...' : 'HitelesÃ­tÃ©s'}
                     </button>
                 </form>
 
@@ -156,17 +158,16 @@ const TwoFactorAuth = () => {
                         style={{
                             background: 'none',
                             border: 'none',
-                            color: resendDisabled ? '#a0aec0' : '#3182ce',
+                            color: resendDisabled ? '#aaa' : (darkMode ? '#6d8eff' : '#007bff'),
                             cursor: resendDisabled ? 'not-allowed' : 'pointer',
-                            textDecoration: 'underline',
-                            fontSize: '0.875rem'
+                            textDecoration: 'underline'
                         }}
                     >
-                        {resendDisabled ? `Újraküldés ${countdown} másodperc múlva` : 'Kód újraküldése'}
+                        {resendDisabled ? `ÃšjrakÃ¼ldÃ©s ${countdown} mÃ¡sodperc mÃºlva` : 'KÃ³d ÃºjrakÃ¼ldÃ©se'}
                     </button>
                 </div>
             </div>
-        </div>
+        </ThemeWrapper>
     );
 };
 

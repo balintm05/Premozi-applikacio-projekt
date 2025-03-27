@@ -8,7 +8,7 @@ const Login = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const title = "Bejelentkezés";
+    const title = "BejelentkezÃ©s";
     document.title = title;
 
     useEffect(() => {
@@ -37,10 +37,10 @@ const Login = () => {
                     navigate('/');
                 }
             } else {
-                setError(result.error || "Bejelentkezési hiba");
+                setError(result.error || "BejelentkezÃ©si hiba");
             }
         } catch (err) {
-            setError("Váratlan hiba történt");
+            setError("VÃ¡ratlan hiba tÃ¶rtÃ©nt");
         } finally {
             setIsLoading(false);
         }
@@ -59,12 +59,12 @@ const Login = () => {
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
                             <div className="mb-3">
-                                <label className="text-dark font-weight-bold fw-bold">Email cím</label>
+                                <label className="text-dark font-weight-bold fw-bold">Email cÃ­m</label>
                                 <input
                                     type="email"
                                     className="form-control"
                                     name="email"
-                                    placeholder="Email cím"
+                                    placeholder="Email cÃ­m"
                                     value={formData.email}
                                     onChange={handleChange}
                                     required
@@ -72,12 +72,12 @@ const Login = () => {
                                 />
                             </div>
                             <div className="mb-3">
-                                <label className="text-dark font-weight-bold fw-bold">Jelszó</label>
+                                <label className="text-dark font-weight-bold fw-bold">JelszÃ³</label>
                                 <input
                                     type="password"
                                     className="form-control"
                                     name="password"
-                                    placeholder="Jelszó"
+                                    placeholder="JelszÃ³"
                                     value={formData.password}
                                     onChange={handleChange}
                                     required
@@ -89,12 +89,12 @@ const Login = () => {
                                     className="btn btn-dark px-5 mb-5 w-100"
                                     disabled={isLoading}
                                 >
-                                    {isLoading ? 'Betöltés...' : title}
+                                    {isLoading ? 'BetÃ¶ltÃ©s...' : title}
                                 </button>
                             </div>
                             <div className="form-text text-center mb-5 text-dark">
-                                Még nincs fiókja?
-                                <a href="/account/register" className="text-dark font-weight-bold fw-bold"> Regisztráció</a>
+                                MÃ©g nincs fiÃ³kja?
+                                <a href="/account/register" className="text-dark font-weight-bold fw-bold"> RegisztrÃ¡ciÃ³</a>
                             </div>
                         </form>
                     </div>

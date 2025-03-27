@@ -15,13 +15,13 @@ const EmailConfirmation = () => {
             try {
                 const result = await api.get(`/auth/confirm-email?userId=${userId}&token=${token}`);
                 if (result.success) {
-                    setMessage('Email cím sikeresen megerõsítve!');
+                    setMessage('Email cÃ­m sikeresen megerÅ‘sÃ­tve!');
                     window.open("/", "_self");
                 } else {
-                    setMessage(result.error || 'Hiba történt az email megerõsítés során.');
+                    setMessage(result.error || 'Hiba tÃ¶rtÃ©nt az email megerÅ‘sÃ­tÃ©s sorÃ¡n.');
                 }
             } catch (error) {
-                setMessage(error.response?.data?.errorMessage || 'Hiba történt az email megerõsítés során.');
+                setMessage(error.response?.data?.errorMessage || 'Hiba tÃ¶rtÃ©nt az email megerÅ‘sÃ­tÃ©s sorÃ¡n.');
             }
         };
         confirmEmail();

@@ -4,48 +4,41 @@ import { api } from '../api/axiosConfig.js';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+    // State and refs
     const [user, setUser] = useState(null);
-    const [isRefreshing, setIsRefreshing] = useState(false);
-    const refreshIntervalRef = useRef(null);
-    const statusCheckIntervalRef = useRef(null);
-    const isInitialized = useRef(false);
-    const visibilityTimeoutRef = useRef(null);
     const activeRequests = useRef(new Set());
     const userRef = useRef(user);
+    const isInitialized = useRef(false);
     userRef.current = user;
 
-    // Debug logging
+    // Debug utilities
     const debugLog = (message) => {
         console.debug(`[AuthContext] ${message} at:`, new Date().toISOString());
     };
 
-    // Enhanced user state management with role tracking
+    // Core authentication functions
     const updateUserState = useCallback((newUserData) => {
-        const currentUser = userRef.current;
-
-        // Check if role changed
-        const roleChanged = currentUser?.role !== newUserData?.role;
-
-        // Check if any user data actually changed
-        const currentUserJson = JSON.stringify(currentUser);
+        const currentUserJson = JSON.stringify(userRef.current);
         const newUserJson = JSON.stringify(newUserData);
-        const userChanged = currentUserJson !== newUserJson;
 
-        if (userChanged) {
-            debugLog(`Updating user state ${roleChanged ? '(role changed)' : ''}`);
+        if (currentUserJson !== newUserJson) {
+            debugLog('Updating user state');
             setUser(newUserData);
-
-            if (roleChanged) {
-                debugLog(`User role changed from ${currentUser?.role} to ${newUserData?.role}`);
-                // Here you could add any role-specific logic or event emitters
-            }
-        } else {
-            debugLog('User state unchanged - skipping update');
         }
     }, []);
 
-    const checkIfLoggedIn = useCallback(async () => {
-        debugLog('checkIfLoggedIn initiated');
+    const cancelAllRequests = useCallback(() => {
+        debugLog('Cancelling all pending requests');
+        activeRequests.current.forEach(controller => {
+            if (!controller.signal.aborted) {
+                controller.abort();
+            }
+        });
+        activeRequests.current.clear();
+    }, []);
+
+    const checkAuthStatus = useCallback(async () => {
+        debugLog('Checking authentication status');
         const controller = new AbortController();
         activeRequests.current.add(controller);
 
@@ -56,17 +49,17 @@ export const AuthProvider = ({ children }) => {
             });
 
             if (response.data.isLoggedIn) {
-                debugLog('User logged in');
+                debugLog('User authenticated');
                 updateUserState(response.data.user);
                 return true;
             }
-            debugLog('User not logged in');
+
+            debugLog('User not authenticated');
             updateUserState(null);
             return false;
         } catch (error) {
             if (error.name !== 'CanceledError') {
-                debugLog('Session check failed');
-                console.error('Session check failed:', error.response?.data?.message || error.message);
+                debugLog('Authentication check failed');
                 updateUserState(null);
             }
             return false;
@@ -75,139 +68,21 @@ export const AuthProvider = ({ children }) => {
         }
     }, [updateUserState]);
 
-    const refreshToken = useCallback(async () => {
-        if (isRefreshing) {
-            debugLog('Refresh already in progress - skipping');
-            return;
-        }
-
-        debugLog('Starting token refresh');
-        setIsRefreshing(true);
-        const controller = new AbortController();
-        activeRequests.current.add(controller);
-
+    // Session management
+    const logout = useCallback(async () => {
         try {
-            await api.post('/auth/refresh-token', {}, {
-                withCredentials: true,
-                signal: controller.signal
+            await api.delete('/auth/logout', {}, {
+                withCredentials: true
             });
-
-            if (!userRef.current) {
-                debugLog('No user found - checking login status');
-                await checkIfLoggedIn();
-            }
         } catch (error) {
-            if (error.name !== 'CanceledError') {
-                debugLog('Token refresh failed');
-                console.error('Token refresh failed:', error.response?.data?.errorMessage || error.message);
-                stopAllIntervals();
-                updateUserState(null);
-            }
+            console.error('Logout error:', error);
         } finally {
-            activeRequests.current.delete(controller);
-            setIsRefreshing(false);
-        }
-    }, [isRefreshing, checkIfLoggedIn]);
-
-
-    const startTokenRefresh = useCallback(() => {
-        if (!refreshIntervalRef.current) {
-            debugLog('Starting token refresh interval');
-            refreshToken();
-            refreshIntervalRef.current = setInterval(refreshToken, 300 * 1000); // 5 minutes
-        }
-    }, [refreshToken]);
-
-    const startStatusCheck = useCallback(() => {
-        if (!statusCheckIntervalRef.current) {
-            debugLog('Starting status check interval');
-            checkIfLoggedIn();
-            statusCheckIntervalRef.current = setInterval(checkIfLoggedIn, 300 * 1000); // 5 minutes
-        }
-    }, [checkIfLoggedIn]);
-
-    const stopAllIntervals = useCallback(() => {
-        debugLog('Stopping all intervals');
-        if (refreshIntervalRef.current) {
-            clearInterval(refreshIntervalRef.current);
-            refreshIntervalRef.current = null;
-        }
-        if (statusCheckIntervalRef.current) {
-            clearInterval(statusCheckIntervalRef.current);
-            statusCheckIntervalRef.current = null;
-        }
-    }, []);
-
-    const cancelAllRequests = useCallback(() => {
-        debugLog('Canceling all pending requests');
-        activeRequests.current.forEach(controller => controller.abort());
-        activeRequests.current.clear();
-    }, []);
-
-    // Single initialization effect
-    useEffect(() => {
-        if (isInitialized.current) return;
-        isInitialized.current = true;
-        debugLog('Initializing auth');
-
-        const initializeAuth = async () => {
-            const isLoggedIn = await checkIfLoggedIn();
-            if (isLoggedIn) {
-                startTokenRefresh();
-                startStatusCheck();
-            }
-        };
-
-        initializeAuth();
-
-        return () => {
-            debugLog('Cleaning up auth initialization');
-            stopAllIntervals();
+            updateUserState(null);
             cancelAllRequests();
-            clearTimeout(visibilityTimeoutRef.current);
-        };
-    }, [checkIfLoggedIn, startTokenRefresh, startStatusCheck, stopAllIntervals, cancelAllRequests]);
-
-    // Visibility change effect - throttled
-    useEffect(() => {
-        if (!user) return;
-
-        const handleVisibilityChange = () => {
-            if (document.visibilityState === 'visible') {
-                debugLog('Tab became visible - scheduling refresh');
-                clearTimeout(visibilityTimeoutRef.current);
-                visibilityTimeoutRef.current = setTimeout(() => {
-                    refreshToken();
-                }, 5000); // 5 second delay
-            } else {
-                debugLog('Tab hidden - clearing pending refresh');
-                clearTimeout(visibilityTimeoutRef.current);
-            }
-        };
-
-        window.addEventListener('visibilitychange', handleVisibilityChange);
-        return () => {
-            window.removeEventListener('visibilitychange', handleVisibilityChange);
-            clearTimeout(visibilityTimeoutRef.current);
-        };
-    }, [user, refreshToken]);
-
-    // Stable user state updates
-    const stableSetUser = useCallback((newUser) => {
-        const currentUser = userRef.current;
-        const currentUserJson = JSON.stringify(currentUser);
-        const newUserJson = JSON.stringify(newUser);
-
-        if (currentUserJson !== newUserJson) {
-            debugLog('Updating user state');
-            setUser(newUser);
-        } else {
-            debugLog('User state unchanged - skipping update');
         }
-    }, []);
+    }, [updateUserState, cancelAllRequests]);
 
-
-
+    // Authentication methods
     const login = async (email, password) => {
         try {
             const response = await api.post('/auth/login', { email, password }, {
@@ -222,7 +97,7 @@ export const AuthProvider = ({ children }) => {
                 };
             }
 
-            await checkIfLoggedIn();
+            await checkAuthStatus();
             return { success: true, data: response.data };
         } catch (error) {
             const errorMessage = error.response?.data?.errorMessage || 'Login failed';
@@ -236,7 +111,7 @@ export const AuthProvider = ({ children }) => {
             const response = await api.post('/auth/verify-email-2fa', { code, userId }, {
                 withCredentials: true
             });
-            await checkIfLoggedIn(true);
+            await checkAuthStatus();
             return { success: true, data: response.data };
         } catch (error) {
             const errorMessage = error.response?.data?.errorMessage || '2FA verification failed';
@@ -245,7 +120,20 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const register = async (email, password) => {
+        try {
+            const response = await api.post('/auth/register', { email, password }, {
+                withCredentials: true
+            });
+            return { success: true, data: response.data };
+        } catch (error) {
+            const errorMessage = error.response?.data?.errorMessage || 'Registration failed';
+            console.error('Registration error:', errorMessage);
+            return { success: false, error: errorMessage };
+        }
+    };
 
+    // 2FA management
     const resend2FACode = async (userId) => {
         try {
             const response = await api.post('/auth/resend-2fa-code', { userId }, {
@@ -274,9 +162,8 @@ export const AuthProvider = ({ children }) => {
 
     const disableEmail2FA = async (password) => {
         try {
-            const userId = user?.userId;
             const response = await api.post('/auth/disable-email-2fa', {
-                userId,
+                userId: user?.userId,
                 password
             }, {
                 withCredentials: true
@@ -289,50 +176,40 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (email, password) => {
-        try {
-            const response = await api.post('/auth/register', { email, password }, {
-                withCredentials: true
-            });
-            return { success: true, data: response.data };
-        } catch (error) {
-            const errorMessage = error.response?.data?.errorMessage || 'Registration failed';
-            console.error('Registration error:', errorMessage);
-            return { success: false, error: errorMessage };
-        }
-    };
+    // Role utilities
+    const hasRole = useCallback((role) => user?.role === role, [user]);
+    const hasAnyRole = useCallback((roles) => roles.includes(user?.role), [user]);
 
-    const logout = async () => {
-        try {
-            await api.delete('/auth/logout', {}, {
-                withCredentials: true
-            });
-            await checkIfLoggedIn(true);
-            return { success: true };
-        } catch (error) {
-            const errorMessage = error.response?.data?.errorMessage || 'Logout failed';
-            console.error('Logout error:', errorMessage);
-            return { success: false, error: errorMessage };
-        }
-    };
-    const hasRole = useCallback((role) => {
-        return user?.role === role;
-    }, [user]);
+    // Initialization
+    useEffect(() => {
+        if (isInitialized.current) return;
+        isInitialized.current = true;
 
-    const hasAnyRole = useCallback((roles) => {
-        return roles.includes(user?.role);
-    }, [user]);
+        const initializeAuth = async () => {
+            debugLog('Initializing authentication');
+            await checkAuthStatus();
+        };
+
+        initializeAuth();
+
+        return () => {
+            cancelAllRequests();
+        };
+    }, [checkAuthStatus, cancelAllRequests]);
 
     return (
         <AuthContext.Provider value={{
+            api,
             user,
             login,
-            register,
             logout,
+            register,
             verify2FA,
             resend2FACode,
             enableEmail2FA,
-            disableEmail2FA
+            disableEmail2FA,
+            hasRole,
+            hasAnyRole
         }}>
             {children}
         </AuthContext.Provider>

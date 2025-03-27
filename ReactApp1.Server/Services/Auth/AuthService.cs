@@ -188,8 +188,8 @@ namespace ReactApp1.Server.Services.Auth
         }
         public async Task logout(HttpContext httpContext)
         {
-            httpContext.Response.Cookies.Delete("refreshToken", new CookieOptions { Path = "", Domain = "localhost" });
-            httpContext.Response.Cookies.Delete("accessToken", new CookieOptions { Path = "", Domain = "localhost" });
+            httpContext.Response.Cookies.Delete("refreshToken", new CookieOptions { Path = "/" });
+            httpContext.Response.Cookies.Delete("accessToken", new CookieOptions { Path = "/"});
         }
 
 
@@ -277,8 +277,7 @@ namespace ReactApp1.Server.Services.Auth
                 IsEssential = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Path = "",
-                Domain = "localhost",
+                Path = "/"
             });
             httpcontext.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
             {
@@ -287,8 +286,7 @@ namespace ReactApp1.Server.Services.Auth
                 IsEssential = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Path = "",
-                Domain = "localhost"
+                Path = "/"
             });
         }
 

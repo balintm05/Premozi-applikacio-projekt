@@ -1,78 +1,137 @@
-﻿
-a.navbar-brand {
-    white-space: normal;
-    text-align: center;
-    word-break: break-all;
+﻿[data-theme="light"] {
+    --bg-color: #f8f9fa;
+    --text-color: #212529;
+    --nav-bg: #f8f9fa;
+    --nav-text: #212529;
+    --content-bg: #ffffff;
+    --footer-bg: #f8f9fa;
+    --footer-text: #212529;
+    --link-color: #0d6efd;
+    --border-color: #dee2e6;
+    --dropdown-bg: #ffffff;
+    --dropdown-text: #212529;
+    --dropdown-hover: #f8f9fa;
+    --btn-bg: #6c757d;
+    --btn-text: #ffffff;
+    --theme-icon-color: #ffc107;
 }
 
-a {
-    color: #0077cc;
+[data-theme="dark"] {
+    --bg-color: #212529;
+    --text-color: #f8f9fa;
+    --nav-bg: #212529;
+    --nav-text: #f8f9fa;
+    --content-bg: #2c3034;
+    --footer-bg: #212529;
+    --footer-text: #f8f9fa;
+    --link-color: #6ea8fe;
+    --border-color: #495057;
+    --dropdown-bg: #343a40;
+    --dropdown-text: #f8f9fa;
+    --dropdown-hover: rgba(255, 255, 255, 0.1);
+    --btn-bg: #5c636a;
+    --btn-text: #ffffff;
+    --theme-icon-color: #ffc107;
 }
 
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.border-top {
-    border-top: 1px solid #e5e5e5;
-}
-
-.border-bottom {
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-    font-size: 1rem;
-    line-height: inherit;
-}
-
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px;
-    text-align:center;
-}
-.dropdown-menu {
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     transition: all 0.3s ease;
 }
 
-.nav-link.dropdown-toggle {
-    cursor: pointer;
-    background: none !important;
+.main-content {
+    flex: 1;
+    padding-bottom: 60px;
+    width: 90vw;
+    max-width: 1800px;
+    margin: 0 auto;
+    padding-top: 20px;
+    background-color: var(--content-bg);
+    transition: all 0.3s ease;
 }
 
-    .nav-link.dropdown-toggle:focus {
-        outline: none;
-        box-shadow: none;
+.main-nav {
+    background-color: var(--nav-bg) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand {
+    color: var(--nav-text) !important;
+    font-weight: 500;
+}
+
+.nav-link {
+    color: var(--nav-text) !important;
+    transition: color 0.2s;
+}
+
+    .nav-link:hover {
+        opacity: 0.8;
     }
 
+.theme-toggle {
+    background: transparent !important;
+    border: none !important;
+    padding: 0.5rem !important;
+    margin-right: 1rem !important;
+    color: var(--nav-text) !important;
+    cursor: pointer;
+}
+
+.theme-icon {
+    font-size: 1.25rem;
+    color: var(--theme-icon-color);
+    transition: all 0.3s ease;
+}
+
+.site-footer {
+    background-color: var(--footer-bg) !important;
+    color: var(--footer-text) !important;
+    border-top: 1px solid var(--border-color) !important;
+    transition: all 0.3s ease;
+}
+
+    .site-footer a {
+        color: var(--link-color);
+        text-decoration: none;
+    }
+
+        .site-footer a:hover {
+            text-decoration: underline;
+        }
+
+.dropdown-menu {
+    background-color: var(--dropdown-bg);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
 .dropdown-item {
-    transition: background-color 0.2s;
+    color: var(--dropdown-text);
 }
 
     .dropdown-item:hover {
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: var(--dropdown-hover);
     }
 
-html, body {
-    height: 100%;
+.login-btn {
+    background-color: var(--btn-bg) !important;
+    color: var(--btn-text) !important;
+    border: 1px solid var(--border-color) !important;
 }
 
-body {
-    display: flex;
-    flex-direction: column;
+@media (max-width: 768px) {
+    .main-content {
+        width: 95vw;
+        padding-bottom: 80px;
+    }
+
+    .theme-toggle {
+        margin-right: 0.5rem;
+    }
 }

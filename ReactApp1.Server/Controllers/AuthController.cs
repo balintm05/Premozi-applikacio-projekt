@@ -206,6 +206,7 @@ namespace ReactApp1.Server.Controllers
         [HttpPost("refresh-token")]
         public async Task RefreshToken()
         {
+            Console.WriteLine("refresh-token");
             try
             {
                 if (User.Identity.IsAuthenticated)
@@ -247,14 +248,11 @@ namespace ReactApp1.Server.Controllers
         [HttpPost("queryUsers")]
         public async Task<ActionResult<List<GetUserResponseObject?>>> QueryUsers(GetUserQueryFilter request)
         {
+            Console.WriteLine("queryUsers");
             List<User> users = await authService.GetQueryUsersAsync(request);
             var userResponses = new List<GetUserResponseObject>();
             foreach(User user in users)
             {
-                if(user.accountStatus == 3)
-                {
-                    userResponses.Add(new GetUserResponseObject(user) { accountStatus = "Törölt" });
-                }
                 if (user.accountStatus == 2)
                 {
                     userResponses.Add(new GetUserResponseObject(user) { accountStatus = "Felfüggesztett" });
@@ -312,7 +310,8 @@ namespace ReactApp1.Server.Controllers
         [AllowAnonymous]
         [HttpPost("checkIfLoggedIn")]
         public async Task<ActionResult<LoginState>> CheckIfLoggedIn()
-        {            
+        {
+            await RefreshToken();
             if (User.Identity.IsAuthenticated)
             {
                 var user = await authService.GetUserAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
@@ -341,8 +340,8 @@ namespace ReactApp1.Server.Controllers
         [HttpPost("checkIfAdmin")]
         public async Task<ActionResult<LoginState>> CheckIfAdmin()
         {
-            var id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            if (id == null)
+            var huh = int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out int id);
+            if (huh||id==null)
             {
                 return Ok(new LoginState(false, null));
             }

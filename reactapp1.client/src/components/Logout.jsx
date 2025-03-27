@@ -14,7 +14,7 @@ function Logout() {
 
     return (
         <div>
-            <p>Kijelentkezés folyamatban...</p>
+            <p>KijelentkezÃ©s folyamatban...</p>
         </div>
     );
 }
