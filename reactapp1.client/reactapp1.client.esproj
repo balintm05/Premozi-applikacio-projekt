@@ -9,6 +9,7 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="src\pages\account\profilePage\" />
     <Folder Include="src\pages\movies\" />
   </ItemGroup>
 </Project>

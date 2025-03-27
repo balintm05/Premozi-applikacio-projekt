@@ -11,7 +11,7 @@ import PageNotFound from "./errors/PageNotFound.jsx";
 import UserListAdmin from "./admin/UserListAdmin.jsx";
 import AdminCheck from "./admin/AdminCheck.jsx";
 import AdminIndex from "./admin/AdminIndex.jsx";
-import ProfilePage from "./pages/account/profilePage/ProfilePage.jsx";
+import ProfilePage from "./components/profile/ProfilePage";
 import UserEditor from "./pages/account/accountManager/UserEditor.jsx";
 import FilmListAdmin from "./admin/FilmListAdmin.jsx";
 import EmailConfirmation from "./components/EmailConfirmation.jsx";

@@ -1,6 +1,8 @@
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../layout/Layout';
+import ThemeWrapper from '../layout/ThemeWrapper';
 
 const Register = () => {
     const { user, register } = useContext(AuthContext);
@@ -33,69 +35,71 @@ const Register = () => {
             } else {
                 setError(result.error || "Hiba történt a regisztráció során");
             }
-        } catch (err) {
+        } catch {
             setError("Váratlan hiba történt");
         } finally {
             setIsLoading(false);
         }
     };
 
-    if (user) return null; 
-
+    if (user) return null;
 
     return (
-        <div className="container">
-            <div className="row">
-                <div className="col-md-6 offset-md-3">
-                    <div style={{ backgroundColor: "rgb(207,207,207)" }} className="card my-5">
-                        <form className="card-body p-lg-5" onSubmit={handleSubmit}>
-                            <div className="text-center mb-5">
-                                <h1 className="text-dark font-weight-bold fw-bold">{title}</h1>
-                            </div>
-                            {error && <div className="alert alert-danger">{error}</div>}
-                            <div className="mb-3">
-                                <label className="text-dark font-weight-bold fw-bold">Email cím</label>
-                                <input
-                                    type="email"
-                                    className="form-control"
-                                    name="email"
-                                    placeholder="Email cím"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                    autoFocus
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <label className="text-dark font-weight-bold fw-bold">Jelszó</label>
-                                <input
-                                    type="password"
-                                    className="form-control"
-                                    name="password"
-                                    placeholder="Jelszó"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className="text-center">
-                                <button
-                                    type="submit"
-                                    className="btn btn-dark px-5 mb-5 w-100"
-                                    disabled={isLoading}
-                                >
-                                    {isLoading ? 'Regisztrálás...' : title}
-                                </button>
-                            </div>
-                            <div className="form-text text-center mb-5 text-dark">
-                                Már van fiókja?
-                                <a href="/account/login" className="text-dark font-weight-bold fw-bold"> Bejelentkezés</a>
-                            </div>
-                        </form>
+        <ThemeWrapper noBg>
+            <div className="auth-container">
+                <div className="auth-card">
+                    <div className="auth-card-header">
+                        <h1>{title}</h1>
+                    </div>
+
+                    {error && (
+                        <div className="auth-error">
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit}>
+                        <div className="auth-form-group">
+                            <label>Email cím</label>
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="pelda@email.com"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                                autoFocus
+                            />
+                        </div>
+
+                        <div className="auth-form-group">
+                            <label>Jelszó</label>
+                            <input
+                                type="password"
+                                name="password"
+                                placeholder="••••••••"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="auth-submit-btn"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? 'Regisztrálás...' : title}
+                        </button>
+                    </form>
+
+                    <div className="auth-footer">
+                        <p>Már van fiókja?</p>
+                        <a href="/account/login">Jelentkezzen be</a>
                     </div>
                 </div>
             </div>
-        </div>
+        </ThemeWrapper>
     );
 };
 

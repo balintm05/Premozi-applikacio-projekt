@@ -13,33 +13,57 @@ function UserDropdown() {
 
     if (!user) {
         return (
-            <a href="/account/login">
-                <button className="btn login-btn">
-                    Bejelentkezés
-                </button>
-            </a>
+            <div className="ms-auto">
+                <a href="/account/login">
+                    <button className="auth-nav-btn">
+                        <span className="auth-nav-btn-icon">
+                            <svg viewBox="0 0 24 24" width="18" height="18">
+                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                            </svg>
+                        </span>
+                        Bejelentkezés
+                    </button>
+                </a>
+            </div>
         );
     }
 
     return (
-        <div className="nav-item dropdown">
+        <div className="nav-item dropdown ms-auto">
             <button
-                className="nav-link dropdown-toggle user-dropdown"
+                className={`user-dropdown-btn ${isOpen ? 'active' : ''}`}
                 id="navbarScrollingDropdown"
                 onClick={toggleDropdown}
                 aria-expanded={isOpen}
             >
-                Felhasználó
+                <span className="user-avatar">
+                    <svg viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                    </svg>
+                </span>
+                <span className="user-name">Felhasználó</span>
+                <span className={`dropdown-arrow ${isOpen ? 'open' : ''}`}>
+                    <svg viewBox="0 0 24 24" width="14" height="14">
+                        <path fill="currentColor" d="M7 10l5 5 5-5z" />
+                    </svg>
+                </span>
             </button>
             <ul
-                className={`dropdown-menu dropdown-menu-end ${isOpen ? 'show' : ''}`}
+                className={`dropdown-menu dropdown-menu-start ${isOpen ? 'show' : ''}`}
                 aria-labelledby="navbarScrollingDropdown"
+                style={{
+                    left: 'auto',
+                    right: 0,
+                    backgroundColor: 'var(--dropdown-bg)',
+                    borderColor: 'var(--border-color)'
+                }}
             >
                 <li>
                     <a
                         className="dropdown-item"
                         href="/account/profile/details"
                         onClick={closeDropdown}
+                        style={{ color: 'var(--dropdown-text)' }}
                     >
                         Profil
                     </a>
@@ -50,18 +74,23 @@ function UserDropdown() {
                             className="dropdown-item"
                             href="/admin/"
                             onClick={closeDropdown}
+                            style={{ color: 'var(--dropdown-text)' }}
                         >
                             Adminisztrátori funkciók
                         </a>
                     </li>
                 )}
                 <li>
-                    <hr className="dropdown-divider" />
+                    <hr className="dropdown-divider" style={{ borderColor: 'var(--border-color)' }} />
                 </li>
                 <li>
                     <a
                         className="dropdown-item"
                         onClick={() => { closeDropdown(); logout(); }}
+                        style={{
+                            color: 'var(--dropdown-text)',
+                            cursor: 'pointer'
+                        }}
                     >
                         Kijelentkezés
                     </a>
@@ -81,6 +110,11 @@ export default function Layout() {
         return false;
     });
 
+    const [navbarCollapsed, setNavbarCollapsed] = useState(true);
+
+    const toggleNavbar = () => {
+        setNavbarCollapsed(!navbarCollapsed);
+    };
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
@@ -93,64 +127,62 @@ export default function Layout() {
 
     return (
         <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
-            <div className={`app-container ${darkMode ? 'dark-mode' : 'light-mode'}`}>
-            <header>
-                <nav className="navbar navbar-expand-sm navbar-toggleable-sm main-nav">
-                    <div className="container-fluid">
-                        <a className="navbar-brand" href="/">Premozi hivatalos weboldala</a>
-                        <button
-                            className="navbar-toggler"
-                            type="button"
-                            data-bs-toggle="collapse"
-                            data-bs-target=".navbar-collapse"
-                            aria-controls="navbarSupportedContent"
-                            aria-expanded="false"
-                            aria-label="Toggle navigation"
-                        >
-                            <span className="navbar-toggler-icon"></span>
-                        </button>
-                        <div className="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                            <ul className="navbar-nav flex-grow-1">
-                                <li className="nav-item">
-                                    <a className="nav-link" href="/">Főoldal</a>
-                                </li>
-                                <li className="nav-item">
-                                    <a className="nav-link" href="/">Privacy</a>
-                                </li>
-                                <li className="nav-item">
-                                    <a className="nav-link" href="/musor/">Film</a>
-                                </li>
-                            </ul>
-                            <div className="d-flex align-items-center">
-                                <button
-                                    className="theme-toggle btn btn-link"
-                                    onClick={toggleTheme}
-                                    aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
-                                >
-                                    {darkMode ? (
-                                        <FaSun className="theme-icon" />
-                                    ) : (
-                                        <FaMoon className="theme-icon" />
-                                    )}
-                                </button>
-                                <UserDropdown />
+            <div className="app-container">
+                <header>
+                    <nav className="navbar navbar-expand-sm navbar-toggleable-sm main-nav">
+                        <div className="container-fluid">
+                            <a className="navbar-brand" href="/">Premozi hivatalos weboldala</a>
+                            <button
+                                className="navbar-toggler"
+                                type="button"
+                                onClick={toggleNavbar}
+                                aria-expanded={!navbarCollapsed}
+                                aria-label="Toggle navigation"
+                            >
+                                <span className="navbar-toggler-icon"></span>
+                            </button>
+                            <div className={`navbar-collapse ${navbarCollapsed ? 'collapse' : ''} d-sm-inline-flex justify-content-between`}>
+                                <ul className="navbar-nav flex-grow-1">
+                                    <li className="nav-item">
+                                        <a className="nav-link" href="/">Főoldal</a>
+                                    </li>
+                                    <li className="nav-item">
+                                        <a className="nav-link" href="/">Privacy</a>
+                                    </li>
+                                    <li className="nav-item">
+                                        <a className="nav-link" href="/musor/">Film</a>
+                                    </li>
+                                </ul>
+                                <div className="d-flex align-items-center">
+                                    <button
+                                        className="theme-toggle btn btn-link"
+                                        onClick={toggleTheme}
+                                        aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                                    >
+                                        {darkMode ? (
+                                            <FaSun className="theme-icon" />
+                                        ) : (
+                                            <FaMoon className="theme-icon" />
+                                        )}
+                                    </button>
+                                    <UserDropdown />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </nav>
-            </header>
+                    </nav>
+                </header>
 
-            <div className="main-content">
-                <main role="main">
-                    <Outlet />
-                </main>
-            </div>
-
-            <footer className="site-footer border-top py-3">
-                <div className="container">
-                    &copy; 2025 - Premozi - <a href="/">Főoldal</a>
+                <div className="main-content">
+                    <main role="main">
+                        <Outlet />
+                    </main>
                 </div>
-            </footer>
+
+                <footer className="site-footer border-top py-3">
+                    <div className="container">
+                        &copy; 2025 - Premozi - <a href="/">Főoldal</a>
+                    </div>
+                </footer>
             </div>
         </ThemeContext.Provider>
     );
