@@ -4,6 +4,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { FaSun, FaMoon } from "react-icons/fa";
 
+
 function UserDropdown() {
     const { user, logout } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
@@ -115,7 +116,6 @@ export default function Layout() {
     const toggleNavbar = () => {
         setNavbarCollapsed(!navbarCollapsed);
     };
-
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
         localStorage.setItem('darkMode', JSON.stringify(darkMode));

@@ -58,27 +58,65 @@
     --auth-input-focus: rgba(99, 179, 237, 0.2);
 }
 
-
+:root {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
 html, body {
     height: 100%;
     margin: 0;
 }
-
 .app-container {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: var(--bg-color); 
+    background-color: var(--bg-color);
     color: var(--text-color);
+    position: relative;
 }
-
+html {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+html::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle at 10% 20%, var(--auth-input-focus) 0%, transparent 20%), 
+                      radial-gradient(circle at 90% 80%, var(--auth-input-focus) 0%, transparent 20%);
+    background-size: 200% 200%;
+    animation: gradientBG 15s ease infinite;
+    z-index: -1; 
+    pointer-events: none;
+}
+body {
+    position: relative;
+}
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 10% 20%, var(--auth-input-focus) 0%, transparent 20%), 
+        radial-gradient(circle at 90% 80%, var(--auth-input-focus) 0%, transparent 20%);
+    background-size: 200% 200%;
+    animation: gradientBG 15s ease infinite;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.5; 
+}
 .main-content {
-    flex: 1;
+    flex: 1 0 auto;
     width: 90vw;
     max-width: 1800px;
     margin: 0 auto;
     padding: 20px 0;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .main-nav {
@@ -114,10 +152,12 @@ html, body {
 }
 
 .site-footer {
-    background-color: var(--bg-color) !important;
-    color: var(--footer-text) !important;
-    border-top: 1px solid var(--border-color) !important;
-    margin-top: auto;
+    background-color: var(--bg-color);
+    color: var(--footer-text);
+    border-top: 1px solid var(--border-color);
+    padding: 1.5rem 0;
+    flex-shrink: 0;
+    margin-top: auto; 
 }
 
     .site-footer a {
@@ -194,28 +234,29 @@ html, body {
      color: var(--btn-text) !important;
 }
 [data-theme="light"], [data-theme="dark"] {
-    transition: background-color 0.8s ease, color 0.8s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.main-nav, .site-footer {
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .nav-link, .user-dropdown, .dropdown-item, .login-btn {
-    transition: color 0.8s ease, background-color 0.8s ease, border-color 0.8s ease;
+    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .dropdown-menu {
-    transition: background-color 0.8s ease, border-color 0.8s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .theme-icon {
-    transition: color 0.8s ease;
-}
-.nav-item.active .nav-link {
-    color: var(--active-link) !important;
-    font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 .btn, .login-btn {
-    transition: all 0.8s ease;
+    transition: all 0.3s ease;
 }
+
 
     .btn:hover, .login-btn:hover {
         background-color: var(--btn-hover) !important;
@@ -252,7 +293,7 @@ html, body {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 .auth-container {
-    background-color: var(--bg-color);
+    background-color: transparent;
 }
 
 .auth-card {
@@ -298,7 +339,7 @@ html, body {
         border-radius: 8px;
         background-color: var(--content-bg);
         color: var(--auth-text);
-        transition: all 0.8s ease;
+        transition: all 0.3s ease;
     }
 
         .auth-form-group input:focus {
@@ -317,7 +358,7 @@ html, body {
     font-weight: 500;
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.8s ease;
+    transition: all 0.3s ease;
     margin-top: 1rem;
 }
 
@@ -385,10 +426,8 @@ html, body {
     justify-content: center;
     min-height: 100vh;
     padding: 2rem;
-    background-color: var(--bg-color);
-    background-image: radial-gradient(circle at 10% 20%, var(--auth-input-focus) 0%, transparent 20%), radial-gradient(circle at 90% 80%, var(--auth-input-focus) 0%, transparent 20%);
-    background-size: 200% 200%;
-    animation: gradientBG 15s ease infinite;
+    background-color: transparent;
+    position: relative;
 }
 
 @keyframes gradientBG {
@@ -415,7 +454,7 @@ html, body {
     box-shadow: var(--auth-shadow);
     border: 1px solid var(--auth-border);
     transform: translateY(0);
-    transition: all 0.8s ease;
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
 }
@@ -569,7 +608,7 @@ html, body {
     border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.8s ease;
+    transition: all 0.3s ease;
     text-decoration: none;
 }
 
@@ -598,7 +637,7 @@ html, body {
     border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.8s ease;
+    transition: all 0.3s ease;
 }
 
     .user-dropdown-btn:hover {
@@ -622,7 +661,7 @@ html, body {
 }
 
 .dropdown-arrow {
-    transition: transform 0.8s ease;
+    transition: transform 0.3s ease;
     display: flex;
     align-items: center;
 }
