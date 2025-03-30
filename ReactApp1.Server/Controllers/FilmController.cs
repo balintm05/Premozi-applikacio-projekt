@@ -49,7 +49,7 @@ namespace ReactApp1.Server.Controllers
     {
         [AllowAnonymous]
         [HttpPost("query")]
-        public async Task<ActionResult<dynamic>> QueryFilm(GetFilmQueryFilter request) 
+        public async Task<ActionResult> QueryFilm(GetFilmQueryFilter request) 
         {
             var movies = await filmService.queryFilm(request);
             if (movies == null)
@@ -62,20 +62,20 @@ namespace ReactApp1.Server.Controllers
 
         [AllowAnonymous]
         [HttpGet("get")]
-        public async Task<ActionResult<List<GetFilmResponse>?>> GetFilm()
+        public async Task<ActionResult> GetFilm()
         {
-            return await filmService.getFilm();
+            return Ok(await filmService.getFilm());
         }
         [AllowAnonymous]
         [HttpGet("get/{id}")]
-        public async Task<ActionResult<GetFilmResponse?>> GetFilm(int id)
+        public async Task<ActionResult> GetFilm(int id)
         {
-            var err = await filmService.getFilm(id);
-            if (err.Error!=null)
+            var film = await filmService.getFilm(id);
+            if (film == null)
             {
-                return BadRequest(err);
+                return BadRequest(new ErrorModel(""));
             }
-            return Ok(err);
+            return Ok(film);
         }
 
         //[Authorize(Roles = "Admin")]

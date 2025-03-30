@@ -1,152 +1,176 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { ThemeContext } from '../layout/Layout'; 
-import  ThemeWrapper  from '../layout/ThemeWrapper';
-import "../../bootstrap/css/bootstrap.min.css";
+import { ThemeContext } from '../layout/Layout';
+import AdminLayout from './AdminLayout';
+import ThemeWrapper from '../layout/ThemeWrapper';
+import { useNavigate } from 'react-router-dom';
 
-function GetUsersTable() {
+function UserListAdmin() {
     const { api } = useContext(AuthContext);
-    const { darkMode } = useContext(ThemeContext); // Get darkMode from ThemeContext
-    const [formData, setFormData] = useState({ userID: "", email: "", accountStatus: "", role: "", megjegyzes: "" });
-    const [rowData, setRowData] = useState([]);
-
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    const { darkMode } = useContext(ThemeContext);
+    const [filter, setFilter] = useState({
+        userID: "",
+        email: "",
+        accountStatus: "none",
+        role: "none",
+        Megjegyzes: ""
+    });
+    const [allUsers, setAllUsers] = useState([]);
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const controller = new AbortController();
 
-        api.post('/Auth/queryUsers', formData, {
+        api.get('/Auth/get', {
             signal: controller.signal
         })
             .then(response => {
-                const formattedData = response.data.map(d => ({
-                    userID: d.userID,
-                    email: d.email,
-                    creationDate: d.creationDate,
-                    accountStatus: d.accountStatus,
-                    role: d.role,
-                    megjegyzes: d.megjegyzes,
-                }));
-                setRowData(formattedData);
+                setAllUsers(response.data);
+                setFilteredUsers(response.data);
+                setLoading(false);
             })
             .catch((error) => {
                 if (error.name !== 'CanceledError') {
                     console.error("Error fetching user data:", error);
+                    setLoading(false);
                 }
             });
 
         return () => controller.abort();
-    }, [formData, api]);
+    }, [api]);
+
+    useEffect(() => {
+        const filtered = allUsers.filter(user => {
+            return (
+                (filter.userID === "" || user.userID.toString().includes(filter.userID)) &&
+                (filter.email === "" || user.email.toLowerCase().includes(filter.email.toLowerCase())) &&
+                (filter.accountStatus === "none" || user.accountStatus.toString() === filter.accountStatus) &&
+                (filter.role === "none" || user.role === filter.role) &&
+                (filter.Megjegyzes === "" || (user.Megjegyzes && user.Megjegyzes.toLowerCase().includes(filter.Megjegyzes.toLowerCase())))
+            );
+        });
+        setFilteredUsers(filtered);
+    }, [filter, allUsers]);
+
+    const handleFilterChange = (e) => {
+        setFilter({ ...filter, [e.target.name]: e.target.value });
+    };
+
+    if (loading) {
+        return <AdminLayout><p>Loading...</p></AdminLayout>;
+    }
 
     return (
-        <ThemeWrapper className="container text-center" style={{ width: "100%", maxWidth: "95%", margin: "0 auto" }}>
-            <br /><h1>Felhasználók listája</h1><br /><br />
-            <div className="table-responsive" style={{ overflowX: "auto" }}>
+        <AdminLayout>
+            <ThemeWrapper className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 className="h2">Felhasználók kezelése</h1>
+            </ThemeWrapper>
+
+            <ThemeWrapper className="table-responsive">
                 <table className={`table table-bordered ${darkMode ? 'table-dark' : ''}`}>
                     <thead>
-                        <tr className={`${darkMode ? 'text-white' : 'text-dark'} border-1`}>
-                            <th className="border-1">ID</th>
-                            <th className="border-1">Email</th>
-                            <th className="border-1">Regisztráció időpontja</th>
-                            <th className="border-1">Felhasználó státusza</th>
-                            <th className="border-1">Jogosultság</th>
-                            <th className="border-1">Megjegyzés</th>
-                            <th className="border-1">Műveletek</th>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Regisztráció időpontja</th>
+                            <th>Felhasználó státusza</th>
+                            <th>Jogosultság</th>
+                            <th>Megjegyzés</th>
+                            <th>Műveletek</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <tr className={`${darkMode ? 'text-white' : 'text-dark'} border-1`}>
-                            <th className="border-1">
+                        <tr>
+                            <th>
                                 <input
                                     type="text"
                                     name="userID"
-                                    onChange={handleChange}
-                                    value={formData.userID}
-                                    className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`}
+                                    onChange={handleFilterChange}
+                                    value={filter.userID}
+                                    className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
                                 />
                             </th>
-                            <th className="border-1">
+                            <th>
                                 <input
                                     type="text"
                                     name="email"
-                                    onChange={handleChange}
-                                    value={formData.email}
-                                    className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`}
+                                    onChange={handleFilterChange}
+                                    value={filter.email}
+                                    className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
                                 />
                             </th>
-                            <th className="border-1"></th>
-                            <th className="border-1">
+                            <th></th>
+                            <th>
                                 <select
-                                    className={`form-select ${darkMode ? 'bg-secondary text-white' : ''}`}
+                                    className={`form-select ${darkMode ? 'bg-dark text-white border-light' : ''}`}
                                     name="accountStatus"
-                                    onChange={handleChange}
-                                    value={formData.accountStatus}
+                                    onChange={handleFilterChange}
+                                    value={filter.accountStatus}
                                 >
-                                    <option defaultValue value="none">Mind</option>
+                                    <option value="none">Mind</option>
                                     <option value="1">Aktív</option>
                                     <option value="2">Felfüggesztett</option>
-                                    <option value="3">Törölt</option>
                                 </select>
                             </th>
-                            <th className="border-1">
+                            <th>
                                 <select
-                                    className={`form-select ${darkMode ? 'bg-secondary text-white' : ''}`}
+                                    className={`form-select ${darkMode ? 'bg-dark text-white border-light' : ''}`}
                                     name="role"
-                                    onChange={handleChange}
-                                    value={formData.role}
+                                    onChange={handleFilterChange}
+                                    value={filter.role}
                                 >
-                                    <option defaultValue value="none">Mind</option>
+                                    <option value="none">Mind</option>
                                     <option value="Admin">Admin</option>
                                     <option value="User">User</option>
                                 </select>
                             </th>
-                            <th className="border-1">
+                            <th>
                                 <input
                                     type="text"
-                                    name="megjegyzes"
-                                    onChange={handleChange}
-                                    value={formData.megjegyzes}
-                                    className={`form-control ${darkMode ? 'bg-secondary text-white' : ''}`}
+                                    name="Megjegyzes"
+                                    onChange={handleFilterChange}
+                                    value={filter.Megjegyzes}
+                                    className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
                                 />
                             </th>
-                            <th className="border-1"></th>
+                            <th></th>
                         </tr>
-                        {rowData.map(row => (
-                            <tr key={row.userID} className={`${darkMode ? 'text-white' : 'text-dark'} border-1`}>
-                                <td className="border-1">{row.userID}</td>
-                                <td className="border-1">{row.email}</td>
-                                <td className="border-1">{row.creationDate}</td>
-                                <td className="border-1">{row.accountStatus}</td>
-                                <td className="border-1">{row.role}</td>
-                                <td className="border-1">{row.megjegyzes}</td>
-                                <td className="border-1">
-                                    <a href={`/account/profile/details/${row.userID}`} className="mr-1">
-                                        <button className={`btn my-2 my-sm-0 text-center font-weight-bold ${darkMode ? 'btn-primary' : 'btn-outline-primary'
-                                            }`}>
+                    </thead>
+                    <tbody>
+                        {filteredUsers.map(row => (
+                            <tr key={row.userID}>
+                                <td>{row.userID}</td>
+                                <td>{row.email}</td>
+                                <td>{new Date(row.creationDate).toLocaleString()}</td>
+                                <td>{row.accountStatus === "1" ? "Aktív" : row.accountStatus === "2" ? "Felfüggesztett" : "Törölt"}</td>
+                                <td>{row.role}</td>
+                                <td>{row.Megjegyzes}</td>
+                                <td>
+                                    <div className="d-flex gap-2">
+                                        <button
+                                            className={`btn ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
+                                            onClick={() => navigate(`/account/profile/details/${row.userID}`)}
+                                            style={{
+                                                borderRight: `1px solid ${darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`
+                                            }}
+                                        >
                                             Profil
                                         </button>
-                                    </a>
-                                    <a href={`/account/profile/manage/edit/${row.userID}`}>
-                                        <button className={`btn my-2 my-sm-0 font-weight-bold text-center ${darkMode ? 'btn-info' : 'btn-outline-info'
-                                            }`}>
+                                        <button
+                                            className={`btn ${darkMode ? 'btn-info' : 'btn-outline-info'}`}
+                                            onClick={() => navigate(`/account/profile/manage/edit/${row.userID}`)}
+                                        >
                                             Módosítás
                                         </button>
-                                    </a>
+                                    </div>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-            </div>
-            <br /><br /><br />
-        </ThemeWrapper>
+            </ThemeWrapper>
+        </AdminLayout>
     );
-}
-
-function UserListAdmin() {
-    return <GetUsersTable />;
 }
 
 export default UserListAdmin;

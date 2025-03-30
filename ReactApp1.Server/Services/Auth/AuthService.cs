@@ -110,7 +110,16 @@ namespace ReactApp1.Server.Services.Auth
             }
             return users;
         }
-
+        public async Task<List<GetUserResponseObject>> get()
+        {
+            var users = await context.Users.ToListAsync();
+            var list = new List<GetUserResponseObject>();   
+            foreach(var user in users)
+            {
+                list.Add(new GetUserResponseObject(user));   
+            }
+            return list;
+        }
 
         public async Task<bool?> EditUserAsync(EditUserDto request, int pid)
         {

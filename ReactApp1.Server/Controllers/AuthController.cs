@@ -242,13 +242,17 @@ namespace ReactApp1.Server.Controllers
         {
             return Ok(new GetUserResponseObject(await authService.GetUserAsync(id)));
         }
-
+        [Authorize(Roles ="Admin")]
+        [HttpGet("get")]
+        public async Task<ActionResult<List<GetUserResponseObject>>> Get()
+        {
+            return await authService.get();
+        }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("queryUsers")]
         public async Task<ActionResult<List<GetUserResponseObject?>>> QueryUsers(GetUserQueryFilter request)
         {
-            Console.WriteLine("queryUsers");
             List<User> users = await authService.GetQueryUsersAsync(request);
             var userResponses = new List<GetUserResponseObject>();
             foreach(User user in users)

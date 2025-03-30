@@ -17,6 +17,10 @@ import FilmListAdmin from "./admin/FilmListAdmin.jsx";
 import EmailConfirmation from "./components/EmailConfirmation.jsx";
 import TwoFactorAuth from "./components/TwoFactorAuth.jsx";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import FoglalasListAdmin from "./admin/FoglalasListAdmin";
+import FoglalasEditAdmin from "./admin/FoglalasEditAdmin";
+import TeremListAdmin from "./admin/TeremListAdmin";
+import TeremEditAdmin from "./admin/TeremEditAdmin";
 
 const App = () => {
     return (
@@ -36,6 +40,11 @@ const App = () => {
                             <Route path="/admin/" element={<AdminIndex />} />
                             <Route path="/admin/users" element={<UserListAdmin />} />
                             <Route path="/admin/filmek" element={<FilmListAdmin />} />
+                            <Route path="/admin/rooms" element={<TeremListAdmin />} />
+                            <Route path="/admin/rooms/add" element={<TeremEditAdmin />} />
+                            <Route path="/admin/rooms/edit/:id" element={<TeremEditAdmin />} />
+                            <Route path="/admin/foglalas" element={<FoglalasListAdmin />} />
+                            <Route path="/admin/foglalas/edit/:id" element={<FoglalasEditAdmin />} />
                         </Route>
                         <Route path="*" element={<PageNotFound />} />
                     </Route>

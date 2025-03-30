@@ -22,10 +22,10 @@ namespace ReactApp1.Server.Models.Film
         public string? EredetiNyelv { get; set; }
         public string? EredetiCim { get; set; }
         public string? Szinkron { get; set; }
-        public string? TrailerLink { get; set; }
         public string? IMDB { get; set; }
-        public string? ImageID {  get; set; }
         public string? Megjegyzes { get; set; }
+        public string? TrailerLink { get; set; }
+        public string? ImageID { get; set; }
         public ErrorModel? Error { get; set; }
         public GetFilmResponse(Entities.Film film)
         {

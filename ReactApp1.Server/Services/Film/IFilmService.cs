@@ -6,9 +6,9 @@ namespace ReactApp1.Server.Services.Film
 {
     public interface IFilmService
     {
-        Task<List<GetFilmResponse>?> queryFilm(GetFilmQueryFilter request);
-        Task<List<GetFilmResponse>?> getFilm();
-        Task<GetFilmResponse?> getFilm(int id);
+        Task<List<Entities.Film>?> queryFilm(GetFilmQueryFilter request);
+        Task<List<Entities.Film>?> getFilm();
+        Task<Entities.Film?> getFilm(int id);
         Task<Models.ErrorModel?> addFilm(ManageFilmDto request, HttpContext httpContext);
         Task<Models.ErrorModel?> editFilm(ManageFilmDto request, HttpContext httpContext);
         Task<Models.ErrorModel?> deleteFilm(int id);

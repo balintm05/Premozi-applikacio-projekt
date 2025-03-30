@@ -39,11 +39,11 @@ namespace ReactApp1.Server.Services.Film
 {
     public class FilmService(DataBaseContext context, IConfiguration configuration, IHttpClientFactory httpClientFactory) :IFilmService
     {
-        public async Task<List<GetFilmResponse>?> queryFilm(GetFilmQueryFilter request)
+        public async Task<List<Entities.Film>?> queryFilm(GetFilmQueryFilter request)
         {
             try
             {
-                var movies = await context.Film.ToListAsync();
+                var movies = await context.Film.Include(x=>x.Images).ToListAsync();
                 if (!string.IsNullOrEmpty(request.id) && int.TryParse(request.id, out int r))
                 {
                     movies = await movies.ToAsyncEnumerable().WhereAwait(async user => await ValueTask.FromResult(user.id.ToString().Equals(request.id))).ToListAsync();
@@ -100,12 +100,7 @@ namespace ReactApp1.Server.Services.Film
                 {
                     movies = await movies.ToAsyncEnumerable().WhereAwait(async user => await ValueTask.FromResult(user.Megjegyzes.ToLower().Contains(request.Megjegyzes.ToLower()))).ToListAsync();
                 }
-                var response = new List<GetFilmResponse>();
-                foreach (var movie in movies)
-                {
-                    response.Add(new GetFilmResponse(movie));
-                }
-                return response;
+                return movies;
             }
             catch(Exception ex) 
             {
@@ -114,24 +109,18 @@ namespace ReactApp1.Server.Services.Film
         }
 
 
-        public async Task<List<GetFilmResponse>?> getFilm()
+        public async Task<List<Entities.Film>?> getFilm()
         {
-            var filmek = await context.Film.ToListAsync();
-            var response = new List<GetFilmResponse>();
-            foreach(Entities.Film film in filmek)
-            {
-                response.Add(new GetFilmResponse(film));
-            }
-            return response;
+            return await context.Film.Include(x => x.Images).ToListAsync();
         }
-        public async Task<GetFilmResponse?> getFilm(int id)
+        public async Task<Entities.Film?> getFilm(int id)
         {
-            var film = await context.Film.FindAsync(id);
-            if (film == null)
+            var film = await context.Film.Include(x => x.Images).ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == id)).FirstAsync();
+            if(film == null)
             {
-                return new GetFilmResponse("Nincs ilyen id-jű film az adatbázisban");
+                return null;
             }
-            return new GetFilmResponse(film);
+            return film;
         }
        
 

@@ -29,7 +29,8 @@ namespace ReactApp1.Server.Services
                 context.Request.Path.StartsWithSegments("/api/Auth/checkIfLoggedIn") || context.Request.Path.StartsWithSegments("/api/Auth/checkIfAdmin") || context.Request.Path.StartsWithSegments("/api/Film/get") || context.Request.Path.StartsWithSegments("/api/Film/query") ||
                 context.Request.Path.StartsWithSegments("/api/Terem/get") || context.Request.Path.StartsWithSegments("/api/Vetites/get") || context.Request.Path.StartsWithSegments("/api/Foglalas/get") || context.Request.Path.StartsWithSegments("/api/Foglalas/getByVetites") ||
                 context.Request.Path.StartsWithSegments("/api/Foglalas/getByUser") || context.Request.Path.StartsWithSegments("/swagger/v1/swagger.json") || context.Request.Path.StartsWithSegments("/swagger/") || context.Request.Path.StartsWithSegments("/api/Image/upload") ||
-                context.Request.Path.StartsWithSegments("/swagger/index.html") || context.Request.Path.StartsWithSegments("/swagger/swagger-ui.css") || context.Request.Path.StartsWithSegments("/swagger/swagger-ui-standalone-preset.js") || context.Request.Path.StartsWithSegments("/swagger/favicon-32x32.png"))
+                context.Request.Path.StartsWithSegments("/swagger/index.html") || context.Request.Path.StartsWithSegments("/swagger/swagger-ui.css") || context.Request.Path.StartsWithSegments("/swagger/swagger-ui-standalone-preset.js") || context.Request.Path.StartsWithSegments("/swagger/favicon-32x32.png")||
+                context.Request.Path.StartsWithSegments("/api/Auth/get")||context.Request.Path.StartsWithSegments("/swagger"))
             {
                 await _next(context);
                 return;

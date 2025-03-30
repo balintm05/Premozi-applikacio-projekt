@@ -84,32 +84,68 @@ namespace ReactApp1.Server.Services.Terem
                 return new Models.ErrorModel(ex.Message);
             }
         }
+
         public async Task<Models.ErrorModel?> editTerem(ManageTeremDto request)
         {
-            var terem = await context.Terem.FindAsync(int.Parse(request.id));
-            if (terem == null)
+            try
             {
-                return new Models.ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
+                var terem = await context.Terem
+                    .Include(t => t.Szekek)
+                    .FirstOrDefaultAsync(t => t.id == int.Parse(request.id));
+
+                if (terem == null) return new Models.ErrorModel("Terem nem található");
+
+                var patchDoc = new JsonPatchDocument<Entities.Terem.Terem>();
+
+                if (!string.IsNullOrEmpty(request.Nev))
+                    patchDoc.Replace(t => t.Nev, request.Nev);
+
+                if (!string.IsNullOrEmpty(request.Megjegyzes))
+                    patchDoc.Replace(t => t.Megjegyzes, request.Megjegyzes);
+
+                patchDoc.ApplyTo(terem);
+
+                if (request.SzekekFrissites != null)
+                {
+                    foreach (var op in request.SzekekFrissites)
+                    {
+                        var pathParts = op.path.Split('/');
+                        var coordPart = pathParts[pathParts.Length - 2];
+                        var coords = coordPart.Split('-');
+
+                        if (coords.Length != 2) continue;
+
+                        int x = int.Parse(coords[0]);
+                        int y = int.Parse(coords[1]);
+
+                        var seat = terem.Szekek.FirstOrDefault(s => s.X == x && s.Y == y);
+
+                        if (seat != null)
+                        {
+                            var seatPatch = new JsonPatchDocument<Szekek>();
+                            seatPatch.Replace(s => s.Allapot, op.value);
+                            seatPatch.ApplyTo(seat);
+                        }
+                        else
+                        {
+                            context.Szekek.Add(new Szekek
+                            {
+                                X = x,
+                                Y = y,
+                                Teremid = terem.id,
+                                Allapot = op.value
+                            });
+                        }
+                    }
+                }
+
+                await context.SaveChangesAsync();
+                return new Models.ErrorModel("Sikeres módosítás");
             }
-            var patchDoc = new JsonPatchDocument<Entities.Terem.Terem>();
-            if (!string.IsNullOrEmpty(request.Nev))
+            catch (Exception ex)
             {
-                patchDoc.Replace(terem => terem.Nev, request.Nev);
+                return new Models.ErrorModel($"Hiba: {ex.Message}");
             }
-            if (!string.IsNullOrEmpty(request.Megjegyzes))
-            {
-                patchDoc.Replace(terem => terem.Megjegyzes, request.Megjegyzes);
-            }
-            patchDoc.ApplyTo(terem);
-            int.TryParse(request.Sorok, out int sorok);
-            int.TryParse(request.Oszlopok, out int oszlopok);
-            if (!(sorok == terem.Szekek.Where(x => x.X == 0).Count() && oszlopok == terem.Szekek.Where(x => x.Y == 0).Count()))
-            {
-                await DeleteExistingSzekek(terem);
-                await CreateSzekek(sorok, oszlopok, terem);
-            }
-            await context.SaveChangesAsync();
-            return new Models.ErrorModel("Sikeres módosítás");
         }
         public async Task<Models.ErrorModel?> deleteTerem(int id)
         {

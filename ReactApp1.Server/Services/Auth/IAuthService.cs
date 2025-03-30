@@ -33,6 +33,7 @@ namespace ReactApp1.Server.Services.Auth
         Task<bool> EnableEmail2FAAsync(int userId);
         Task<bool> DisableEmail2FAAsync(int userId, string? password = null);
         Task<bool> StartEmail2FAFlowAsync(int userId);
+        Task<List<GetUserResponseObject>> get();
 
         //just no
         //Task<HttpResponseMessage?> OkResponseSetTokenCookie(TokenResponseDto request);
