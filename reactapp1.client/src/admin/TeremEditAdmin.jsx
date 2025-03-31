@@ -214,7 +214,7 @@ function TeremEditAdmin() {
 
     return (
         <AdminLayout>
-            <ThemeWrapper className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom  p-3">
+            <ThemeWrapper className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom p-3">
                 <h1 className="h2">{id && id !== 'add' ? 'Terem szerkesztése' : 'Új terem hozzáadása'}</h1>
             </ThemeWrapper>
 

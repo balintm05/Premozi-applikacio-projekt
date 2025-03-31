@@ -25,7 +25,6 @@ function TeremListAdmin() {
             signal: controller.signal
         })
             .then(response => {
-                // Extract terem objects from response
                 const data = Array.isArray(response.data) ?
                     response.data.map(item => item.terem) :
                     [];

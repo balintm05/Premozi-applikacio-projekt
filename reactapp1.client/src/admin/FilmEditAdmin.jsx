@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../layout/Layout';
 import AdminLayout from './AdminLayout';
 import ThemeWrapper from '../layout/ThemeWrapper';
+import { filmupload } from "../api/axiosConfig";
 
 function FilmEditAdmin() {
     const { id } = useParams();
@@ -63,7 +64,7 @@ function FilmEditAdmin() {
                     setLoading(false);
                 })
                 .catch(error => {
-                    setError(error.response?.data?.error || "Error loading film");
+                    setError(error.response?.data?.error || "Hiba a film betöltésekor");
                     setLoading(false);
                 });
         } else {
@@ -99,7 +100,7 @@ function FilmEditAdmin() {
             const method = id && id !== 'add' ? 'patch' : 'post';
             const url = id && id !== 'add' ? '/Film/edit' : '/Film/add';
 
-            const response = await api[method](url, formData, {
+            const response = await filmupload[method](url, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -109,27 +110,27 @@ function FilmEditAdmin() {
                 setError(response.data.errorMessage);
             } else {
                 setSuccessMessage(id && id !== 'add'
-                    ? "Film updated successfully!"
-                    : "Film added successfully!");
+                    ? "A film sikeresen frissítve!"
+                    : "A film sikeresen hozzáadva!");
                 if (id === 'add' && response.data?.film?.id) {
                     navigate(`/admin/filmek/edit/${response.data.film.id}`);
                 }
             }
         } catch (error) {
-            setError(error.response?.data?.message || "Error saving film");
+            setError(error.response?.data?.message || "Hiba történt a mentés során");
         } finally {
             setIsSaving(false);
         }
     };
 
     if (loading) {
-        return <AdminLayout><p>Loading...</p></AdminLayout>;
+        return <AdminLayout><p>Betöltés...</p></AdminLayout>;
     }
 
     return (
         <AdminLayout>
             <ThemeWrapper className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 p-3 border-bottom">
-                <h1 className="h2">{id && id !== 'add' ? 'Edit Film' : 'Add New Film'}</h1>
+                <h1 className="h2">{id && id !== 'add' ? 'Film szerkesztése' : 'Új film hozzáadása'}</h1>
             </ThemeWrapper>
 
             {error && (
@@ -148,7 +149,7 @@ function FilmEditAdmin() {
                 <div className="row">
                     <div className="col-md-6">
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="cim" className="form-label">Title</label>
+                            <label htmlFor="cim" className="form-label">Cím</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -161,7 +162,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="kategoria" className="form-label">Category</label>
+                            <label htmlFor="kategoria" className="form-label">Kategória</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -174,7 +175,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="mufaj" className="form-label">Genre</label>
+                            <label htmlFor="mufaj" className="form-label">Műfaj</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -187,7 +188,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="korhatar" className="form-label">Age Rating</label>
+                            <label htmlFor="korhatar" className="form-label">Korhatár</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -200,7 +201,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="jatekido" className="form-label">Duration (minutes)</label>
+                            <label htmlFor="jatekido" className="form-label">Játékidő (perc)</label>
                             <input
                                 type="number"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -214,7 +215,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="gyarto" className="form-label">Producer</label>
+                            <label htmlFor="gyarto" className="form-label">Gyártó</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -227,7 +228,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="rendezo" className="form-label">Director</label>
+                            <label htmlFor="rendezo" className="form-label">Rendező</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -242,7 +243,7 @@ function FilmEditAdmin() {
 
                     <div className="col-md-6">
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="szereplok" className="form-label">Cast</label>
+                            <label htmlFor="szereplok" className="form-label">Szereplők</label>
                             <textarea
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
                                 id="szereplok"
@@ -254,7 +255,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="leiras" className="form-label">Description</label>
+                            <label htmlFor="leiras" className="form-label">Leírás</label>
                             <textarea
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
                                 id="leiras"
@@ -266,7 +267,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="eredetiNyelv" className="form-label">Original Language</label>
+                            <label htmlFor="eredetiNyelv" className="form-label">Eredeti nyelv</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -279,7 +280,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="eredetiCim" className="form-label">Original Title</label>
+                            <label htmlFor="eredetiCim" className="form-label">Eredeti cím</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -292,7 +293,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="szinkron" className="form-label">Dubbing</label>
+                            <label htmlFor="szinkron" className="form-label">Szinkron</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -305,7 +306,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="trailerLink" className="form-label">Trailer Link</label>
+                            <label htmlFor="trailerLink" className="form-label">Trailer link</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -331,7 +332,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="megjegyzes" className="form-label">Notes</label>
+                            <label htmlFor="megjegyzes" className="form-label">Megjegyzés</label>
                             <textarea
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
                                 id="megjegyzes"
@@ -342,7 +343,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="image" className="form-label">Cover Image</label>
+                            <label htmlFor="image" className="form-label">Borítókép</label>
                             <input
                                 type="file"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -362,7 +363,7 @@ function FilmEditAdmin() {
                         className={`btn ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
                         disabled={isSaving}
                     >
-                        {isSaving ? 'Saving...' : (id && id !== 'add' ? 'Save' : 'Add')}
+                        {isSaving ? 'Mentés...' : (id && id !== 'add' ? 'Mentés' : 'Hozzáadás')}
                     </button>
                     <button
                         type="button"
@@ -370,7 +371,7 @@ function FilmEditAdmin() {
                         onClick={() => navigate('/admin/filmek')}
                         disabled={isSaving}
                     >
-                        Cancel
+                        Mégse
                     </button>
                 </div>
             </form>
