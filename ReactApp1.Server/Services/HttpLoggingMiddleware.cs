@@ -30,7 +30,7 @@ namespace ReactApp1.Server.Services
                 context.Request.Path.StartsWithSegments("/api/Terem/get") || context.Request.Path.StartsWithSegments("/api/Vetites/get") || context.Request.Path.StartsWithSegments("/api/Foglalas/get") || context.Request.Path.StartsWithSegments("/api/Foglalas/getByVetites") ||
                 context.Request.Path.StartsWithSegments("/api/Foglalas/getByUser") || context.Request.Path.StartsWithSegments("/swagger/v1/swagger.json") || context.Request.Path.StartsWithSegments("/swagger/") || context.Request.Path.StartsWithSegments("/api/Image/upload") ||
                 context.Request.Path.StartsWithSegments("/swagger/index.html") || context.Request.Path.StartsWithSegments("/swagger/swagger-ui.css") || context.Request.Path.StartsWithSegments("/swagger/swagger-ui-standalone-preset.js") || context.Request.Path.StartsWithSegments("/swagger/favicon-32x32.png")||
-                context.Request.Path.StartsWithSegments("/api/Auth/get")||context.Request.Path.StartsWithSegments("/swagger"))
+                context.Request.Path.StartsWithSegments("/api/Auth/get")||context.Request.Path.StartsWithSegments("/swagger")||context.Request.Path.StartsWithSegments("/favicon.ico")||context.Request.Path.StartsWithSegments("/images"))
             {
                 await _next(context);
                 return;
@@ -38,8 +38,6 @@ namespace ReactApp1.Server.Services
 
             var request = context.Request;
             var requestBody = await ReadRequestBodyAsync(request);
-
-            // Redact the body and headers for specific endpoints
             var redactedRequestBody = requestBody;
             var redactedRequestHeaders = FormatHeaders(request.Headers);
             if (context.Request.Path.StartsWithSegments("/api/Auth/register") ||
@@ -130,7 +128,6 @@ namespace ReactApp1.Server.Services
             var headerString = new StringBuilder();
             foreach (var (key, value) in headers)
             {
-                // Redact sensitive headers
                 if (key.Equals("Authorization", StringComparison.OrdinalIgnoreCase) ||
                     key.Equals("X-Refresh-Token", StringComparison.OrdinalIgnoreCase))
                 {

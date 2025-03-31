@@ -423,8 +423,8 @@ namespace ReactApp1.Server.Services.Auth
 
             await emailService.SendEmailAsync(
                 user.email,
-                "2FA Bejelentkezési kód",
-                $"<h3>Az Ön 2FA kódja: <strong>{code}</strong></h3><p>Ez a kód 5 percig érvényes.</p>");
+                "Kétfaktoros azonosító kód",
+                $"<h3>Az Ön kétfaktoros azonosító kódja: <strong>{code}</strong></h3><p>Ez a kód 5 percig érvényes.</p>");
 
             return true;
         }

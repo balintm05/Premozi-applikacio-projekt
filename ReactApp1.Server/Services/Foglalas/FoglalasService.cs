@@ -8,17 +8,16 @@ using ReactApp1.Server.Entities.Vetites;
 using ReactApp1.Server.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using ReactApp1.Server.Entities;
+using ReactApp1.Server.Services.Email;
 
 namespace ReactApp1.Server.Services.Foglalas
 {
-    public class FoglalasService(DataBaseContext context, IConfiguration configuration) : IFoglalasService
+    public class FoglalasService(DataBaseContext context, IConfiguration configuration, IEmailService emailService) : IFoglalasService
     {
         public async Task<List<GetFoglalasResponse>?> GetFoglalas()
         {
-            var foglalasok =  await context.FoglalasAdatok.ToListAsync();
-            var users = await context.Users.ToListAsync();
-            var fszekek = await context.FoglaltSzekek.ToListAsync();
-            var vetites = await context.Vetites.ToListAsync();
+            var foglalasok = await context.FoglalasAdatok.Include(x => x.User).Include(x => x.FoglaltSzekek).ThenInclude(x => x.VetitesSzekek).ThenInclude(x => x.Vetites).ThenInclude(x => x.Film).Include(x => x.FoglaltSzekek).ThenInclude(x => x.VetitesSzekek).ThenInclude(x => x.Vetites).ThenInclude(x => x.Terem).ToListAsync();
             var resp = new List<GetFoglalasResponse>();
             foreach (var foglalas in foglalasok)
             {
@@ -28,14 +27,11 @@ namespace ReactApp1.Server.Services.Foglalas
         }
         public async Task<List<GetFoglalasResponse>?> GetFoglalasByVetites(int vid)
         {
-            var foglalasok = await context.FoglalasAdatok.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == vid)).ToListAsync();
+            var foglalasok = await context.FoglalasAdatok.Include(x => x.User).Include(x => x.FoglaltSzekek).ThenInclude(x => x.VetitesSzekek).ThenInclude(x => x.Vetites).ThenInclude(x => x.Film).Include(x => x.FoglaltSzekek).ThenInclude(x => x.VetitesSzekek).ThenInclude(x => x.Vetites).ThenInclude(x => x.Terem).ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == vid)).ToListAsync();
             if (foglalasok.Count == 0)
             {
                 return null;
             }
-            var users = await context.Users.ToListAsync();
-            var fszekek = await context.FoglaltSzekek.ToListAsync();
-            var vetites = await context.Vetites.ToListAsync();
             var resp = new List<GetFoglalasResponse>();
             foreach(var foglalas in foglalasok)
             {
@@ -45,14 +41,11 @@ namespace ReactApp1.Server.Services.Foglalas
         }
         public async Task<List<GetFoglalasResponse>?> GetFoglalasByUser(int uid)
         {
-            var foglalasok = await context.FoglalasAdatok.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == uid)).ToListAsync();
+            var foglalasok = await context.FoglalasAdatok.Include(x => x.User).Include(x => x.FoglaltSzekek).ThenInclude(x => x.VetitesSzekek).ThenInclude(x => x.Vetites).ThenInclude(x => x.Film).Include(x => x.FoglaltSzekek).ThenInclude(x => x.VetitesSzekek).ThenInclude(x => x.Vetites).ThenInclude(x => x.Terem).ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == uid)).ToListAsync();
             if (foglalasok.Count==0)
             {
                 return null;
             }
-            var users = await context.Users.ToListAsync();
-            var fszekek = await context.FoglaltSzekek.ToListAsync();
-            var vetites = await context.Vetites.ToListAsync();
             var resp = new List<GetFoglalasResponse>();
             foreach (var foglalas in foglalasok)
             {
@@ -62,10 +55,10 @@ namespace ReactApp1.Server.Services.Foglalas
         }
         public async Task<Models.ErrorModel?> addFoglalas(ManageFoglalasDto request)
         {
-            var foglalas = new FoglalasAdatok();            
+            var foglalas = new FoglalasAdatok();
             var uidb = int.TryParse(request.UserID, out int uid);
             var vidb = int.TryParse(request.VetitesID, out int vid);
-            if(request.X.Count == 0 || request.Y.Count == 0)
+            if (request.X.Count == 0 || request.Y.Count == 0)
             {
                 return new Models.ErrorModel("Kötelező széket megadni");
             }
@@ -81,9 +74,12 @@ namespace ReactApp1.Server.Services.Foglalas
             {
                 return new Models.ErrorModel("A vetítés id-nek számnak kell lennie");
             }
+
             var user = await context.Users.FindAsync(uid);
             var vetites = await context.Vetites.FindAsync(vid);
-            if(user == null)
+            var film = vetites != null ? await context.Film.FindAsync(vetites.Filmid) : null;
+
+            if (user == null)
             {
                 return new Models.ErrorModel("Nem található ezzel az id-vel felhasználó az adatbázisban");
             }
@@ -91,17 +87,20 @@ namespace ReactApp1.Server.Services.Foglalas
             {
                 return new Models.ErrorModel("Nem található ezzel az id-vel vetítés az adatbázisban");
             }
+            if (vetites.Idopont <= DateTime.Now)
+            {
+                return new Models.ErrorModel("Ez a vetítés már elkezdődött vagy befejeződött, nem lehet új foglalást tenni");
+            }
             foglalas.UserID = uid;
             await context.AddAsync(foglalas);
-
             var vetitesszekek = await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x =>
             {
-                for(int i=0; i<request.X.Count; i++)
+                for (int i = 0; i < request.X.Count; i++)
                 {
-                    if(x.Vetitesid == vid && request.X[i].Equals(x.X.ToString()) && request.Y[i].Equals(x.Y.ToString()))
+                    if (x.Vetitesid == vid && request.X[i].Equals(x.X.ToString()) && request.Y[i].Equals(x.Y.ToString()))
                     {
                         return await ValueTask.FromResult(true);
-                    }                   
+                    }
                 }
                 return await ValueTask.FromResult(false);
             }).ToListAsync();
@@ -109,16 +108,17 @@ namespace ReactApp1.Server.Services.Foglalas
             {
                 return new Models.ErrorModel("Az egyik megadott hely nem található az adatbázisban");
             }
-            if(await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x=> await ValueTask.FromResult(x.FoglalasAllapot==0)).AnyAsync()){
+            if (vetitesszekek.Any(x => x.FoglalasAllapot != 1))
+            {
                 return new Models.ErrorModel("Az egyik megadott hely nem elérhető");
             }
-            if (await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(vetitesszekek.Contains(x) && x.FoglalasAllapot == 2)).AnyAsync())
+            if (vetitesszekek.Any(x => x.FoglalasAllapot == 2))
             {
                 return new Models.ErrorModel("Az egyik megadott hely már le lett foglalva");
             }
-            var foglaltszekek = new List<FoglaltSzekek>();    
-            foreach(var h in vetitesszekek)
-            {      
+            var foglaltszekek = new List<FoglaltSzekek>();
+            foreach (var h in vetitesszekek)
+            {
                 var fsz = new FoglaltSzekek { FoglalasAdatok = foglalas, VetitesSzekek = h };
                 foglaltszekek.Add(fsz);
                 h.FoglaltSzekek = fsz;
@@ -127,6 +127,28 @@ namespace ReactApp1.Server.Services.Foglalas
             context.UpdateRange(vetitesszekek);
             await context.AddRangeAsync(foglaltszekek);
             await context.SaveChangesAsync();
+            try
+            {
+                var seatsList = string.Join(", ", vetitesszekek.Select(s => $"{s.X}. sor {s.Y}. szék"));
+                var emailSubject = "Sikeres foglalás";
+                var emailBody = $@"
+            <h2>Tisztelt {user.email}!</h2>
+            <p>Sikeresen lefoglalta a következő helyeket:</p>
+            <p><strong>Film:</strong> {film?.Cim ?? "Ismeretlen film"}</p>
+            <p><strong>Vetítés ideje:</strong> {vetites.Idopont.ToString("yyyy.MM.dd HH:mm")}</p>
+            <p><strong>Foglalt helyek:</strong> {seatsList}</p>
+            <p><strong>Foglalás azonosító:</strong> {foglalas.id}</p>
+            <p>Köszönjük, hogy minket választott!</p>
+            <p>Üdvözlettel,<br>Premozi</p>
+        ";
+
+                await emailService.SendEmailAsync(user.email, emailSubject, emailBody);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending confirmation email: {ex.Message}");
+            }
+
             return new Models.ErrorModel("Sikeres hozzáadás");
         }
         public async Task<Models.ErrorModel?> editFoglalas(ManageFoglalasDto request)
@@ -226,10 +248,6 @@ namespace ReactApp1.Server.Services.Foglalas
                 return new ErrorModel("Nem található az adatbázisban foglalás a megadott id-vel");
             }
             var vetitesszekek = await context.VetitesSzekek.Include(x=>x.FoglaltSzekek).ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.FoglaltSzekek!=null&&x.FoglaltSzekek.FoglalasAdatokid==id)).ToListAsync();
-            if (vetitesszekek.Count == 0)
-            {
-                return new ErrorModel("Nem található ehhez a foglaláshoz tartozó székfoglalás");
-            }
             foreach (var h in vetitesszekek)
             {
                 h.FoglalasAllapot = 1;

@@ -23,6 +23,6 @@ function AdminChecker() {
     return isAdmin ? <Outlet /> : <PageNotFound />;
 }
 
-export default function AdminCheck() {
+export default function AdminCheck() {  
     return <AdminChecker />;
 }

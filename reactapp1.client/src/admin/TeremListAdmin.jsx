@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../layout/Layout';
 import AdminLayout from './AdminLayout';
@@ -13,10 +13,25 @@ function TeremListAdmin() {
         nev: ""
     });
     const [allTermek, setAllTermek] = useState([]);
-    const [filteredTermek, setFilteredTermek] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+
+    const filteredTermek = useMemo(() => {
+        return allTermek.filter(terem => {
+            const teremId = terem?.id?.toString() || '';
+            const teremNev = terem?.nev?.toLowerCase() || '';
+
+            return (
+                (filter.id === "" || teremId.includes(filter.id)) &&
+                (filter.nev === "" || teremNev.includes(filter.nev.toLowerCase()))
+            );
+        });
+    }, [allTermek, filter]);
+
+    const handleFilterChange = (e) => {
+        setFilter({ ...filter, [e.target.name]: e.target.value });
+    };
 
     useEffect(() => {
         const controller = new AbortController();
@@ -29,12 +44,7 @@ function TeremListAdmin() {
                     response.data.map(item => item.terem) :
                     [];
 
-                if (data.length === 0) {
-                    setError("Nem található terem");
-                }
-
                 setAllTermek(data);
-                setFilteredTermek(data);
                 setLoading(false);
             })
             .catch((error) => {
@@ -48,32 +58,23 @@ function TeremListAdmin() {
         return () => controller.abort();
     }, [api]);
 
-    useEffect(() => {
-        const filtered = allTermek.filter(terem => {
-            const teremId = terem?.id?.toString() || '';
-            const teremNev = terem?.nev?.toLowerCase() || '';
-
-            return (
-                (filter.id === "" || teremId.includes(filter.id)) &&
-                (filter.nev === "" || teremNev.includes(filter.nev.toLowerCase()))
-            );
-        });
-        setFilteredTermek(filtered);
-    }, [filter, allTermek]);
-
-    const handleFilterChange = (e) => {
-        setFilter({ ...filter, [e.target.name]: e.target.value });
-    };
-
     if (loading) {
-        return <AdminLayout><p>Betöltés...</p></AdminLayout>;
+        return (
+            <AdminLayout>
+                <div className="admin-content-container">
+                    <p>Betöltés...</p>
+                </div>
+            </AdminLayout>
+        );
     }
 
     if (error) {
         return (
             <AdminLayout>
-                <div className={`alert ${darkMode ? 'alert-danger' : 'alert-warning'}`}>
-                    {error}
+                <div className="admin-content-container">
+                    <div className={`alert ${darkMode ? 'alert-danger' : 'alert-warning'}`}>
+                        {error}
+                    </div>
                 </div>
             </AdminLayout>
         );
@@ -81,7 +82,7 @@ function TeremListAdmin() {
 
     return (
         <AdminLayout>
-            <ThemeWrapper className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3  p-3 border-bottom">
+            <ThemeWrapper className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 p-3 border-bottom">
                 <h1 className="h2">Termek kezelése</h1>
                 <button
                     className={`btn ${darkMode ? 'btn-success' : 'btn-outline-success'}`}
@@ -94,14 +95,14 @@ function TeremListAdmin() {
             <ThemeWrapper className="table-responsive">
                 <table className={`table table-bordered ${darkMode ? 'table-dark' : ''}`}>
                     <thead>
-                        <tr>
+                        <tr className={darkMode ? 'bg-dark text-light' : 'bg-light'}>
                             <th>ID</th>
                             <th>Név</th>
                             <th>Székek száma</th>
                             <th>Megjegyzés</th>
                             <th>Műveletek</th>
                         </tr>
-                        <tr>
+                        <tr className={darkMode ? 'bg-secondary' : 'bg-light'}>
                             <th>
                                 <input
                                     type="text"
@@ -131,9 +132,8 @@ function TeremListAdmin() {
                         {filteredTermek.length > 0 ? (
                             filteredTermek.map(terem => {
                                 const szekekCount = terem?.szekek?.length || 0;
-
                                 return (
-                                    <tr key={terem.id || `terem-${Math.random().toString(36).substr(2, 9)}`}>
+                                    <tr key={terem.id} className={darkMode ? 'table-dark' : ''}>
                                         <td>{terem.id}</td>
                                         <td>{terem.nev}</td>
                                         <td>{szekekCount}</td>
@@ -141,13 +141,13 @@ function TeremListAdmin() {
                                         <td>
                                             <div className="d-flex gap-2">
                                                 <button
-                                                    className={`btn ${darkMode ? 'btn-info' : 'btn-outline-info'}`}
+                                                    className={`btn btn-sm ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
                                                     onClick={() => navigate(`/admin/termek/edit/${terem.id}`)}
                                                 >
                                                     Módosítás
                                                 </button>
                                                 <button
-                                                    className={`btn ${darkMode ? 'btn-danger' : 'btn-outline-danger'}`}
+                                                    className={`btn btn-sm ${darkMode ? 'btn-danger' : 'btn-outline-danger'}`}
                                                     onClick={() => navigate(`/admin/termek/delete/${terem.id}`)}
                                                 >
                                                     Törlés
@@ -158,9 +158,9 @@ function TeremListAdmin() {
                                 );
                             })
                         ) : (
-                            <tr>
-                                <td colSpan="5" className="text-center py-4">
-                                    Nincs találat
+                            <tr className={darkMode ? 'table-dark' : ''}>
+                                <td colSpan={5} className="text-center py-4">
+                                    {allTermek.length === 0 ? "Nincsenek termek az adatbázisban" : "Nincs találat a szűrési feltételek alapján"}
                                 </td>
                             </tr>
                         )}
