@@ -82,11 +82,11 @@ function TeremListAdmin() {
 
     return (
         <AdminLayout>
-            <ThemeWrapper className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <ThemeWrapper className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3  p-3 border-bottom">
                 <h1 className="h2">Termek kezelése</h1>
                 <button
                     className={`btn ${darkMode ? 'btn-success' : 'btn-outline-success'}`}
-                    onClick={() => navigate('/admin/rooms/add')}
+                    onClick={() => navigate('/admin/termek/add')}
                 >
                     Új terem hozzáadása
                 </button>
@@ -143,13 +143,13 @@ function TeremListAdmin() {
                                             <div className="d-flex gap-2">
                                                 <button
                                                     className={`btn ${darkMode ? 'btn-info' : 'btn-outline-info'}`}
-                                                    onClick={() => navigate(`/admin/rooms/edit/${terem.id}`)}
+                                                    onClick={() => navigate(`/admin/termek/edit/${terem.id}`)}
                                                 >
                                                     Módosítás
                                                 </button>
                                                 <button
                                                     className={`btn ${darkMode ? 'btn-danger' : 'btn-outline-danger'}`}
-                                                    onClick={() => navigate(`/admin/rooms/delete/${terem.id}`)}
+                                                    onClick={() => navigate(`/admin/termek/delete/${terem.id}`)}
                                                 >
                                                     Törlés
                                                 </button>

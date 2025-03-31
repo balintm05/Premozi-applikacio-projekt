@@ -1,17 +1,17 @@
-import "../../bootstrap/css/bootstrap.min.css";
+import ThemeWrapper from "../layout/ThemeWrapper";
+
 function PageNotFound() {
     return (
-
-        <div className="container text-center">
+        <ThemeWrapper className="container text-center" as="div">
             <div className="row">
                 <div className="col-md-6 offset-md-3">
-                    <div className="card my-5 bg-dark text-white">
+                    <ThemeWrapper className="card my-5" as="div">
                         <h2>A keresett oldal nem található</h2>
-                    </div>
+                    </ThemeWrapper>
                 </div>
             </div>
-        </div>
-  );
+        </ThemeWrapper>
+    );
 }
 
 export default PageNotFound;

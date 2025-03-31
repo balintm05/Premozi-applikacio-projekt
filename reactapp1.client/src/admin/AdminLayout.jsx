@@ -10,8 +10,8 @@ export default function AdminLayout({ children }) {
 
     const tabs = [
         { id: 'films', path: '/admin/filmek', name: 'Filmek' },
-        { id: 'rooms', path: '/admin/rooms', name: 'Termek' },
-        { id: 'screenings', path: '/admin/screenings', name: 'Vetítések' },
+        { id: 'rooms', path: '/admin/termek', name: 'Termek' },
+        { id: 'screenings', path: '/admin/vetitesek', name: 'Vetítések' },
         { id: 'foglalas', path: '/admin/foglalas', name: 'Foglalások' },
         { id: 'users', path: '/admin/users', name: 'Felhasználók' }
     ];
@@ -36,7 +36,7 @@ export default function AdminLayout({ children }) {
                             }}
                         >
                             <h4 className="fw-bold" style={{ color: darkMode ? 'var(--nav-text)' : '#212529' }}>
-                                Admin Panel
+                                Adminisztrátor felület
                             </h4>
                         </div>
                         <ul className="nav flex-column">

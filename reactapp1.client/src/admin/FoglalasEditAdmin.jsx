@@ -65,7 +65,7 @@ function FoglalasEditAdmin() {
     return (
         <AdminLayout>
             <div className="admin-content-container">
-                <div className="admin-header">
+                <div className="admin-header p-3">
                     <h1 className="h2">Foglalás szerkesztése</h1>
                 </div>
                 <div className="admin-table-container">

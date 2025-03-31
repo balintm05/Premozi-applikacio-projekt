@@ -21,6 +21,7 @@ import FoglalasListAdmin from "./admin/FoglalasListAdmin";
 import FoglalasEditAdmin from "./admin/FoglalasEditAdmin";
 import TeremListAdmin from "./admin/TeremListAdmin";
 import TeremEditAdmin from "./admin/TeremEditAdmin";
+import FilmEditAdmin from './admin/FilmEditAdmin';
 
 const App = () => {
     return (
@@ -40,9 +41,11 @@ const App = () => {
                             <Route path="/admin/" element={<AdminIndex />} />
                             <Route path="/admin/users" element={<UserListAdmin />} />
                             <Route path="/admin/filmek" element={<FilmListAdmin />} />
-                            <Route path="/admin/rooms" element={<TeremListAdmin />} />
-                            <Route path="/admin/rooms/add" element={<TeremEditAdmin />} />
-                            <Route path="/admin/rooms/edit/:id" element={<TeremEditAdmin />} />
+                            <Route path="/admin/filmek/add" element={<FilmEditAdmin />} />
+                            <Route path="/admin/filmek/edit/:id" element={<FilmEditAdmin />} />
+                            <Route path="/admin/termek" element={<TeremListAdmin />} />
+                            <Route path="/admin/termek/add" element={<TeremEditAdmin />} />
+                            <Route path="/admin/termek/edit/:id" element={<TeremEditAdmin />} />
                             <Route path="/admin/foglalas" element={<FoglalasListAdmin />} />
                             <Route path="/admin/foglalas/edit/:id" element={<FoglalasEditAdmin />} />
                         </Route>
