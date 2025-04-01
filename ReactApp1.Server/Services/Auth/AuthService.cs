@@ -34,19 +34,25 @@ namespace ReactApp1.Server.Services.Auth
     public class AuthService(DataBaseContext context, IConfiguration configuration, IEmailService emailService):IAuthService
     {
         public async Task<TokenResponseDto?> LoginAsync(AuthUserDto request)
-        {            
+        {
             var user = await context.Users.FirstOrDefaultAsync(x => x.email == request.email);
             if (user == null || new PasswordHasher<User>().VerifyHashedPassword(user, user.passwordHash, request.password) == PasswordVerificationResult.Failed)
             {
                 return new TokenResponseDto { Error = new ErrorModel("A megadott Email cím-jelszó kombinációval rendelkező felhasználó nem található") };
             };
-            if(user.accountStatus == 2)
+
+            if (user.PasswordResetRequired)
+            {
+                return new TokenResponseDto { Error = new ErrorModel("Jelszó visszaállítás szükséges") };
+            }
+
+            if (user.accountStatus == 2)
             {
                 return new TokenResponseDto { Error = new ErrorModel("A fiók fel van függesztve") };
             }
-            return await CreateTokenResponse(user);
 
-        }       
+            return await CreateTokenResponse(user);
+        }
 
 
         public async Task<TokenResponseDto?> RegisterAsync(AuthUserDto request)
@@ -135,7 +141,25 @@ namespace ReactApp1.Server.Services.Auth
             return true;
         }
 
+        public async Task<bool> ChangeUserStatusAsync(int userId, int newStatus)
+        {
+            if (newStatus < 1 || newStatus > 2) return false;
 
+            var user = await context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.accountStatus = newStatus;
+            await context.SaveChangesAsync();
+
+            var statusMessage = newStatus == 1 ? "aktiválva" : "felfüggesztve";
+            await emailService.SendEmailAsync(
+                user.email,
+                "Fiók státusz változás",
+                $"<h3>Fioók státusza megváltozott</h3>" +
+                $"<p>Az Ön fiókját {statusMessage} lett.</p>");
+
+            return true;
+        }
         public async Task<bool?> EditUserAdminAsync(EditUserAdminDto request)
         {
             try
@@ -164,17 +188,95 @@ namespace ReactApp1.Server.Services.Auth
         public async Task<bool?> EditPasswordAsync(EditPasswordDto request, int pid)
         {
             var user = await context.Users.FindAsync(pid);
-            if(!(request.password.Length>=6 && request.password.Length <= 30))
-            {
-                return false;
-            }
-            var hashedPw = new PasswordHasher<User>().HashPassword(user, request.password);
-            var patchDoc = new JsonPatchDocument<User> { };
-            patchDoc.Replace(user => user.passwordHash, hashedPw);
-            patchDoc.ApplyTo(user);
-            await context.SaveChangesAsync();
-            return true;
+            if (user == null) return false;
 
+            if (!request.forceChange)
+            {
+                var passwordVerification = new PasswordHasher<User>().VerifyHashedPassword(
+                    user, user.passwordHash, request.currentPassword);
+
+                if (passwordVerification != PasswordVerificationResult.Success)
+                    return false;
+            }
+
+            if (request.newPassword.Length < 6 || request.newPassword.Length > 30)
+                return false;
+
+            var hashedPw = new PasswordHasher<User>().HashPassword(user, request.newPassword);
+            user.passwordHash = hashedPw;
+            await context.SaveChangesAsync();
+
+            if (request.forceChange)
+            {
+                await emailService.SendEmailAsync(
+                    user.email,
+                    "Jelszó megváltoztatva",
+                    "<h3>Az Ön jelszava adminisztrátori beavatkozással megváltozott</h3>" +
+                    "<p>Kérjük, jelentkezzen be az új jelszavával.</p>");
+            }
+
+            return true;
+        }
+        public async Task<string> GeneratePasswordResetTokenAsync(int userId)
+        {
+            var user = await context.Users.FindAsync(userId);
+            if (user == null) return null;
+
+            var token = Guid.NewGuid().ToString() + DateTime.UtcNow.Ticks.ToString();
+            user.PasswordResetToken = BCrypt.Net.BCrypt.HashPassword(token);
+            user.PasswordResetTokenExpiry = DateTime.UtcNow.AddDays(1);
+            user.PasswordResetRequired = true;
+            await context.SaveChangesAsync();
+
+            return token;
+        }
+
+        public async Task<bool> VerifyPasswordResetTokenAsync(int userId, string token)
+        {
+            var user = await context.Users.FindAsync(userId);
+            if (user == null || user.PasswordResetTokenExpiry < DateTime.UtcNow)
+                return false;
+
+            return BCrypt.Net.BCrypt.Verify(token, user.PasswordResetToken);
+        }
+
+        public async Task<bool> CompletePasswordResetAsync(int userId, string newPassword)
+        {
+            var user = await context.Users.FindAsync(userId);
+            if (user == null || !user.PasswordResetRequired)
+                return false;
+
+            if (newPassword.Length < 6 || newPassword.Length > 30)
+                return false;
+
+            var hashedPw = new PasswordHasher<User>().HashPassword(user, newPassword);
+            user.passwordHash = hashedPw;
+            user.PasswordResetToken = null;
+            user.PasswordResetTokenExpiry = null;
+            user.PasswordResetRequired = false;
+            await context.SaveChangesAsync();
+
+            return true;
+        }
+        public async Task<bool> ForcePasswordChangeAsync(int userId, string newPassword)
+        {
+            var user = await context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            if (newPassword.Length < 6 || newPassword.Length > 30)
+                return false;
+
+            var hashedPw = new PasswordHasher<User>().HashPassword(user, newPassword);
+            user.passwordHash = hashedPw;
+            await context.SaveChangesAsync();
+
+            await emailService.SendEmailAsync(
+                user.email,
+                "Jelszó megváltoztatva",
+                "<h3>Az Ön jelszava adminisztrátori beavatkozással megváltozott</h3>" +
+                "<p>Kérjük, jelentkezzen be az új jelszavával.</p>");
+
+            return true;
         }
 
 

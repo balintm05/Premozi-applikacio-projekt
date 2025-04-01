@@ -32,11 +32,11 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.Limits.MaxRequestBodySize = 20971520;
+    serverOptions.Limits.MaxRequestBodySize = builder.Configuration.GetValue<long>("FileStorage:MaxFileSize");
 });
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 20971520; 
+    options.MultipartBodyLengthLimit = builder.Configuration.GetValue<long>("FileStorage:MaxFileSize");
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -80,10 +80,9 @@ builder.Services.AddAuthorization(options =>
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailService, SendGridEmailService>();
 builder.Services.AddHttpClient();
-var connectionString = builder.Configuration.GetConnectionString("MySqlConnectionString");
-var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
 builder.Services.AddDbContext<DataBaseContext>(options =>
-    options.UseMySql(connectionString, serverVersion));
+    options.UseMySql(builder.Configuration.GetConnectionString("MySqlConnectionString"),
+    new MySqlServerVersion(new Version(10, 4, 32))));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<ITeremService, TeremService>();
@@ -125,15 +124,14 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapFallbackToFile("/index.html");
-var imagesFolder = Path.Combine(app.Environment.ContentRootPath, "Images");
+var imagesFolder = Path.Combine(app.Environment.ContentRootPath, app.Configuration["FileStorage:ImageStoragePath"]);
 if (!Directory.Exists(imagesFolder))
 {
     Directory.CreateDirectory(imagesFolder);
 }
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(builder.Environment.ContentRootPath, "Images")),
+    FileProvider = new PhysicalFileProvider(imagesFolder),
     RequestPath = "/images"
 });
 app.Run();

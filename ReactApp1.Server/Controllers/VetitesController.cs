@@ -64,7 +64,7 @@ namespace ReactApp1.Server.Controllers
             }
             return Ok(err);
         }
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpPost("add")]
         public async Task<ActionResult<List<ErrorModel>?>> AddVetites(ManageVetitesDto request)
         {
@@ -75,7 +75,7 @@ namespace ReactApp1.Server.Controllers
             }
             return BadRequest(err);
         }
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpPatch("edit")]
         public async Task<ActionResult<ErrorModel>?> EditVetites(ManageVetitesDto request)
         {
@@ -86,7 +86,7 @@ namespace ReactApp1.Server.Controllers
             }
             return BadRequest(err);
         }
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<ActionResult<ErrorModel>?> DeleteVetites(int id)
         {

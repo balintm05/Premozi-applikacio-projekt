@@ -99,6 +99,10 @@ namespace ReactApp1.Server.Services.Vetites
             {
                 return new ErrorModel("Már szerepel ebben az időközben vetítés ebben a teremben az adatbázisban");
             }
+            if (request.Megjegyzes != null)
+            {
+                vetites.Megjegyzes = request.Megjegyzes;
+            }
             await context.Vetites.AddAsync(vetites);
             await CreateVSzekek(vetites);
             await context.SaveChangesAsync();

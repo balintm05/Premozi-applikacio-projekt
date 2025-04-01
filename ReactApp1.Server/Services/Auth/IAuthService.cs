@@ -34,8 +34,13 @@ namespace ReactApp1.Server.Services.Auth
         Task<bool> DisableEmail2FAAsync(int userId, string? password = null);
         Task<bool> StartEmail2FAFlowAsync(int userId);
         Task<List<GetUserResponseObject>> get();
+        Task<bool> ForcePasswordChangeAsync(int userId, string newPassword);
+        Task<bool> ChangeUserStatusAsync(int userId, int newStatus);
+        Task<string> GeneratePasswordResetTokenAsync(int userId);
+        Task<bool> VerifyPasswordResetTokenAsync(int userId, string token);
+        Task<bool> CompletePasswordResetAsync(int userId, string newPassword);
 
-        //just no
-        //Task<HttpResponseMessage?> OkResponseSetTokenCookie(TokenResponseDto request);
-    }
+            //just no
+            //Task<HttpResponseMessage?> OkResponseSetTokenCookie(TokenResponseDto request);
+        }
 }

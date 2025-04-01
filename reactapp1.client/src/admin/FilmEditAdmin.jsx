@@ -92,19 +92,13 @@ function FilmEditAdmin() {
         try {
             const formData = new FormData();
             Object.entries(film).forEach(([key, value]) => {
-                if (value !== null && value !== undefined) {
+                if (value !== null && value !== undefined && value !== '') {
                     formData.append(key, value);
                 }
             });
-
             const method = id && id !== 'add' ? 'patch' : 'post';
             const url = id && id !== 'add' ? '/Film/edit' : '/Film/add';
-
-            const response = await filmupload[method](url, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            const response = await filmupload[method](url, formData);
 
             if (response.data?.errorMessage) {
                 setError(response.data.errorMessage);

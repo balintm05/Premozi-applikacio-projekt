@@ -381,5 +381,97 @@ namespace ReactApp1.Server.Controllers
             }
             return BadRequest(err);
         }
+        [Authorize]
+        [HttpPatch("change-password")]
+        public async Task<ActionResult<Models.ErrorModel?>> ChangePassword([FromBody] EditPasswordDto request)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var isSuccessful = await authService.EditPasswordAsync(request, userId);
+            return isSuccessful == true
+                ? Ok(new Models.ErrorModel("Sikeres frissítés"))
+                : BadRequest(new Models.ErrorModel("A megadott jelszó nem megfelelő"));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("force-password-change/{id}")]
+        public async Task<ActionResult<Models.ErrorModel?>> ForcePasswordChange(int id, [FromBody] string newPassword)
+        {
+            if (User.FindFirstValue(ClaimTypes.Role) == "Admin" &&
+                authService.GetUserAsync(id)?.Result.role == "Admin")
+            {
+                return StatusCode(403, new ErrorModel("Admin jelszavát nem lehet így módosítani"));
+            }
+
+            var isSuccessful = await authService.ForcePasswordChangeAsync(id, newPassword);
+            return isSuccessful == true
+                ? Ok(new Models.ErrorModel("Jelszó sikeresen megváltoztatva"))
+                : BadRequest(new Models.ErrorModel("Érvénytelen jelszó"));
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPatch("change-status/{id}")]
+        public async Task<ActionResult<Models.ErrorModel?>> ChangeUserStatus(int id, [FromBody] int newStatus)
+        {
+            if (authService.GetUserAsync(id)?.Result.role == "Admin")
+            {
+                return StatusCode(403, new ErrorModel("Admin státusza nem módosítható"));
+            }
+
+            var result = await authService.ChangeUserStatusAsync(id, newStatus);
+            return result == true
+                ? Ok(new Models.ErrorModel("Státusz sikeresen módosítva"))
+                : BadRequest(new Models.ErrorModel("Érvénytelen státusz"));
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost("request-password-reset")]
+        public async Task<ActionResult> RequestPasswordReset([FromBody] PasswordResetRequestDto request)
+        {
+            if (authService.GetUserAsync(request.UserId)?.Result.role == "Admin")
+            {
+                return StatusCode(403, new ErrorModel("Admin jelszavát nem lehet így módosítani"));
+            }
+
+            var token = await authService.GeneratePasswordResetTokenAsync(request.UserId);
+            if (token == null) return BadRequest(new ErrorModel("Érvénytelen felhasználó"));
+
+            var user = await authService.GetUserAsync(request.UserId);
+            var resetLink = $"{Request.Scheme}://{Request.Host}/reset-password?userId={request.UserId}&token={WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token))}";
+
+            await emailService.SendEmailAsync(
+                user.email,
+                "Jelszó visszaállítás szükséges",
+                $"<h3>Jelszó visszaállításra van szükség</h3>" +
+                $"<p>Az adminisztrátor új jelszó megadását kérte. Kattintson <a href='{resetLink}'>ide</a> a jelszó visszaállításához.</p>");
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("verify-password-reset")]
+        public async Task<ActionResult> VerifyPasswordResetToken([FromQuery] int userId, [FromQuery] string token)
+        {
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+            var isValid = await authService.VerifyPasswordResetTokenAsync(userId, decodedToken);
+
+            return isValid
+                ? Ok(new { valid = true })
+                : BadRequest(new ErrorModel("Érvénytelen vagy lejárt token"));
+        }
+
+        [AllowAnonymous]
+        [HttpPost("complete-password-reset")]
+        public async Task<ActionResult> CompletePasswordReset([FromBody] CompletePasswordResetDto request)
+        {
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token));
+            var isValid = await authService.VerifyPasswordResetTokenAsync(request.UserId, decodedToken);
+
+            if (!isValid) return BadRequest(new ErrorModel("Érvénytelen vagy lejárt token"));
+
+            var success = await authService.CompletePasswordResetAsync(request.UserId, request.NewPassword);
+
+            return success
+                ? Ok(new { success = true })
+                : BadRequest(new ErrorModel("Érvénytelen jelszó"));
+        }
     }
 }

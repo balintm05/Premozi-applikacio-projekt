@@ -16,60 +16,55 @@ namespace ReactApp1.Server.Controllers
     [ApiController]
     public class ImageController(IWebHostEnvironment environment, IConfiguration configuration) : ControllerBase
     {
-        //[Authorize(Roles="Admin")]
+        [Authorize(Roles="Admin")]
         [HttpPost("upload")]
         public async Task<ActionResult<ImageUploadResponse>> UploadImage(IFormFile file, [FromServices] DataBaseContext dbContext)
         {
             try
             {
-                var config = configuration.GetSection("FileStorage");
-                var maxSize = config.GetValue<long>("MaxFileSize", 20 * 1024 * 1024);
-                var allowedExts = config.GetValue<string[]>("AllowedExtensions") ?? new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                var fileStorageConfig = configuration.GetSection("FileStorage");
+                var maxSize = fileStorageConfig.GetValue<long>("MaxFileSize", 20 * 1024 * 1024);
+                var allowedExts = fileStorageConfig.GetValue<string[]>("AllowedExtensions") ?? [".jpg", ".jpeg", ".png"];
+                var imagesDir = Path.Combine(environment.ContentRootPath, fileStorageConfig["ImageStoragePath"] ?? "Images");
                 if (file == null || file.Length == 0)
-                {
-                    return BadRequest(new ImageUploadResponse { Error = new ErrorModel("Nem lett fájl megadva") });
-                }           
+                    return BadRequest(new ImageUploadResponse { Error = new("No file provided") });
+
                 if (file.Length > maxSize)
-                {
-                    return BadRequest(new ImageUploadResponse { Error = new ErrorModel($"Maximum méret: {maxSize / 1024 / 1024}MB") });
-                }     
+                    return BadRequest(new ImageUploadResponse { Error = new($"Max size: {maxSize / 1024 / 1024}MB") });
+
                 var fileExt = Path.GetExtension(file.FileName).ToLowerInvariant();
                 if (!allowedExts.Contains(fileExt))
-                {
-                    return BadRequest(new ImageUploadResponse { Error = new ErrorModel($"Elfogadható fájtformátumok: {string.Join(", ", allowedExts)}") });
-                }
-                var imagesDir = Path.Combine(environment.ContentRootPath, "Images");
-                if (!Directory.Exists(imagesDir))
-                {
-                    Directory.CreateDirectory(imagesDir);
-                }
-                var fileName = $"{Guid.NewGuid()}{fileExt}";
-                var originalFilePath = Path.Combine(imagesDir, fileName);
-                using (var stream = new FileStream(originalFilePath, FileMode.Create))
+                    return BadRequest(new ImageUploadResponse { Error = new($"Allowed formats: {string.Join(", ", allowedExts)}") });
+                Directory.CreateDirectory(imagesDir); 
+                var originalFileName = $"{Guid.NewGuid()}{fileExt}";
+                var originalFilePath = Path.Combine(imagesDir, originalFileName);
+                await using (var stream = new FileStream(originalFilePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
                 }
-                var processedFileName = $"{Path.GetFileNameWithoutExtension(fileName)}.jpg";
-                var processedRelativePath = $"/images/{processedFileName}";
-                var processedFilePath = Path.Combine(imagesDir, processedFileName);
+                var processedFileName = fileExt.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                                       fileExt.Equals(".jpeg", StringComparison.OrdinalIgnoreCase)
+                    ? originalFileName
+                    : $"{Path.GetFileNameWithoutExtension(originalFileName)}.jpg";
 
-                await ProcessImage(
-                    inputPath: originalFilePath,
-                    outputPath: processedFilePath
-                );
-                System.IO.File.Delete(originalFilePath);
+                var processedFilePath = Path.Combine(imagesDir, processedFileName);
+                if (!processedFileName.Equals(originalFileName))
+                {
+                    await ProcessImage(originalFilePath, processedFilePath);
+                    System.IO.File.Delete(originalFilePath); 
+                }
                 var imageRecord = new Images
                 {
                     FileName = processedFileName,
                     OriginalFileName = file.FileName,
-                    RelativePath = processedRelativePath,
-                    ContentType = "image/jpeg",
+                    RelativePath = $"/images/{processedFileName}",
+                    ContentType = processedFileName.EndsWith(".png") ? "image/png" : "image/jpeg",
                     FileSize = new FileInfo(processedFilePath).Length,
                     UploadDate = DateTime.UtcNow
                 };
-                dbContext.Images.Add(imageRecord);
+                await dbContext.Images.AddAsync(imageRecord);
                 await dbContext.SaveChangesAsync();
-                var absoluteUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}{processedRelativePath}";
+                var absoluteUrl = $"{Request.Scheme}://{Request.Host}/images/{processedFileName}";
                 return Ok(new ImageUploadResponse
                 {
                     Id = imageRecord.Id,
@@ -81,29 +76,25 @@ namespace ReactApp1.Server.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new ImageUploadResponse { Error = new ErrorModel($"Internal server error: {ex.Message}") });
+                return StatusCode(500, new ImageUploadResponse { Error = new($"Internal error: {ex.Message}") });
             }
         }
-        private async Task ProcessImage(string inputPath, string outputPath, int maxWidth = 1920, int quality = 80)
+        private static async Task ProcessImage(string inputPath, string outputPath, int maxWidth = 1920, int quality = 80)
         {
-            using (SixLabors.ImageSharp.Image image = await SixLabors.ImageSharp.Image.LoadAsync(inputPath))
+            using var image = await Image.LoadAsync(inputPath);
+            image.Mutate(x => x.AutoOrient());
+
+            if (image.Width > maxWidth)
             {
-                image.Mutate(x => x.AutoOrient());
-                if (image.Width > maxWidth)
+                image.Mutate(x => x.Resize(new ResizeOptions
                 {
-                    image.Mutate(x => x.Resize(new ResizeOptions
-                    {
-                        Size = new Size(maxWidth, 0),
-                        Mode = ResizeMode.Max
-                    }));
-                }
-                var encoder = new JpegEncoder()
-                {
-                    Quality = quality,
-                    ColorType = JpegEncodingColor.YCbCrRatio420
-                };
-                await image.SaveAsync(outputPath, encoder);
+                    Size = new Size(maxWidth, 0),
+                    Mode = ResizeMode.Max
+                }));
             }
+            var encoder = new JpegEncoder { Quality = quality };
+            await image.SaveAsync(outputPath, encoder);
         }
     }
 }
+

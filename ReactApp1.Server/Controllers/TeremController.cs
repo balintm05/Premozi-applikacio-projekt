@@ -59,7 +59,7 @@ namespace ReactApp1.Server.Controllers
             }
             return Ok(err);
         }
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpPost("add")]
         public async Task<ActionResult<Models.ErrorModel?>> AddTerem(ManageTeremDto request)
         {
@@ -70,7 +70,7 @@ namespace ReactApp1.Server.Controllers
             }
             return BadRequest(err);
         }
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPatch("edit")]
         public async Task<ActionResult<Models.ErrorModel?>> EditTerem(ManageTeremDto request)
         {
@@ -81,7 +81,7 @@ namespace ReactApp1.Server.Controllers
             }
             return BadRequest(err);
         }
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<ActionResult<Models.ErrorModel?>> deleteTerem(int id)
         {

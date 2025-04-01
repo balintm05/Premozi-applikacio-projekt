@@ -13,29 +13,32 @@ namespace ReactApp1.Server.Services.Email
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            try
+            var msg = new SendGridMessage()
             {
-                var client = new SendGridClient(_emailSettings.SendGridApiKey);
-                var from = new EmailAddress(_emailSettings.FromEmail, _emailSettings.FromName);
-                var to = new EmailAddress(email);
-                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent: null, htmlMessage);
+                From = new EmailAddress(_emailSettings.FromEmail, _emailSettings.FromName),
+                Subject = subject,
+                HtmlContent = $@"
+            <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+                <div style='background: #f8f9fa; padding: 20px; border-radius: 5px;'>
+                    <h2 style='color: #007bff;'>{subject}</h2>
+                    {htmlMessage}
+                    <p style='margin-top: 20px; font-size: 0.9em; color: #6c757d;'>
+                        Üdvözlettel,<br>
+                        {_emailSettings.FromName}
+                    </p>
+                </div>
+            </div>"
+            };
 
-                var response = await client.SendEmailAsync(msg);
+            msg.AddTo(new EmailAddress(email));
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Body.ReadAsStringAsync();
-                    Console.WriteLine($"Failed to send email to {email}. Status: {response.StatusCode}, Error: {errorContent}");
-                }
-                else
-                {
-                    Console.WriteLine($"Successfully sent email to: {email}");
-                }
-            }
-            catch (Exception ex)
+            var client = new SendGridClient(_emailSettings.SendGridApiKey);
+            var response = await client.SendEmailAsync(msg);
+
+            if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Exception while sending email to {email}: {ex.Message}");
-                throw; 
+                var errorContent = await response.Body.ReadAsStringAsync();
+                throw new Exception($"Email sending failed: {errorContent}");
             }
         }
     }

@@ -14,13 +14,14 @@ namespace ReactApp1.Server.Controllers
     //[Authorize]
     public class FoglalasController(IFoglalasService foglalasService) : ControllerBase
     {
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpGet("get")]
         public async Task<ActionResult<List<GetFoglalasResponse>>?> GetFoglalas()
         {
             var foglalasok = await foglalasService.GetFoglalas();
             return Ok(foglalasok);
         }
+        [AllowAnonymous]
         [HttpGet("getByVetites/{vid}")]
         public async Task<ActionResult<List<GetFoglalasResponse>>?> GetFoglalasByVetites(int vid)
         {
@@ -31,6 +32,7 @@ namespace ReactApp1.Server.Controllers
             }
             return Ok(foglalasok);
         }
+        [AllowAnonymous]
         [HttpGet("getByUser/{uid}")]
         public async Task<ActionResult<List<GetFoglalasResponse>>?> GetFoglalasByUser(int uid)
         {
@@ -41,7 +43,7 @@ namespace ReactApp1.Server.Controllers
             }
             return Ok(foglalasok);
         }
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpPost("add")]
         public async Task<ActionResult<Models.ErrorModel?>> AddFoglalas(ManageFoglalasDto request)
         {
@@ -52,7 +54,7 @@ namespace ReactApp1.Server.Controllers
             }
             return BadRequest(err);
         }
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpPatch("edit")]
         public async Task<ActionResult<Models.ErrorModel?>> EditFoglalas(ManageFoglalasDto request)
         {
@@ -63,7 +65,7 @@ namespace ReactApp1.Server.Controllers
             }
             return BadRequest(err);
         }
-        //[Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin")]
         [HttpDelete("delete/{id}")]
         public async Task<ActionResult<Models.ErrorModel?>> DeleteFoglalas(int id)
         {

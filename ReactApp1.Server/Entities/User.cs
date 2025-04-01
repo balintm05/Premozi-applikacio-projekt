@@ -37,6 +37,9 @@ namespace ReactApp1.Server.Entities
         public string? EmailConfirmationToken { get; set; }
         public DateTime? EmailConfirmationTokenExpiry { get; set; }
         public bool TwoFactorEnabled { get; set; } = false;
+        public string? PasswordResetToken { get; set; }
+        public DateTime? PasswordResetTokenExpiry { get; set; }
+        public bool PasswordResetRequired { get; set; } = false;
         public ICollection<FoglalasAdatok> Foglalasok { get; set; } = new List<FoglalasAdatok>();
     }
 }
