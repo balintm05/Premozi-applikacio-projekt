@@ -206,7 +206,6 @@ namespace ReactApp1.Server.Controllers
         [HttpPost("refresh-token")]
         public async Task RefreshToken()
         {
-            Console.WriteLine("refresh-token");
             try
             {
                 if (User.Identity.IsAuthenticated)
@@ -276,12 +275,15 @@ namespace ReactApp1.Server.Controllers
         public async Task<ActionResult<Models.ErrorModel>> EditUser(EditUserDto request)
         {
             int? id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            if(id == null)
+            if (id == null)
             {
                 return BadRequest(new Models.ErrorModel("Hiba történt"));
             }
-            var isSuccessful = await authService.EditUserAsync(request, (int)id);
-            return isSuccessful == true ? Ok(new Models.ErrorModel("Sikeres frissítés")) : BadRequest(new Models.ErrorModel("Az email cím nem megfelelő, nem történt változás"));
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
+            var isSuccessful = await authService.EditUserAsync(request, (int)id, baseUrl);
+            return isSuccessful == true
+                ? Ok(new Models.ErrorModel("Sikeres frissítés. Kérjük erősítse meg az új email címét."))
+                : BadRequest(new Models.ErrorModel("Az email cím nem megfelelő vagy a jelszó hibás, nem történt változás"));
         }
 
 
@@ -388,7 +390,7 @@ namespace ReactApp1.Server.Controllers
             var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var isSuccessful = await authService.EditPasswordAsync(request, userId);
             return isSuccessful == true
-                ? Ok(new Models.ErrorModel("Sikeres frissítés"))
+                ? Ok(new Models.ErrorModel("Sikeres frissítés. Megerősítő emailt küldtünk."))
                 : BadRequest(new Models.ErrorModel("A megadott jelszó nem megfelelő"));
         }
 
@@ -430,13 +432,10 @@ namespace ReactApp1.Server.Controllers
             {
                 return StatusCode(403, new ErrorModel("Admin jelszavát nem lehet így módosítani"));
             }
-
             var token = await authService.GeneratePasswordResetTokenAsync(request.UserId);
             if (token == null) return BadRequest(new ErrorModel("Érvénytelen felhasználó"));
-
             var user = await authService.GetUserAsync(request.UserId);
             var resetLink = $"{Request.Scheme}://{Request.Host}/reset-password?userId={request.UserId}&token={WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token))}";
-
             await emailService.SendEmailAsync(
                 user.email,
                 "Jelszó visszaállítás szükséges",
@@ -452,7 +451,6 @@ namespace ReactApp1.Server.Controllers
         {
             var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
             var isValid = await authService.VerifyPasswordResetTokenAsync(userId, decodedToken);
-
             return isValid
                 ? Ok(new { valid = true })
                 : BadRequest(new ErrorModel("Érvénytelen vagy lejárt token"));

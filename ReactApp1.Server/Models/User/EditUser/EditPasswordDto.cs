@@ -1,9 +1,16 @@
-﻿namespace ReactApp1.Server.Models.User.EditUser
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ReactApp1.Server.Models.User.EditUser
 {
     public class EditPasswordDto
     {
-        public string? currentPassword { get; set; }
-        public string? newPassword { get; set; }
+        [Required]
+        public string currentPassword { get; set; }
+
+        [Required]
+        [StringLength(30, MinimumLength = 6, ErrorMessage = "A jelszónak 6 és 30 karakter között kell lennie")]
+        public string newPassword { get; set; }
+
         public bool forceChange { get; set; } = false;
         public ErrorModel? Error { get; set; }
     }

@@ -1,21 +1,21 @@
 ﻿[data-theme="light"] {
-    --bg-color: #f5f5f5; /* Slightly darker background for better contrast */
+    --bg-color: #f5f5f5;
     --text-color: #212529;
-    --nav-bg: #e9ecef; /* Distinct from main background */
+    --nav-bg: #e9ecef;
     --nav-text: #212529;
     --content-bg: var(--bg-color);
-    --footer-bg: #e9ecef; /* Matches nav for consistency */
+    --footer-bg: #e9ecef; 
     --footer-text: #212529;
-    --link-color: #0a58ca; /* More vibrant blue */
-    --border-color: #ced4da; /* Slightly darker borders */
+    --link-color: #0a58ca;
+    --border-color: #ced4da;
     --dropdown-bg: #ffffff;
     --dropdown-text: #212529;
-    --dropdown-hover: #f1f3f5; /* Distinct hover state */
-    --btn-bg: #495057; /* Darker button background */
+    --dropdown-hover: #f1f3f5;
+    --btn-bg: #495057; 
     --btn-text: #ffffff;
-    --btn-hover: #343a40; /* Distinct button hover state */
+    --btn-hover: #343a40; 
     --theme-icon-color: #ffc107;
-    --active-link: #0d6efd; /* Distinct active link color */
+    --active-link: #0d6efd; 
     --auth-card-bg: #ffffff;
     --auth-text: #2d3748;
     --auth-border: #e2e8f0;
@@ -29,23 +29,23 @@
 }
 
 [data-theme="dark"] {
-    --bg-color: #1a1a1a; /* Darker background */
+    --bg-color: #1a1a1a; 
     --text-color: #f8f9fa;
     --nav-bg: #212529;
     --nav-text: #f8f9fa;
     --content-bg: var(--bg-color);
     --footer-bg: #212529;
-    --footer-text: #adb5bd; /* Lighter footer text */
+    --footer-text: #adb5bd; 
     --link-color: #6ea8fe;
     --border-color: #495057;
     --dropdown-bg: #343a40;
     --dropdown-text: #f8f9fa;
-    --dropdown-hover: #3e444b; /* More visible hover */
+    --dropdown-hover: #3e444b; 
     --btn-bg: #495057;
     --btn-text: #ffffff;
-    --btn-hover: #5a6268; /* Distinct button hover */
+    --btn-hover: #5a6268; 
     --theme-icon-color: #ffc107;
-    --active-link: #3d8bfd; /* Brighter active link */
+    --active-link: #3d8bfd; 
     --auth-card-bg: #2d3748;
     --auth-text: #f7fafc;
     --auth-border: #4a5568;
@@ -691,3 +691,82 @@ body::before {
     background-color: rgba(255, 255, 255, 0.1) !important;
     font-weight: 500;
 }
+.auth-success {
+    color: #38a169;
+    background-color: rgba(56, 161, 105, 0.1);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    border-left: 4px solid #38a169;
+}
+
+.auth-card-header h1 {
+    color: var(--auth-text);
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.auth-card-header p {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--auth-text);
+    opacity: 0.7;
+}
+
+.auth-form-group {
+    margin-bottom: 1.75rem;
+}
+
+    .auth-form-group label {
+        display: block;
+        margin-bottom: 0.75rem;
+        color: var(--auth-text);
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .auth-form-group input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid var(--auth-border);
+        border-radius: 10px;
+        background-color: var(--content-bg);
+        color: var(--auth-text);
+        font-size: 1rem;
+        transition: all 0.2s ease;
+    }
+
+        .auth-form-group input:focus {
+            border-color: var(--auth-accent);
+            outline: none;
+            box-shadow: 0 0 0 3px var(--auth-input-focus);
+        }
+
+.auth-submit-btn {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--auth-btn-bg);
+    color: var(--auth-btn-text);
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 1rem;
+}
+
+    .auth-submit-btn:hover {
+        background-color: var(--auth-link-hover);
+    }
+
+    .auth-submit-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }

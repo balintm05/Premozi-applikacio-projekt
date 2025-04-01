@@ -6,6 +6,7 @@ import ThemeWrapper from "../layout/ThemeWrapper";
 function ChangePasswordPage() {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,12 +18,25 @@ function ChangePasswordPage() {
         setIsSubmitting(true);
         setError(null);
 
+        if (newPassword.length < 6 || newPassword.length > 30) {
+            setError("A jelszónak 6 és 30 karakter között kell lennie");
+            setIsSubmitting(false);
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setError("A jelszavak nem egyeznek");
+            setIsSubmitting(false);
+            return;
+        }
+
         try {
-            const response = await api.patch("/auth/editPassword", {
-                password: currentPassword,
+            const response = await api.patch("/auth/change-password", {
+                currentPassword,
                 newPassword
             });
-            if (response.data.errorMessage) {
+
+            if (response.data?.errorMessage) {
                 setError(response.data.errorMessage);
             } else {
                 setSuccess(true);
@@ -36,61 +50,71 @@ function ChangePasswordPage() {
     };
 
     return (
-        <ThemeWrapper>
-            <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-                <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Jelszó módosítása</h2>
-
-                {error && (
-                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                        {error}
-                    </div>
-                )}
-
-                {success && (
-                    <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-                        Jelszó sikeresen megváltoztatva! Átirányítás a profilra...
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                            Jelenlegi jelszó
-                        </label>
-                        <input
-                            id="currentPassword"
-                            type="password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                            placeholder="Írja be a jelenlegi jelszót"
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+        <ThemeWrapper noBg>
+            <div className="auth-container">
+                <div className="auth-card">
+                    <div className="auth-card-header">
+                        <h1>Jelszó módosítása</h1>
+                        <p className="opacity-70">Állítson be egy új biztonságos jelszót</p>
                     </div>
 
-                    <div>
-                        <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                            Új jelszó
-                        </label>
-                        <input
-                            id="newPassword"
-                            type="password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            placeholder="Írja be az új jelszót"
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
+                    {error && (
+                        <div className="auth-error">
+                            <span>{error}</span>
+                        </div>
+                    )}
 
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className={`w-full py-2 px-4 rounded-md text-white font-medium ${isSubmitting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'} transition-colors`}
-                    >
-                        {isSubmitting ? 'Feldolgozás...' : 'Mentés'}
-                    </button>
-                </form>
+                    {success && (
+                        <div className="auth-success">
+                            <span>A jelszó sikeresen megváltozott! Átirányítás...</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit}>
+                        <div className="auth-form-group">
+                            <label>Jelenlegi jelszó</label>
+                            <input
+                                type="password"
+                                value={currentPassword}
+                                onChange={(e) => setCurrentPassword(e.target.value)}
+                                placeholder="••••••••"
+                                required
+                            />
+                        </div>
+
+                        <div className="auth-form-group">
+                            <label>Új jelszó</label>
+                            <input
+                                type="password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                placeholder="Legalább 6 karakter"
+                                minLength={6}
+                                maxLength={30}
+                                required
+                            />
+                        </div>
+
+                        <div className="auth-form-group">
+                            <label>Jelszó megerősítése</label>
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="••••••••"
+                                required
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            className="auth-submit-btn"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? 'Feldolgozás...' : 'Jelszó módosítása'}
+                        </button>
+                    </form>
+                </div>
             </div>
         </ThemeWrapper>
     );

@@ -129,7 +129,7 @@ namespace ReactApp1.Server.Services.Foglalas
             await context.SaveChangesAsync();
             try
             {
-                var seatsList = string.Join(", ", vetitesszekek.Select(s => $"{s.X}. sor {s.Y}. szék"));
+                var seatsList = string.Join(", ", vetitesszekek.Select(s => $"{s.X+1}. sor {s.Y+1}. szék"));
                 var emailSubject = "Sikeres foglalás";
                 var emailBody = $@"
             <h2>Tisztelt {user.email}!</h2>

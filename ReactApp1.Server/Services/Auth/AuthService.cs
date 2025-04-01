@@ -25,6 +25,7 @@ using ReactApp1.Server.Models.User.Response;
 using ReactApp1.Server.Models;
 using Org.BouncyCastle.Crypto.Generators;
 using ReactApp1.Server.Services.Email;
+using Microsoft.AspNetCore.WebUtilities;
 //using System.Data.Entity;
 
 //https://www.youtube.com/watch?v=6EEltKS8AwA
@@ -127,16 +128,25 @@ namespace ReactApp1.Server.Services.Auth
             return list;
         }
 
-        public async Task<bool?> EditUserAsync(EditUserDto request, int pid)
+        public async Task<bool?> EditUserAsync(EditUserDto request, int pid, string baseUrl)
         {
-            if(!new EmailAddressAttribute().IsValid(request.email))
-            {
-                return false;
-            }
             var user = await context.Users.FindAsync(pid);
-            var patchDoc = new JsonPatchDocument<User>{ };
-            patchDoc.Replace(user => user.email, request.email);
-            patchDoc.ApplyTo(user);
+            if (user == null) return false;
+            var passwordVerification = new PasswordHasher<User>().VerifyHashedPassword(
+                user, user.passwordHash, request.currentPassword);
+            if (passwordVerification != PasswordVerificationResult.Success)
+                return false;
+            if (!new EmailAddressAttribute().IsValid(request.email))
+                return false;
+            var confirmationToken = await GenerateEmailConfirmationTokenAsync(user);
+            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(confirmationToken));
+            await emailService.SendEmailAsync(
+                request.email,
+                "Erősítse meg új email címét",
+                $"<h1>Email cím változás</h1>" +
+                $"<p>Kattintson <a href='{baseUrl}/api/auth/confirm-email?userId={user.userID}&token={encodedToken}'>ide</a> az új email cím megerősítéséhez.</p>");
+            user.email = request.email;
+            user.EmailConfirmed = false;
             await context.SaveChangesAsync();
             return true;
         }
@@ -205,15 +215,12 @@ namespace ReactApp1.Server.Services.Auth
             var hashedPw = new PasswordHasher<User>().HashPassword(user, request.newPassword);
             user.passwordHash = hashedPw;
             await context.SaveChangesAsync();
-
-            if (request.forceChange)
-            {
-                await emailService.SendEmailAsync(
-                    user.email,
-                    "Jelszó megváltoztatva",
-                    "<h3>Az Ön jelszava adminisztrátori beavatkozással megváltozott</h3>" +
-                    "<p>Kérjük, jelentkezzen be az új jelszavával.</p>");
-            }
+            await emailService.SendEmailAsync(
+                user.email,
+                "Jelszó megváltoztatva",
+                $"<h3>Az Ön jelszava megváltozott</h3>" +
+                $"<p>Ez egy megerősítés, hogy az Ön fiókjának jelszava megváltozott {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm")} időpontban.</p>" +
+                $"<p>Ha Ön nem kezdeményezte ezt a változtatást, kérjük azonnal lépjen kapcsolatba az ügyfélszolgálattal.</p>");
 
             return true;
         }
@@ -245,16 +252,20 @@ namespace ReactApp1.Server.Services.Auth
             var user = await context.Users.FindAsync(userId);
             if (user == null || !user.PasswordResetRequired)
                 return false;
-
             if (newPassword.Length < 6 || newPassword.Length > 30)
                 return false;
-
             var hashedPw = new PasswordHasher<User>().HashPassword(user, newPassword);
             user.passwordHash = hashedPw;
             user.PasswordResetToken = null;
             user.PasswordResetTokenExpiry = null;
             user.PasswordResetRequired = false;
             await context.SaveChangesAsync();
+            await emailService.SendEmailAsync(
+                user.email,
+                "Jelszó visszaállítva",
+                $"<h3>Az Ön jelszava sikeresen visszaállítottuk</h3>" +
+                $"<p>A jelszó visszaállítása megtörtént: {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm")}</p>" +
+                $"<p>Ha Ön nem kezdeményezte ezt a változtatást, azonnal lépjen kapcsolatba az ügyfélszolgálattal.</p>");
 
             return true;
         }
@@ -272,9 +283,11 @@ namespace ReactApp1.Server.Services.Auth
 
             await emailService.SendEmailAsync(
                 user.email,
-                "Jelszó megváltoztatva",
-                "<h3>Az Ön jelszava adminisztrátori beavatkozással megváltozott</h3>" +
-                "<p>Kérjük, jelentkezzen be az új jelszavával.</p>");
+                "Jelszó megváltoztatva (adminisztrátori művelet)",
+                $"<h3>Az Ön jelszava adminisztrátori beavatkozással megváltozott</h3>" +
+                $"<p>Az új jelszó beállítása történt: {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm")}</p>" +
+                $"<p>Kérjük, jelentkezzen be az új jelszavával.</p>" +
+                $"<p>Ha Ön nem kért jelszóváltoztatást, azonnal lépjen kapcsolatba az ügyfélszolgálattal.</p>");
 
             return true;
         }
@@ -308,16 +321,12 @@ namespace ReactApp1.Server.Services.Auth
 
 
 
-        //token methods
 
         public async Task<TokenResponseDto?> RefreshTokenAsync(string refToken)
         {
             var user = await ValidateRefreshTokenAsync(refToken);          
             return user != null ? 
-                new TokenResponseDto
-                {
-                    AccessToken = CreateToken(user)
-                } : null;
+                await CreateTokenResponse(user): null;
         }
 
 
@@ -522,7 +531,6 @@ namespace ReactApp1.Server.Services.Auth
 
             var code = new Random().Next(100000, 999999).ToString();
             await StoreEmail2FACodeAsync(userId, code, 5);
-
             await emailService.SendEmailAsync(
                 user.email,
                 "Kétfaktoros azonosító kód",

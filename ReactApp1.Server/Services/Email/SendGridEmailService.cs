@@ -40,6 +40,7 @@ namespace ReactApp1.Server.Services.Email
                 var errorContent = await response.Body.ReadAsStringAsync();
                 throw new Exception($"Email sending failed: {errorContent}");
             }
+            Console.WriteLine($"Email sikeresen elküldve a/az {email} email címre");
         }
     }
 }

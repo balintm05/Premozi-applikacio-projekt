@@ -7,7 +7,7 @@ const EmailConfirmation = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { api } = useContext(AuthContext);
-    const [status, setStatus] = useState('loading'); // 'loading', 'success', 'error'
+    const [status, setStatus] = useState('loading');
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
