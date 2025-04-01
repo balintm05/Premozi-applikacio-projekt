@@ -12,7 +12,7 @@ using ReactApp1.Server.Data;
 namespace ReactApp1.Server.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20250326195622_teehee")]
+    [Migration("20250401090540_teehee")]
     partial class teehee
     {
         /// <inheritdoc />
@@ -319,14 +319,17 @@ namespace ReactApp1.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("TwoFactorEnabled")
+                    b.Property<bool>("PasswordResetRequired")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("TwoFactorRecoveryCodes")
+                    b.Property<string>("PasswordResetToken")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("TwoFactorSecret")
-                        .HasColumnType("longtext");
+                    b.Property<DateTime?>("PasswordResetTokenExpiry")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("accountStatus")
                         .HasMaxLength(1)

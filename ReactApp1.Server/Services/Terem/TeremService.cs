@@ -62,31 +62,38 @@ namespace ReactApp1.Server.Services.Terem
         }
         public async Task<Models.ErrorModel?> addTerem(ManageTeremDto request)
         {
+            using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                var terem = new Entities.Terem.Terem();
-                var szekek = new List<Szekek>();
-                terem.Nev = request.Nev;
+                var terem = new Entities.Terem.Terem
+                {
+                    Nev = request.Nev,
+                    Megjegyzes = request.Megjegyzes
+                };
+                await context.Terem.AddAsync(terem);
+                await context.SaveChangesAsync();
                 bool s = int.TryParse(request.Sorok, out int sorok);
                 bool o = int.TryParse(request.Oszlopok, out int oszlopok);
+
                 if (s && o)
                 {
-                    await context.Terem.AddAsync(terem);
                     await CreateSzekek(sorok, oszlopok, terem);
                     await context.SaveChangesAsync();
+                    await transaction.CommitAsync();
                     return new Models.ErrorModel("Sikeres hozzáadás");
                 }
                 else
                 {
+                    await transaction.RollbackAsync();
                     return new Models.ErrorModel("Számot kell megadni a sorok és oszlopok számához");
                 }
             }
             catch (Exception ex)
             {
+                await transaction.RollbackAsync();
                 return new Models.ErrorModel(ex.Message);
             }
         }
-
         public async Task<Models.ErrorModel?> editTerem(ManageTeremDto request)
         {
             using var transaction = await context.Database.BeginTransactionAsync();
@@ -251,25 +258,19 @@ namespace ReactApp1.Server.Services.Terem
         }
         private async Task CreateSzekek(int sorok, int oszlopok, Entities.Terem.Terem terem)
         {
-            var existingSeats = await context.Szekek
-                .Where(s => s.Teremid == terem.id)
-                .ToListAsync();
-
             var newSeats = new List<Szekek>();
+
             for (int x = 0; x < sorok; x++)
             {
                 for (int y = 0; y < oszlopok; y++)
                 {
-                    if (!existingSeats.Any(s => s.X == x && s.Y == y))
+                    newSeats.Add(new Szekek
                     {
-                        newSeats.Add(new Szekek
-                        {
-                            Teremid = terem.id,
-                            X = x,
-                            Y = y,
-                            Allapot = 1
-                        });
-                    }
+                        Teremid = terem.id,
+                        X = x,
+                        Y = y,
+                        Allapot = 1 
+                    });
                 }
             }
             await context.Szekek.AddRangeAsync(newSeats);
@@ -277,19 +278,17 @@ namespace ReactApp1.Server.Services.Terem
                 .Where(v => v.Teremid == terem.id)
                 .Include(v => v.VetitesSzekek)
                 .ToListAsync();
+
             foreach (var vetites in vetitesek)
             {
                 foreach (var seat in newSeats)
                 {
-                    if (!vetites.VetitesSzekek.Any(vs => vs.X == seat.X && vs.Y == seat.Y))
+                    vetites.VetitesSzekek.Add(new VetitesSzekek
                     {
-                        vetites.VetitesSzekek.Add(new VetitesSzekek
-                        {
-                            X = seat.X,
-                            Y = seat.Y,
-                            FoglalasAllapot = seat.Allapot
-                        });
-                    }
+                        X = seat.X,
+                        Y = seat.Y,
+                        FoglalasAllapot = seat.Allapot
+                    });
                 }
             }
         }

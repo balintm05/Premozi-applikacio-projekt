@@ -146,7 +146,7 @@ function UserListAdmin() {
                                 <td>{row.role}</td>
                                 <td>{row.Megjegyzes}</td>
                                 <td>
-                                    <div className="d-flex gap-2">
+                                    <div className="gap-2">
                                         <button
                                             className={`btn ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
                                             onClick={() => navigate(`/account/profile/details/${row.userID}`)}
@@ -155,12 +155,6 @@ function UserListAdmin() {
                                             }}
                                         >
                                             Profil
-                                        </button>
-                                        <button
-                                            className={`btn ${darkMode ? 'btn-info' : 'btn-outline-info'}`}
-                                            onClick={() => navigate(`/account/profile/manage/edit/${row.userID}`)}
-                                        >
-                                            Módosítás
                                         </button>
                                     </div>
                                 </td>

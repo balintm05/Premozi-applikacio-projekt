@@ -16,7 +16,7 @@ namespace ReactApp1.Server.Controllers
     [ApiController]
     public class ImageController(IWebHostEnvironment environment, IConfiguration configuration) : ControllerBase
     {
-        [Authorize(Roles="Admin")]
+        [Authorize(Policy ="InternalOnly")]
         [HttpPost("upload")]
         public async Task<ActionResult<ImageUploadResponse>> UploadImage(IFormFile file, [FromServices] DataBaseContext dbContext)
         {

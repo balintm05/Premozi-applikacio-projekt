@@ -316,14 +316,17 @@ namespace ReactApp1.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("TwoFactorEnabled")
+                    b.Property<bool>("PasswordResetRequired")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<string>("TwoFactorRecoveryCodes")
+                    b.Property<string>("PasswordResetToken")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("TwoFactorSecret")
-                        .HasColumnType("longtext");
+                    b.Property<DateTime?>("PasswordResetTokenExpiry")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("accountStatus")
                         .HasMaxLength(1)

@@ -139,7 +139,6 @@ namespace ReactApp1.Server.Services.Foglalas
             <p><strong>Foglalt helyek:</strong> {seatsList}</p>
             <p><strong>Foglalás azonosító:</strong> {foglalas.id}</p>
             <p>Köszönjük, hogy minket választott!</p>
-            <p>Üdvözlettel,<br>Premozi</p>
         ";
 
                 await emailService.SendEmailAsync(user.email, emailSubject, emailBody);

@@ -23,6 +23,11 @@ import TeremEditAdmin from "./admin/TeremEditAdmin";
 import FilmEditAdmin from './admin/FilmEditAdmin';
 import VetitesListAdmin from './admin/VetitesListAdmin';
 import VetitesEditAdmin from './admin/VetitesEditAdmin';
+import ChangeEmailPage from './components/ChangeEmailPage';
+import ChangePasswordPage from './components/ChangePasswordPage';
+import PasswordResetPage from './components/PasswordResetPage';
+import AdminUserStatusPage from './admin/AdminUserStatusPage';
+import AdminForcePasswordChangePage from './admin/AdminForcePasswordChange';
 
 const App = () => {
     return (
@@ -34,13 +39,20 @@ const App = () => {
                         <Route path="/account/login" element={<Login />} />
                         <Route path="/account/register" element={<Register />} />
                         <Route path="/logout" element={<Logout />} />
+
                         <Route path="/account/profile/details/:id?" element={<ProfilePage />} />
-                        <Route path="/account/profile/manage/edit/:id?" element={<UserEditor />} />
+                        <Route path="/account/change-email" element={<ChangeEmailPage />} />
+                        <Route path="/account/change-password" element={<ChangePasswordPage />} />
+
                         <Route path="/auth/confirm-email" element={<EmailConfirmation />} />
                         <Route path="/auth/2fa" element={<TwoFactorAuth />} />
+                        <Route path="/auth/reset-password" element={<PasswordResetPage />} />
+
                         <Route element={<AdminCheck />}>
                             <Route path="/admin/" element={<AdminIndex />} />
                             <Route path="/admin/users" element={<UserListAdmin />} />
+                            <Route path="/admin/user/:id/status" element={<AdminUserStatusPage />} />
+                            <Route path="/admin/user/:id/force-password-change" element={<AdminForcePasswordChangePage />} />
                             <Route path="/admin/filmek" element={<FilmListAdmin />} />
                             <Route path="/admin/filmek/add" element={<FilmEditAdmin />} />
                             <Route path="/admin/filmek/edit/:id" element={<FilmEditAdmin />} />
@@ -52,6 +64,7 @@ const App = () => {
                             <Route path="/admin/vetitesek/edit/:id" element={<VetitesEditAdmin />} />
                             <Route path="/admin/foglalas" element={<FoglalasListAdmin />} />
                         </Route>
+                        
                         <Route path="*" element={<PageNotFound />} />
                     </Route>
                 </Routes>

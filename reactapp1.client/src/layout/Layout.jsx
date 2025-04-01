@@ -6,7 +6,7 @@ import { FaSun, FaMoon } from "react-icons/fa";
 
 
 function UserDropdown() {
-    const { user, logout } = useContext(AuthContext);
+    const { id,  user, logout } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleDropdown = () => setIsOpen(!isOpen);

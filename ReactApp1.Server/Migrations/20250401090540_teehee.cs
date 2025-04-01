@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -111,10 +110,10 @@ namespace ReactApp1.Server.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     EmailConfirmationTokenExpiry = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     TwoFactorEnabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    TwoFactorSecret = table.Column<string>(type: "longtext", nullable: true)
+                    PasswordResetToken = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    TwoFactorRecoveryCodes = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
+                    PasswordResetTokenExpiry = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    PasswordResetRequired = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {

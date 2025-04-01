@@ -149,6 +149,7 @@ namespace ReactApp1.Server.Services.Film
                     throw new Exception("Nem adott meg képet");
                 }
                 var httpClient = httpClientFactory.CreateClient("ImageUpload");
+                httpClient.DefaultRequestHeaders.Add("X-Internal-Request", "True");
                 using var content = new MultipartFormDataContent();
                 using var fileStream = request.image.OpenReadStream();
                 content.Add(new StreamContent(fileStream), "file", request.image.FileName);
