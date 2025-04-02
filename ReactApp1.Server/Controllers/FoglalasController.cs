@@ -43,7 +43,7 @@ namespace ReactApp1.Server.Controllers
             }
             return Ok(foglalasok);
         }
-        [Authorize(Roles ="Admin")]
+        //[Authorize]
         [HttpPost("add")]
         public async Task<ActionResult<Models.ErrorModel?>> AddFoglalas(ManageFoglalasDto request)
         {
@@ -54,7 +54,7 @@ namespace ReactApp1.Server.Controllers
             }
             return BadRequest(err);
         }
-        [Authorize(Roles ="Admin")]
+        [Authorize]
         [HttpPatch("edit")]
         public async Task<ActionResult<Models.ErrorModel?>> EditFoglalas(ManageFoglalasDto request)
         {
@@ -65,7 +65,7 @@ namespace ReactApp1.Server.Controllers
             }
             return BadRequest(err);
         }
-        [Authorize(Roles ="Admin")]
+        [Authorize]
         [HttpDelete("delete/{id}")]
         public async Task<ActionResult<Models.ErrorModel?>> DeleteFoglalas(int id)
         {

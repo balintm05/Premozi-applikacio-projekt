@@ -392,7 +392,7 @@ namespace ReactApp1.Server.Services.Auth
         {
             httpcontext.Response.Cookies.Append("accessToken", token.AccessToken, new CookieOptions
             {
-                Expires = DateTimeOffset.UtcNow.AddMinutes(5),
+                Expires = DateTimeOffset.UtcNow.AddMinutes(10),
                 HttpOnly = true,
                 IsEssential = true,
                 Secure = true,
@@ -401,7 +401,7 @@ namespace ReactApp1.Server.Services.Auth
             });
             httpcontext.Response.Cookies.Append("refreshToken", token.RefreshToken, new CookieOptions
             {
-                Expires = DateTimeOffset.UtcNow.AddDays(1),
+                Expires = DateTimeOffset.UtcNow.AddDays(3),
                 HttpOnly = true,
                 IsEssential = true,
                 Secure = true,
@@ -411,16 +411,20 @@ namespace ReactApp1.Server.Services.Auth
         }
 
         
-        public async Task<bool> checkIfStatusChanged(ClaimsPrincipal User)
+        public async Task<bool> checkIfStatusChanged(ClaimsPrincipal User, HttpContext httpContext)
         {
             var user = await context.Users.FindAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
             if(user == null || user.accountStatus == 2)
             {
                 return true;
             }
-            if (user.role != User.FindFirstValue(ClaimTypes.Role)||user.email!=User.FindFirstValue(ClaimTypes.Email))
+            if (user.email!=User.FindFirstValue(ClaimTypes.Email))
             {            
                 return true;
+            }
+            if(user.role != User.FindFirstValue(ClaimTypes.Role))
+            {
+                SetTokensInsideCookie(await CreateTokenResponse(user), httpContext);             
             }
             return false;
         }

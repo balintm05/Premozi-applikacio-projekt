@@ -321,7 +321,7 @@ namespace ReactApp1.Server.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var user = await authService.GetUserAsync(int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)));
-                var resp = await authService.checkIfStatusChanged(User);
+                var resp = await authService.checkIfStatusChanged(User, HttpContext);
                 if (resp)
                 {
                     await authService.logout(HttpContext);
@@ -425,22 +425,25 @@ namespace ReactApp1.Server.Controllers
                 : BadRequest(new Models.ErrorModel("Érvénytelen státusz"));
         }
         [Authorize(Roles = "Admin")]
-        [HttpPost("request-password-reset")]
-        public async Task<ActionResult> RequestPasswordReset([FromBody] PasswordResetRequestDto request)
+        [HttpPost("request-password-reset/{userId}")]
+        public async Task<ActionResult> RequestPasswordReset(int userId)
         {
-            if (authService.GetUserAsync(request.UserId)?.Result.role == "Admin")
-            {
-                return StatusCode(403, new ErrorModel("Admin jelszavát nem lehet így módosítani"));
-            }
-            var token = await authService.GeneratePasswordResetTokenAsync(request.UserId);
-            if (token == null) return BadRequest(new ErrorModel("Érvénytelen felhasználó"));
-            var user = await authService.GetUserAsync(request.UserId);
-            var resetLink = $"{Request.Scheme}://{Request.Host}/reset-password?userId={request.UserId}&token={WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token))}";
+            var targetUser = await authService.GetUserAsync(userId);
+            if (targetUser == null) return BadRequest(new ErrorModel("Felhasználó nem található"));
+            if (targetUser.role == "Admin") return StatusCode(403, new ErrorModel("Admin jelszavát nem lehet így visszaállítani"));
+
+            var token = await authService.GeneratePasswordResetTokenAsync(userId);
+            if (token == null) return BadRequest(new ErrorModel("Hiba történt a token generálása közben"));
+
+            var resetLink = $"{Request.Scheme}://{Request.Host}/reset-password?userId={userId}&token={WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token))}";
+
             await emailService.SendEmailAsync(
-                user.email,
-                "Jelszó visszaállítás szükséges",
-                $"<h3>Jelszó visszaállításra van szükség</h3>" +
-                $"<p>Az adminisztrátor új jelszó megadását kérte. Kattintson <a href='{resetLink}'>ide</a> a jelszó visszaállításához.</p>");
+                targetUser.email,
+                "Jelszó visszaállítási kérés",
+                $"<h3>Jelszó visszaállítást kértek a fiókjához</h3>" +
+                $"<p>Kattintson <a href='{resetLink}'>ide</a> az új jelszó beállításához.</p>" +
+                $"<p>A link 24 órán belül lejár.</p>" +
+                $"<p>Ha Ön nem kezdeményezte ezt a kérést, kérjük, hagyja figyelmen kívül ezt az üzenetet.</p>");
 
             return Ok();
         }

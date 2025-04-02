@@ -21,7 +21,7 @@ namespace ReactApp1.Server.Services.Auth
         Task<bool?> EditPasswordAsync(EditPasswordDto request, int pid);
         Task<TokenResponseDto?> RefreshTokenAsync(string refToken);
         void SetTokensInsideCookie(TokenResponseDto token, HttpContext httpcontext);
-        Task<bool> checkIfStatusChanged(ClaimsPrincipal User);
+        Task<bool> checkIfStatusChanged(ClaimsPrincipal User, HttpContext httpContext);
         Task<ErrorModel?> deleteUser(int id);
         Task logout(HttpContext httpcontext);
         Task<TokenResponseDto> CreateTokenResponse(User? user);

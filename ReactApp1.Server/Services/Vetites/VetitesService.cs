@@ -35,10 +35,11 @@ using ReactApp1.Server.Models.Film;
 using ReactApp1.Server.Models.Terem;
 using ReactApp1.Server.Entities.Terem;
 using ReactApp1.Server.Entities.Vetites;
+using ReactApp1.Server.Services.Email;
 
 namespace ReactApp1.Server.Services.Vetites
 {
-    public class VetitesService(DataBaseContext context, IConfiguration configuration) : IVetitesService
+    public class VetitesService(DataBaseContext context, IConfiguration configuration, IEmailService emailService) : IVetitesService
     {
         public async Task<List<GetVetitesResponse>?> getVetites()
         {
@@ -173,14 +174,101 @@ namespace ReactApp1.Server.Services.Vetites
         }
         public async Task<ErrorModel> deleteVetites(int id)
         {
-            var vetites = await context.Vetites.FindAsync(id);
-            if (vetites == null)
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
             {
-                return new ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
+                var vetites = await context.Vetites
+                    .Include(v => v.VetitesSzekek)
+                    .Include(v => v.Terem)
+                    .Include(v => v.Film)
+                    .FirstOrDefaultAsync(v => v.id == id);
+                if (vetites == null)
+                {
+                    return new ErrorModel("Nem található ilyen id-jű vetítés az adatbázisban");
+                }
+                var affectedUsers = new Dictionary<int, List<(VetitesSzekek seat, Entities.Vetites.Vetites vetites)>>();
+                foreach (var seat in vetites.VetitesSzekek.Where(s => s.FoglalasAllapot == 2))
+                {
+                    await TrackAffectedUser(seat, vetites, affectedUsers);
+                }
+                context.Vetites.Remove(vetites);
+                await context.SaveChangesAsync();
+                await SendNotificationsToAffectedUsers(affectedUsers);
+
+                await transaction.CommitAsync();
+                return new ErrorModel("Sikeres törlés");
             }
-            context.Vetites.Remove(vetites);
-            await context.SaveChangesAsync();
-            return new ErrorModel("Sikeres törlés");
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return new ErrorModel($"Hiba történt a törlés során: {ex.Message}");
+            }
+        }
+
+        private async Task TrackAffectedUser(VetitesSzekek seat, Entities.Vetites.Vetites vetites,
+            Dictionary<int, List<(VetitesSzekek seat, Entities.Vetites.Vetites vetites)>> affectedUsers)
+        {
+            var foglaltSzek = await context.FoglaltSzekek
+                .Include(fs => fs.FoglalasAdatok)
+                    .ThenInclude(fa => fa.User)
+                .FirstOrDefaultAsync(fs =>
+                    fs.Vetitesid == seat.Vetitesid &&
+                    fs.X == seat.X &&
+                    fs.Y == seat.Y);
+
+            if (foglaltSzek?.FoglalasAdatok?.User != null)
+            {
+                var userId = foglaltSzek.FoglalasAdatok.User.userID;
+                if (!affectedUsers.ContainsKey(userId))
+                {
+                    affectedUsers[userId] = new List<(VetitesSzekek, Entities.Vetites.Vetites)>();
+                }
+                affectedUsers[userId].Add((seat, vetites));
+                context.FoglaltSzekek.Remove(foglaltSzek);
+            }
+        }
+
+        private async Task SendNotificationsToAffectedUsers(Dictionary<int, List<(VetitesSzekek seat, Entities.Vetites.Vetites vetites)>> affectedUsers)
+        {
+            foreach (var userEntry in affectedUsers)
+            {
+                var userId = userEntry.Key;
+                var user = await context.Users.FindAsync(userId);
+                if (user == null) continue;
+
+                var vetitesek = userEntry.Value
+                    .GroupBy(x => x.vetites)
+                    .Select(g => new {
+                        Vetites = g.Key,
+                        Seats = g.Select(x => x.seat).ToList()
+                    }).ToList();
+
+                var emailBody = new StringBuilder()
+                    .AppendLine("<h2>Tisztelt Felhasználó!</h2>")
+                    .AppendLine("<p>A következő foglalásait töröltük, mert a vetítés törlésre került:</p>");
+
+                foreach (var vetites in vetitesek)
+                {
+                    emailBody.AppendLine($"<h3>{vetites.Vetites.Film?.Cim ?? "Ismeretlen film"} - {vetites.Vetites.Terem?.Nev ?? "Ismeretlen terem"}</h3>")
+                            .AppendLine($"<p><strong>Foglalás azonosító:</strong> {vetites.Seats.FirstOrDefault()?.FoglaltSzekek?.FoglalasAdatok?.id}</p>")
+                            .AppendLine($"<p><strong>Időpont:</strong> {vetites.Vetites.Idopont:yyyy.MM.dd HH:mm}</p>")
+                            .AppendLine("<p><strong>Érintett székek:</strong></p><ul>");
+
+                    foreach (var seat in vetites.Seats)
+                    {
+                        emailBody.AppendLine($"<li>{seat.X + 1}. sor, {seat.Y + 1}. szék</li>");
+                    }
+                    emailBody.AppendLine("</ul>");
+                }
+
+                emailBody.AppendLine("<p>Kérjük, nézze meg a jelenleg elérhető vetítéseinket.</p>");
+
+                await emailService.SendEmailAsync(
+                    user.email,
+                    "Vetítés törölve - foglalásai érintve lettek",
+                    emailBody.ToString()
+                );
+            }
         }
         private async Task CreateVSzekek(Entities.Vetites.Vetites vetites)
         {

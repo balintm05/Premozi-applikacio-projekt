@@ -34,10 +34,12 @@ using ReactApp1.Server.Models.Terem;
 using Microsoft.Extensions.Hosting;
 using System.Text.Json.Nodes;
 using ReactApp1.Server.Models;
+using ReactApp1.Server.Services.Email;
+using ReactApp1.Server.Entities.Vetites;
 
 namespace ReactApp1.Server.Services.Film
 {
-    public class FilmService(DataBaseContext context, IConfiguration configuration, IHttpClientFactory httpClientFactory) :IFilmService
+    public class FilmService(DataBaseContext context, IConfiguration configuration, IHttpClientFactory httpClientFactory, IEmailService emailService) :IFilmService
     {
         public async Task<List<Entities.Film>?> queryFilm(GetFilmQueryFilter request)
         {
@@ -278,21 +280,106 @@ namespace ReactApp1.Server.Services.Film
 
         public async Task<Models.ErrorModel?> deleteFilm(int id)
         {
+            using var transaction = await context.Database.BeginTransactionAsync();
             try
             {
-                context.Film.Remove(await context.Film.FindAsync(id));
+                var film = await context.Film
+                    .Include(f => f.Vetitesek)
+                        .ThenInclude(v => v.VetitesSzekek)
+                    .Include(f => f.Vetitesek)
+                        .ThenInclude(v => v.Terem)
+                    .FirstOrDefaultAsync(f => f.id == id);
+
+                if (film == null)
+                {
+                    return new Models.ErrorModel("Nem található ilyen id-jű film az adatbázisban");
+                }
+                var affectedUsers = new Dictionary<int, List<(VetitesSzekek seat, Entities.Vetites.Vetites vetites)>>();
+                foreach (var vetites in film.Vetitesek)
+                {
+                    foreach (var seat in vetites.VetitesSzekek.Where(s => s.FoglalasAllapot == 2))
+                    {
+                        await TrackAffectedUser(seat, vetites, affectedUsers);
+                    }
+                }
+                context.Film.Remove(film);
                 await context.SaveChangesAsync();
+                await SendFilmDeletionNotifications(affectedUsers, film.Cim);
+
+                await transaction.CommitAsync();
                 return new Models.ErrorModel("Sikeres törlés");
             }
-            catch(IndexOutOfRangeException ex)
+            catch (Exception ex)
             {
-                return new Models.ErrorModel("Nincs ilyen id-jű film");
+                await transaction.RollbackAsync();
+                return new Models.ErrorModel($"Hiba történt a törlés során: {ex.Message}");
             }
-            catch(Exception ex)
+        }
+
+        private async Task TrackAffectedUser(VetitesSzekek seat, Entities.Vetites.Vetites vetites,
+            Dictionary<int, List<(VetitesSzekek seat, Entities.Vetites.Vetites vetites)>> affectedUsers)
+        {
+            var foglaltSzek = await context.FoglaltSzekek
+                .Include(fs => fs.FoglalasAdatok)
+                    .ThenInclude(fa => fa.User)
+                .FirstOrDefaultAsync(fs =>
+                    fs.Vetitesid == vetites.id &&
+                    fs.X == seat.X &&
+                    fs.Y == seat.Y);
+            if (foglaltSzek?.FoglalasAdatok?.User != null)
             {
-                return new Models.ErrorModel(ex.Message);
+                var userId = foglaltSzek.FoglalasAdatok.User.userID;
+                if (!affectedUsers.ContainsKey(userId))
+                {
+                    affectedUsers[userId] = new List<(VetitesSzekek, Entities.Vetites.Vetites)>();
+                }
+                affectedUsers[userId].Add((seat, vetites));
+                context.FoglaltSzekek.Remove(foglaltSzek);
             }
-            
+        }
+
+        private async Task SendFilmDeletionNotifications(
+            Dictionary<int, List<(VetitesSzekek seat, Entities.Vetites.Vetites vetites)>> affectedUsers,
+            string filmTitle)
+        {
+            foreach (var userEntry in affectedUsers)
+            {
+                var userId = userEntry.Key;
+                var user = await context.Users.FindAsync(userId);
+                if (user == null || string.IsNullOrEmpty(user.email)) continue;
+                var vetitesek = userEntry.Value
+                    .GroupBy(x => x.vetites)
+                    .Select(g => new {
+                        Vetites = g.Key,
+                        Seats = g.Select(x => x.seat).ToList()
+                    }).ToList();
+                var emailBody = new StringBuilder()
+                    .AppendLine("<h2>Tisztelt Felhasználó!</h2>")
+                    .AppendLine($"<p>A következő foglalásait töröltük, mert a <strong>{filmTitle}</strong> film törlésre került:</p>");
+                foreach (var vetites in vetitesek)
+                {
+                    emailBody.AppendLine($"<h3>{vetites.Vetites.Terem?.Nev ?? "Ismeretlen terem"} - {vetites.Vetites.Idopont:yyyy.MM.dd HH:mm}</h3>")
+                            .AppendLine("<p><strong>Érintett székek:</strong></p><ul>");
+                    foreach (var seat in vetites.Seats)
+                    {
+                        emailBody.AppendLine($"<li>{seat.X + 1}. sor, {seat.Y + 1}. szék</li>");
+                    }
+                    emailBody.AppendLine("</ul>");
+                }
+                emailBody.AppendLine("<p>Sajnáljuk, hogy a film eltávolításra került. Kérjük, nézze meg a jelenleg elérhető filmjeinket és vetítéseinket.</p>");
+                try
+                {
+                    await emailService.SendEmailAsync(
+                        user.email,
+                        $"Film törölve - {filmTitle} foglalásai érintve lettek",
+                        emailBody.ToString()
+                    );
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Hiba történt az email küldésekor: {ex.Message}");
+                }
+            }
         }
     }
 }

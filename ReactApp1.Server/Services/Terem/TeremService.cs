@@ -230,11 +230,10 @@ namespace ReactApp1.Server.Services.Terem
                     }
                     emailBody.AppendLine("</ul>");
                 }
-                emailBody.AppendLine("<p>Kérjük, foglaljon másik széket.</p>")
-                        .AppendLine("<p>Üdvözlettel,<br>Premozi</p>");
+                emailBody.AppendLine("<p>Kérjük, foglaljon másik széket.</p>");
                 await emailService.SendEmailAsync(
                     user.email,
-                    "Foglalásaid változtak",
+                    "Foglalásai változtak",
                     emailBody.ToString()
                 );
             }
@@ -242,14 +241,37 @@ namespace ReactApp1.Server.Services.Terem
 
         public async Task<Models.ErrorModel?> deleteTerem(int id)
         {
-            var terem = await context.Terem.FindAsync(id);
-            if (terem == null)
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
             {
-                return new Models.ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
+                var terem = await context.Terem
+                    .Include(t => t.Vetites)
+                        .ThenInclude(v => v.VetitesSzekek)
+                    .FirstOrDefaultAsync(t => t.id == id);
+                if (terem == null)
+                {
+                    return new Models.ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
+                }
+                var affectedUsers = new Dictionary<int, List<(VetitesSzekek seat, Entities.Vetites.Vetites vetites)>>();
+                foreach (var vetites in terem.Vetites)
+                {
+                    foreach (var seat in vetites.VetitesSzekek.Where(s => s.FoglalasAllapot == 2))
+                    {
+                        await TrackAffectedUser(seat, vetites, affectedUsers);
+                    }
+                }
+                context.Terem.Remove(terem);
+                await context.SaveChangesAsync();
+                await SendNotificationsToAffectedUsers(affectedUsers);
+
+                await transaction.CommitAsync();
+                return new Models.ErrorModel("Sikeres törlés");
             }
-            context.Terem.Remove(terem);
-            await context.SaveChangesAsync();
-            return new Models.ErrorModel("Sikeres törlés");
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return new Models.ErrorModel($"Hiba történt a törlés során: {ex.Message}");
+            }
         }
         public async Task<Models.ErrorModel?> EditSzekek(List<Szekek> szekekUpdate)
         {

@@ -1,99 +1,105 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import ThemeWrapper from "../layout/ThemeWrapper";
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Box, TextField, Button, Typography, Alert } from '@mui/material';
+import {api} from '../api/axiosConfig';
 
-function ChangePasswordPage() {
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
+export default function PasswordResetPage() {
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const { api } = useContext(AuthContext);
-    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [validToken, setValidToken] = useState(false);
+
+    const userId = searchParams.get('userId');
+    const token = searchParams.get('token');
+
+    useEffect(() => {
+        const verifyToken = async () => {
+            try {
+                const response = await api.get(`/auth/verify-password-reset?userId=${userId}&token=${token}`);
+                setValidToken(response.data.valid);
+            } catch (err) {
+                setError("Érvénytelen vagy lejárt visszaállítási link");
+            }
+        };
+
+        if (userId && token) verifyToken();
+    }, [userId, token]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setIsSubmitting(true);
-        setError(null);
+        if (password !== confirmPassword) {
+            setError("A jelszavak nem egyeznek");
+            return;
+        }
 
+        setLoading(true);
         try {
-            const response = await api.patch("/auth/editPassword", {
-                password: currentPassword,
-                newPassword
+            await api.post('/auth/complete-password-reset', {
+                userId: parseInt(userId),
+                token,
+                newPassword: password
             });
-            if (response.data.errorMessage) {
-                setError(response.data.errorMessage);
-            } else {
-                setSuccess(true);
-                setTimeout(() => navigate("/profile"), 2000);
-            }
+            setSuccess(true);
+            setTimeout(() => navigate('/login'), 2000);
         } catch (err) {
-            setError(err.response?.data?.errorMessage || "Hiba történt a jelszó módosítása közben");
+            setError(err.response?.data?.errorMessage || "Sikertelen jelszó visszaállítás");
         } finally {
-            setIsSubmitting(false);
+            setLoading(false);
         }
     };
 
+    if (!validToken) {
+        return (
+            <Box sx={{ maxWidth: 500, mx: 'auto', mt: 4 }}>
+                <Alert severity="error">
+                    Érvénytelen vagy lejárt visszaállítási link
+                </Alert>
+            </Box>
+        );
+    }
+
     return (
-        <ThemeWrapper>
-            <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
-                <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Jelszó módosítása</h2>
+        <Box sx={{ maxWidth: 500, mx: 'auto', mt: 4, p: 3 }}>
+            <Typography variant="h4" gutterBottom>Jelszó visszaállítása</Typography>
 
-                {error && (
-                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                        {error}
-                    </div>
-                )}
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+            {success && <Alert severity="success" sx={{ mb: 2 }}>
+                Jelszó sikeresen frissítve! Átirányítás a bejelentkezéshez...
+            </Alert>}
 
-                {success && (
-                    <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-                        Jelszó sikeresen megváltoztatva! Átirányítás a profilra...
-                    </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                            Jelenlegi jelszó
-                        </label>
-                        <input
-                            id="currentPassword"
-                            type="password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                            placeholder="Írja be a jelenlegi jelszót"
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                            Új jelszó
-                        </label>
-                        <input
-                            id="newPassword"
-                            type="password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            placeholder="Írja be az új jelszót"
-                            required
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className={`w-full py-2 px-4 rounded-md text-white font-medium ${isSubmitting ? 'bg-blue-400' : 'bg-blue-600 hover:bg-blue-700'} transition-colors`}
-                    >
-                        {isSubmitting ? 'Feldolgozás...' : 'Mentés'}
-                    </button>
-                </form>
-            </div>
-        </ThemeWrapper>
+            <form onSubmit={handleSubmit}>
+                <TextField
+                    fullWidth
+                    margin="normal"
+                    label="Új jelszó"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+                <TextField
+                    fullWidth
+                    margin="normal"
+                    label="Jelszó megerõsítése"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                />
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    disabled={loading || success}
+                    sx={{ mt: 2 }}
+                >
+                    {loading ? 'Feldolgozás...' : 'Jelszó visszaállítása'}
+                </Button>
+            </form>
+        </Box>
     );
 }
-
-export default ChangePasswordPage;

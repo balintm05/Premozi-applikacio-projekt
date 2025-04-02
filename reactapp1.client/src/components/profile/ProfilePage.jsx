@@ -35,7 +35,6 @@ function ProfilePage() {
             setIsAdminView(hasRole("Admin") && id && id !== user?.userID.toString());
         } catch (err) {
             setError(err.message);
-            //await navigate("/");
         } finally {
             setLoading(false);
         }
@@ -76,10 +75,10 @@ function ProfilePage() {
     );
 
     const isViewingOwnProfile = !id || id === user?.userID.toString();
-    const showAdminData = hasRole("Admin") && profileData?.role; 
+    const showAdminData = hasRole("Admin") && profileData?.role;
 
     return (
-        <ThemeWrapper>
+        <ThemeWrapper noBg>
             <div className="profile-container">
                 <div className="profile-header">
                     <h1>{isAdminView ? "Felhasználó kezelése" : "Profilom"}</h1>
@@ -97,6 +96,18 @@ function ProfilePage() {
                             <span className="detail-label">Email cím:</span>
                             <span className="detail-value">{profileData.email}</span>
                         </div>
+                        <div className="detail-row">
+                            <span className="detail-label">Regisztráció dátuma:</span>
+                            <span className="detail-value">
+                                {new Date(profileData.creationDate).toLocaleDateString('hu-HU', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
@@ -107,14 +118,19 @@ function ProfilePage() {
                             <div className="detail-row">
                                 <span className="detail-label">Státusz:</span>
                                 <span className="detail-value">
-                                    {
-                                        profileData.accountStatus == 1 ? "Aktív" : "Felfüggesztett"}
+                                    {profileData.accountStatus == 1 ? "Aktív" : "Felfüggesztett"}
                                 </span>
                             </div>
                             <div className="detail-row">
                                 <span className="detail-label">Jogosultság:</span>
                                 <span className="detail-value">{profileData.role}</span>
                             </div>
+                            {profileData.megjegyzes && (
+                                <div className="detail-row">
+                                    <span className="detail-label">Megjegyzés:</span>
+                                    <span className="detail-value">{profileData.megjegyzes}</span>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

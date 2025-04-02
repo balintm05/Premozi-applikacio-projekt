@@ -131,7 +131,6 @@ export default function Layout() {
                 <header>
                     <nav className="navbar navbar-expand-sm navbar-toggleable-sm main-nav">
                         <div className="container-fluid">
-                            <a className="navbar-brand" href="/">Premozi hivatalos weboldala</a>
                             <button
                                 className="navbar-toggler"
                                 type="button"
@@ -141,29 +140,30 @@ export default function Layout() {
                             >
                                 <span className="navbar-toggler-icon"></span>
                             </button>
-                            <div className={`navbar-collapse ${navbarCollapsed ? 'collapse' : ''} d-sm-inline-flex justify-content-between`}>
-                                <ul className="navbar-nav flex-grow-1">
-                                    <li className="nav-item">
-                                        <a className="nav-link" href="/">Főoldal</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" href="/">Privacy</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" href="/musor/">Film</a>
-                                    </li>
-                                </ul>
-                                <div className="d-flex align-items-center">
+                            <div className={`navbar-collapse ${navbarCollapsed ? 'collapse' : ''} d-sm-inline-flex`}>
+                                <div className="navbar-brand d-none d-lg-block me-auto">
+                                    <a className="navbar-brand" href="/">Premozi hivatalos weboldala</a>
+                                </div>
+                                <div className="d-flex justify-content-center flex-grow-1">
+                                    <ul className="navbar-nav">
+                                        <li className="nav-item">
+                                            <a className="nav-link" href="/">Főoldal</a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a className="nav-link" href="/">Privacy</a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a className="nav-link" href="/musor/">Film</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="d-flex align-items-center ms-auto">
                                     <button
                                         className="theme-toggle btn btn-link"
                                         onClick={toggleTheme}
                                         aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
                                     >
-                                        {darkMode ? (
-                                            <FaSun className="theme-icon" />
-                                        ) : (
-                                            <FaMoon className="theme-icon" />
-                                        )}
+                                        {darkMode ? <FaSun className="theme-icon" /> : <FaMoon className="theme-icon" />}
                                     </button>
                                     <UserDropdown />
                                 </div>
