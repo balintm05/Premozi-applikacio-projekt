@@ -71,7 +71,7 @@ namespace ReactApp1.Server.Controllers
                 });
             }
 
-            authService.SetTokensInsideCookie(tokenResponse, HttpContext);
+            await authService.SetTokensInsideCookie(tokenResponse, HttpContext);
             return Ok();
         }
 
@@ -113,7 +113,7 @@ namespace ReactApp1.Server.Controllers
                 if (result)
                 {
                     var jwttoken = await authService.CreateTokenResponse(await authService.GetUserAsync(userId));
-                    authService.SetTokensInsideCookie(jwttoken,HttpContext);
+                    await authService.SetTokensInsideCookie(jwttoken,HttpContext);
                     return Ok(new ErrorModel("Email cím megerősítve!"));
                 }
                 else
@@ -139,7 +139,7 @@ namespace ReactApp1.Server.Controllers
                 return BadRequest(new ErrorModel("Érvénytelen felhasználó"));
 
             var finalToken = await authService.CreateTokenResponse(user);
-            authService.SetTokensInsideCookie(finalToken, HttpContext);
+            await authService.SetTokensInsideCookie(finalToken, HttpContext);
 
             return Ok();
         }
@@ -213,11 +213,7 @@ namespace ReactApp1.Server.Controllers
                     return;
                 }
                 HttpContext.Request.Cookies.TryGetValue("refreshToken", out var refreshToken);
-                var token = await authService.RefreshTokenAsync(refreshToken);
-                if (token != null)
-                {
-                    authService.SetTokensInsideCookie(token, HttpContext);
-                }
+                await authService.RefreshTokenAsync(refreshToken, HttpContext);
             }
             catch
             {

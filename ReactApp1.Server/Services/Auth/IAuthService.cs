@@ -19,8 +19,8 @@ namespace ReactApp1.Server.Services.Auth
         Task<bool?> EditUserAsync(EditUserDto request, int pid, string baseUrl);
         Task<bool?> EditUserAdminAsync(EditUserAdminDto request);
         Task<bool?> EditPasswordAsync(EditPasswordDto request, int pid);
-        Task<TokenResponseDto?> RefreshTokenAsync(string refToken);
-        void SetTokensInsideCookie(TokenResponseDto token, HttpContext httpcontext);
+        Task RefreshTokenAsync(string refToken, HttpContext httpContext);
+        Task SetTokensInsideCookie(TokenResponseDto token, HttpContext httpcontext);
         Task<bool> checkIfStatusChanged(ClaimsPrincipal User, HttpContext httpContext);
         Task<ErrorModel?> deleteUser(int id);
         Task logout(HttpContext httpcontext);

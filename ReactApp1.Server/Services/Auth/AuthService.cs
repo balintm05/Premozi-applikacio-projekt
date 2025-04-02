@@ -322,11 +322,19 @@ namespace ReactApp1.Server.Services.Auth
 
 
 
-        public async Task<TokenResponseDto?> RefreshTokenAsync(string refToken)
+        public async Task RefreshTokenAsync(string refToken, HttpContext httpContext)
         {
-            var user = await ValidateRefreshTokenAsync(refToken);          
-            return user != null ? 
-                await CreateTokenResponse(user): null;
+            var user = await ValidateRefreshTokenAsync(refToken);
+            var resp = await CreateTokenResponse(user);
+            if (string.IsNullOrEmpty(resp.RefreshToken))
+            {
+                await logout(httpContext);
+                Console.WriteLine("huh");
+            }
+            if(user != null)
+            {
+                await SetTokensInsideCookie(await CreateTokenResponse(user), httpContext);
+            } 
         }
 
 
@@ -356,11 +364,21 @@ namespace ReactApp1.Server.Services.Auth
         }
 
 
-        private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
+        private async Task<string?> GenerateAndSaveRefreshTokenAsync(User user)
         {
+            if (user.refreshTokenExpiry == null)
+            {
+                user.refreshTokenExpiry = DateTime.UtcNow.AddDays(3);
+            }
+            if (user.refreshTokenExpiry != null && user.refreshTokenExpiry < DateTime.UtcNow)
+            {
+                user.refreshToken = null;
+                user.refreshTokenExpiry = null;
+                await context.SaveChangesAsync();
+                return null;
+            }
             var rToken = GenerateRefreshToken();
             user.refreshToken = rToken;
-            user.refreshTokenExpiry = DateTime.UtcNow.AddDays(7);
             await context.SaveChangesAsync();
             return rToken;
         }
@@ -388,7 +406,7 @@ namespace ReactApp1.Server.Services.Auth
         }
 
 
-        public void SetTokensInsideCookie(TokenResponseDto token, HttpContext httpcontext)
+        public Task SetTokensInsideCookie(TokenResponseDto token, HttpContext httpcontext)
         {
             httpcontext.Response.Cookies.Append("accessToken", token.AccessToken, new CookieOptions
             {
@@ -408,6 +426,7 @@ namespace ReactApp1.Server.Services.Auth
                 SameSite = SameSiteMode.None,
                 Path = "/"
             });
+            return Task.CompletedTask;
         }
 
         
@@ -424,7 +443,7 @@ namespace ReactApp1.Server.Services.Auth
             }
             if(user.role != User.FindFirstValue(ClaimTypes.Role))
             {
-                SetTokensInsideCookie(await CreateTokenResponse(user), httpContext);             
+                await SetTokensInsideCookie(await CreateTokenResponse(user), httpContext);             
             }
             return false;
         }
