@@ -5,6 +5,10 @@ using System.Text;
 using System;
 using System.Data.Entity;
 using ReactApp1.Server.Data;
+using System.Linq;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Net.Http.Headers;
 
 namespace ReactApp1.Server.Services
 {
@@ -23,27 +27,40 @@ namespace ReactApp1.Server.Services
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
+
         public async Task InvokeAsync(HttpContext context)
         {
             if (context.Request.Path.StartsWithSegments("/api/Auth/refresh-token") || context.Request.Path.StartsWithSegments("/api/Auth/getUser") || context.Request.Path.StartsWithSegments("/api/Auth/getUserAdmin") || context.Request.Path.StartsWithSegments("/api/Auth/queryUsers") ||
                 context.Request.Path.StartsWithSegments("/api/Auth/checkIfLoggedIn") || context.Request.Path.StartsWithSegments("/api/Auth/checkIfAdmin") || context.Request.Path.StartsWithSegments("/api/Film/get") || context.Request.Path.StartsWithSegments("/api/Film/query") ||
                 context.Request.Path.StartsWithSegments("/api/Terem/get") || context.Request.Path.StartsWithSegments("/api/Vetites/get") || context.Request.Path.StartsWithSegments("/api/Foglalas/get") || context.Request.Path.StartsWithSegments("/api/Foglalas/getByVetites") ||
-                context.Request.Path.StartsWithSegments("/api/Foglalas/getByUser") || context.Request.Path.StartsWithSegments("/swagger/v1/swagger.json") || context.Request.Path.StartsWithSegments("/swagger/") || context.Request.Path.StartsWithSegments("/api/Image/upload") ||
-                context.Request.Path.StartsWithSegments("/swagger/index.html") || context.Request.Path.StartsWithSegments("/swagger/swagger-ui.css") || context.Request.Path.StartsWithSegments("/swagger/swagger-ui-standalone-preset.js") || context.Request.Path.StartsWithSegments("/swagger/favicon-32x32.png")||
-                context.Request.Path.StartsWithSegments("/api/Auth/get")||context.Request.Path.StartsWithSegments("/swagger")||context.Request.Path.StartsWithSegments("/favicon.ico")||context.Request.Path.StartsWithSegments("/images"))
+                context.Request.Path.StartsWithSegments("/api/Foglalas/getByUser") || context.Request.Path.StartsWithSegments("/swagger/v1/swagger.json") || context.Request.Path.StartsWithSegments("/swagger/") ||
+                context.Request.Path.StartsWithSegments("/swagger/index.html") || context.Request.Path.StartsWithSegments("/swagger/swagger-ui.css") || context.Request.Path.StartsWithSegments("/swagger/swagger-ui-standalone-preset.js") || context.Request.Path.StartsWithSegments("/swagger/favicon-32x32.png") ||
+                context.Request.Path.StartsWithSegments("/api/Auth/get") || context.Request.Path.StartsWithSegments("/swagger") || context.Request.Path.StartsWithSegments("/favicon.ico") || context.Request.Path.StartsWithSegments("/images")||context.Request.Path.StartsWithSegments("/api/Image/get"))
             {
                 await _next(context);
                 return;
             }
 
             var request = context.Request;
-            var requestBody = await ReadRequestBodyAsync(request);
-            var redactedRequestBody = requestBody;
+            string requestBody = string.Empty;
+            string redactedRequestBody = string.Empty;
             var redactedRequestHeaders = FormatHeaders(request.Headers);
+
+            if (IsMultipartFormData(request.ContentType))
+            {
+                requestBody = await ReadMultipartFormDataAsync(request);
+                redactedRequestBody = RedactMultipartFormData(requestBody);
+            }
+            else
+            {
+                requestBody = await ReadRequestBodyAsync(request);
+                redactedRequestBody = requestBody;
+            }
+
             if (context.Request.Path.StartsWithSegments("/api/Auth/register") ||
                 context.Request.Path.StartsWithSegments("/api/Auth/login"))
             {
-                redactedRequestBody = RedactSensitiveData(requestBody);
+                redactedRequestBody = RedactSensitiveData(redactedRequestBody);
                 redactedRequestHeaders = RedactSensitiveHeaders(request.Headers);
             }
 
@@ -94,6 +111,73 @@ namespace ReactApp1.Server.Services
             }
         }
 
+        private bool IsMultipartFormData(string contentType)
+        {
+            return !string.IsNullOrEmpty(contentType) &&
+                   contentType.Contains("multipart/form-data", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private async Task<string> ReadMultipartFormDataAsync(HttpRequest request)
+        {
+            if (!IsMultipartFormData(request.ContentType))
+                return string.Empty;
+
+            var boundary = GetBoundary(request.ContentType);
+            if (string.IsNullOrEmpty(boundary))
+                return string.Empty;
+
+            request.EnableBuffering();
+            var reader = new MultipartReader(boundary, request.Body);
+            var section = await reader.ReadNextSectionAsync();
+            var formData = new StringBuilder();
+
+            while (section != null)
+            {
+                var hasContentDisposition = ContentDispositionHeaderValue.TryParse(
+                    section.ContentDisposition, out var contentDisposition);
+
+                if (hasContentDisposition)
+                {
+                    formData.AppendLine($"Content-Disposition: {contentDisposition}");
+                    if (contentDisposition.IsFileDisposition())
+                    {
+                        formData.AppendLine("Content-Type: [FILE_CONTENT_REDACTED]");
+                        formData.AppendLine("File content: [REDACTED]");
+                    }
+                    else
+                    {
+                        using (var streamReader = new StreamReader(section.Body))
+                        {
+                            var value = await streamReader.ReadToEndAsync();
+                            formData.AppendLine($"Value: {value}");
+                        }
+                    }
+                }
+
+                section = await reader.ReadNextSectionAsync();
+            }
+
+            request.Body.Position = 0;
+            return formData.ToString();
+        }
+
+        private string RedactMultipartFormData(string formData)
+        {
+            return formData;
+        }
+
+        private string GetBoundary(string contentType)
+        {
+            var boundaryMarker = "boundary=";
+            var index = contentType.IndexOf(boundaryMarker, StringComparison.OrdinalIgnoreCase);
+            if (index < 0)
+                return null;
+
+            index += boundaryMarker.Length;
+            var boundary = contentType[index..].Trim('"', ' ');
+            return boundary;
+        }
+
         private async Task<string> ReadRequestBodyAsync(HttpRequest request)
         {
             request.EnableBuffering();
@@ -101,7 +185,7 @@ namespace ReactApp1.Server.Services
             var buffer = new byte[Convert.ToInt32(request.ContentLength)];
             await body.ReadAsync(buffer, 0, buffer.Length);
             var bodyAsText = Encoding.UTF8.GetString(buffer);
-            request.Body.Position = 0; 
+            request.Body.Position = 0;
             return bodyAsText;
         }
 
@@ -109,7 +193,7 @@ namespace ReactApp1.Server.Services
         {
             response.Body.Seek(0, SeekOrigin.Begin);
             var bodyAsText = await new StreamReader(response.Body).ReadToEndAsync();
-            response.Body.Seek(0, SeekOrigin.Begin); 
+            response.Body.Seek(0, SeekOrigin.Begin);
             return bodyAsText;
         }
 

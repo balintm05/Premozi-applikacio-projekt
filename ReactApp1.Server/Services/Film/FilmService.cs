@@ -124,7 +124,7 @@ namespace ReactApp1.Server.Services.Film
             }
             return film;
         }
-       
+
 
         public async Task<Models.ErrorModel?> addFilm(ManageFilmDto request, HttpContext httpContext)
         {
@@ -135,7 +135,7 @@ namespace ReactApp1.Server.Services.Film
                 movie.Kategoria = request.Kategoria;
                 movie.Mufaj = request.Mufaj;
                 movie.Korhatar = request.Korhatar;
-                movie.Jatekido = int.TryParse(request.Jatekido, out int res)?res:throw new Exception("Nem számot adott meg");
+                movie.Jatekido = int.TryParse(request.Jatekido, out int res) ? res : throw new Exception("Nem számot adott meg");
                 movie.Gyarto = request.Gyarto;
                 movie.Rendezo = request.Rendezo;
                 movie.Szereplok = request.Szereplok;
@@ -146,128 +146,112 @@ namespace ReactApp1.Server.Services.Film
                 movie.TrailerLink = request.TrailerLink;
                 movie.IMDB = request.IMDB;
                 movie.Megjegyzes = !string.IsNullOrEmpty(request.Megjegyzes) ? request.Megjegyzes : "";
-                if (request.image == null)
+                if (request.image != null)
                 {
-                    throw new Exception("Nem adott meg képet");
+                    var httpClient = httpClientFactory.CreateClient("ImageUpload");
+                    httpClient.DefaultRequestHeaders.Add("X-Internal-Request", "True");
+                    httpClient.DefaultRequestHeaders.Add("Role", "Admin");
+                    using var content = new MultipartFormDataContent();
+                    using var fileStream = request.image.OpenReadStream();
+                    content.Add(new StreamContent(fileStream), "file", request.image.FileName);
+                    var response = await httpClient.PostAsync("api/image/upload", content);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        return new Models.ErrorModel($"Sikertelen fájlfeltöltés: {response.StatusCode} - {errorContent}");
+                    }
+                    var result = await response.Content.ReadFromJsonAsync<ImageUploadResponse>();
+                    if (result == null)
+                    {
+                        return new Models.ErrorModel("Sikertelen fájlfeldolgozás");
+                    }
+                    movie.ImageID = result.Id;
                 }
-                var httpClient = httpClientFactory.CreateClient("ImageUpload");
-                httpClient.DefaultRequestHeaders.Add("X-Internal-Request", "True");
-                using var content = new MultipartFormDataContent();
-                using var fileStream = request.image.OpenReadStream();
-                content.Add(new StreamContent(fileStream), "file", request.image.FileName);
-                var response = await httpClient.PostAsync("api/image/upload", content);
-                if (!response.IsSuccessStatusCode)
+                else if (request.imageId.HasValue)
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    return new Models.ErrorModel($"Sikertelen fájlfeltöltés: {response.StatusCode} - {errorContent}");
+                    var existingImage = await context.Images.FindAsync(request.imageId.Value);
+                    if (existingImage == null)
+                    {
+                        return new Models.ErrorModel("A kiválasztott kép nem található a könyvtárban");
+                    }
+                    movie.ImageID = request.imageId.Value;
                 }
-                var result = await response.Content.ReadFromJsonAsync<ImageUploadResponse>();
-                if (result == null)
+                else
                 {
-                    return new Models.ErrorModel("Sikertelen fájlfeldolgozás");
+                    return new Models.ErrorModel("Kérem válasszon képet vagy töltsön fel újat");
                 }
-                movie.ImageID = result.Id;
+
                 await context.Film.AddAsync(movie);
                 await context.SaveChangesAsync();
                 return new Models.ErrorModel("Sikeres hozzáadás");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return new Models.ErrorModel(ex.Message);
-            }           
+            }
         }
-
 
         public async Task<Models.ErrorModel?> editFilm(ManageFilmDto request, HttpContext httpContext)
         {
             try
             {
-                var movie = await context.Film.FindAsync(int.Parse(request.id));
+                var movie = await context.Film
+                    .Include(f => f.Images)
+                    .FirstOrDefaultAsync(f => f.id == int.Parse(request.id));
                 if (movie == null)
                 {
-                    throw new Exception("Nem található ilyen id-jű film");
+                    return new Models.ErrorModel("Nem található ilyen id-jű film");
                 }
                 var patchDoc = new JsonPatchDocument<Entities.Film>();
-                if (!string.IsNullOrEmpty(request.Cim))
-                {
-                    patchDoc.Replace(movie => movie.Cim, request.Cim);
-                }
-                if (!string.IsNullOrEmpty(request.Kategoria))
-                {
-                    patchDoc.Replace(movie => movie.Kategoria, request.Kategoria);
-                }
-                if (!string.IsNullOrEmpty(request.Mufaj))
-                {
-                    patchDoc.Replace(movie => movie.Mufaj, request.Mufaj);
-                }
-                if (!string.IsNullOrEmpty(request.Korhatar))
-                {
-                    patchDoc.Replace(movie => movie.Korhatar, request.Korhatar);
-                }
+                if (request.Cim != null) patchDoc.Replace(f => f.Cim, request.Cim);
+                if (request.Kategoria != null) patchDoc.Replace(f => f.Kategoria, request.Kategoria);
+                if (request.Mufaj != null) patchDoc.Replace(f => f.Mufaj, request.Mufaj);
+                if (request.Korhatar != null) patchDoc.Replace(f => f.Korhatar, request.Korhatar);
                 if (!string.IsNullOrEmpty(request.Jatekido))
                 {
-                    patchDoc.Replace(movie => movie.Jatekido, int.TryParse(request.Jatekido, out int res) ? res : throw new Exception("Nem számot adott meg"));
+                    if (int.TryParse(request.Jatekido, out int jatekido))
+                    {
+                        patchDoc.Replace(f => f.Jatekido, jatekido);
+                    }
                 }
-
-                if (!string.IsNullOrEmpty(request.Gyarto))
-                {
-                    patchDoc.Replace(movie => movie.Gyarto, request.Gyarto);
-                }
-                if (!string.IsNullOrEmpty(request.Rendezo))
-                {
-                    patchDoc.Replace(movie => movie.Rendezo, request.Rendezo);
-                }
-                if (!string.IsNullOrEmpty(request.Szereplok))
-                {
-                    patchDoc.Replace(movie => movie.Szereplok, request.Szereplok);
-                }
-                if (!string.IsNullOrEmpty(request.Leiras))
-                {
-                    patchDoc.Replace(movie => movie.Leiras, request.Leiras);
-                }
-                if (!string.IsNullOrEmpty(request.EredetiNyelv))
-                {
-                    patchDoc.Replace(movie => movie.EredetiNyelv, request.EredetiNyelv);
-                }
-                if (!string.IsNullOrEmpty(request.EredetiCim))
-                {
-                    patchDoc.Replace(movie => movie.EredetiCim, request.EredetiCim);
-                }
-                if (!string.IsNullOrEmpty(request.Szinkron))
-                {
-                    patchDoc.Replace(movie => movie.Szinkron, request.Szinkron);
-                }
-                if (!string.IsNullOrEmpty(request.TrailerLink))
-                {
-                    patchDoc.Replace(movie => movie.TrailerLink, request.TrailerLink);
-                }
-                if (!string.IsNullOrEmpty(request.IMDB))
-                {
-                    patchDoc.Replace(movie => movie.IMDB, request.IMDB);
-                }
-                if (!string.IsNullOrEmpty(request.Megjegyzes))
-                {
-                    patchDoc.Replace(movie => movie.Megjegyzes, request.Megjegyzes);
-                }                
+                if (request.Gyarto != null) patchDoc.Replace(f => f.Gyarto, request.Gyarto);
+                if (request.Rendezo != null) patchDoc.Replace(f => f.Rendezo, request.Rendezo);
+                if (request.Szereplok != null) patchDoc.Replace(f => f.Szereplok, request.Szereplok);
+                if (request.Leiras != null) patchDoc.Replace(f => f.Leiras, request.Leiras);
+                if (request.EredetiNyelv != null) patchDoc.Replace(f => f.EredetiNyelv, request.EredetiNyelv);
+                if (request.EredetiCim != null) patchDoc.Replace(f => f.EredetiCim, request.EredetiCim);
+                if (request.Szinkron != null) patchDoc.Replace(f => f.Szinkron, request.Szinkron);
+                if (request.TrailerLink != null) patchDoc.Replace(f => f.TrailerLink, request.TrailerLink);
+                if (request.IMDB != null) patchDoc.Replace(f => f.IMDB, request.IMDB);
+                if (request.Megjegyzes != null) patchDoc.Replace(f => f.Megjegyzes, request.Megjegyzes);
+                patchDoc.ApplyTo(movie);
                 if (request.image != null)
                 {
                     var httpClient = httpClientFactory.CreateClient("ImageUpload");
+                    httpClient.DefaultRequestHeaders.Add("X-Internal-Request", "True");
+                    httpClient.DefaultRequestHeaders.Add("Role", "Admin");
                     using var content = new MultipartFormDataContent();
                     using var fileStream = request.image.OpenReadStream();
                     content.Add(new StreamContent(fileStream), "file", request.image.FileName);
-                    var response = await httpClient.PostAsync("/api/image/upload", content);
-                    if (response.IsSuccessStatusCode)
+                    var response = await httpClient.PostAsync("api/image/upload", content);
+                    if (!response.IsSuccessStatusCode)
                     {
-                        var result = await response.Content.ReadFromJsonAsync<ImageUploadResponse>();
-                        patchDoc.Replace(movie => movie.ImageID, result.Id);
+                        var errorContent = await response.Content.ReadAsStringAsync();
+                        return new Models.ErrorModel($"Sikertelen fájlfeltöltés: {response.StatusCode} - {errorContent}");
                     }
-                    else
+                    var result = await response.Content.ReadFromJsonAsync<ImageUploadResponse>();
+                    if (result == null)
                     {
-                        var error = await response.Content.ReadFromJsonAsync<ErrorModel>();
-                        return error;
+                        return new Models.ErrorModel("Sikertelen fájlfeldolgozás");
                     }
+                    patchDoc.Replace(f => f.ImageID, result.Id);
+                }
+                else if (request.imageId.HasValue)
+                {
+                    patchDoc.Replace(f => f.ImageID, request.imageId.Value);
                 }
                 patchDoc.ApplyTo(movie);
+
                 await context.SaveChangesAsync();
                 return new Models.ErrorModel("Sikeres módosítás");
             }
@@ -380,6 +364,6 @@ namespace ReactApp1.Server.Services.Film
                     Console.WriteLine($"Hiba történt az email küldésekor: {ex.Message}");
                 }
             }
-        }
+        }        
     }
 }

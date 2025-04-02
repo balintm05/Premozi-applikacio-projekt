@@ -22,7 +22,7 @@ export default function PasswordResetPage() {
                 const response = await api.get(`/auth/verify-password-reset?userId=${userId}&token=${token}`);
                 setValidToken(response.data.valid);
             } catch (err) {
-                setError("…rvÈnytelen vagy lej·rt vissza·llÌt·si link");
+                setError("√ârv√©nytelen vagy lej√°rt vissza√°ll√≠t√°si link");
             }
         };
 
@@ -46,7 +46,7 @@ export default function PasswordResetPage() {
             setSuccess(true);
             setTimeout(() => navigate('/login'), 2000);
         } catch (err) {
-            setError(err.response?.data?.errorMessage || "Sikertelen jelszÛ vissza·llÌt·s");
+            setError(err.response?.data?.errorMessage || "Sikertelen jelsz√≥ vissza√°ll√≠t√°s");
         } finally {
             setLoading(false);
         }
@@ -56,7 +56,7 @@ export default function PasswordResetPage() {
         return (
             <Box sx={{ maxWidth: 500, mx: 'auto', mt: 4 }}>
                 <Alert severity="error">
-                    …rvÈnytelen vagy lej·rt vissza·llÌt·si link
+                    √ârv√©nytelen vagy lej√°rt vissza√°ll√≠t√°si link
                 </Alert>
             </Box>
         );
@@ -64,18 +64,18 @@ export default function PasswordResetPage() {
 
     return (
         <Box sx={{ maxWidth: 500, mx: 'auto', mt: 4, p: 3 }}>
-            <Typography variant="h4" gutterBottom>JelszÛ vissza·llÌt·sa</Typography>
+            <Typography variant="h4" gutterBottom>Jelsz√≥ vissza√°ll√≠t√°sa</Typography>
 
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             {success && <Alert severity="success" sx={{ mb: 2 }}>
-                JelszÛ sikeresen frissÌtve! ¡tir·nyÌt·s a bejelentkezÈshez...
+                Jelsz√≥ sikeresen friss√≠tve! √Åtir√°ny√≠t√°s a bejelentkez√©shez...
             </Alert>}
 
             <form onSubmit={handleSubmit}>
                 <TextField
                     fullWidth
                     margin="normal"
-                    label="⁄j jelszÛ"
+                    label="√öj jelsz√≥"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -84,7 +84,7 @@ export default function PasswordResetPage() {
                 <TextField
                     fullWidth
                     margin="normal"
-                    label="JelszÛ megerısÌtÈse"
+                    label="Jelsz√≥ meger≈ës√≠t√©se"
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -97,7 +97,7 @@ export default function PasswordResetPage() {
                     disabled={loading || success}
                     sx={{ mt: 2 }}
                 >
-                    {loading ? 'Feldolgoz·s...' : 'JelszÛ vissza·llÌt·sa'}
+                    {loading ? 'Feldolgoz√°s...' : 'Jelsz√≥ vissza√°ll√≠t√°sa'}
                 </Button>
             </form>
         </Box>

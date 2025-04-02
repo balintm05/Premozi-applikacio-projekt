@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using ReactApp1.Server.Data;
 using ReactApp1.Server.Entities;
 using ReactApp1.Server.Models;
+using ReactApp1.Server.Services.Film;
+using ReactApp1.Server.Services.Image;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
@@ -14,8 +16,14 @@ namespace ReactApp1.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ImageController(IWebHostEnvironment environment, IConfiguration configuration) : ControllerBase
+    public class ImageController(IWebHostEnvironment environment, IConfiguration configuration, IImageService imageService) : ControllerBase
     {
+        [Authorize(Roles ="Admin")]
+        [HttpGet("get")]
+        public async Task<List<Images>?> GetImages()
+        {
+            return await imageService.getImages();
+        }
         [Authorize(Policy ="InternalOnly")]
         [HttpPost("upload")]
         public async Task<ActionResult<ImageUploadResponse>> UploadImage(IFormFile file, [FromServices] DataBaseContext dbContext)
@@ -94,6 +102,28 @@ namespace ReactApp1.Server.Controllers
             }
             var encoder = new JpegEncoder { Quality = quality };
             await image.SaveAsync(outputPath, encoder);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteImage(int id, [FromServices] DataBaseContext dbContext)
+        {
+            var image = await dbContext.Images.FindAsync(id);
+            if (image == null)
+                return NotFound();
+
+            var imagesDir = Path.Combine(environment.ContentRootPath,
+                configuration["FileStorage:ImageStoragePath"] ?? "Images");
+            var filePath = Path.Combine(imagesDir, image.FileName);
+
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            dbContext.Images.Remove(image);
+            await dbContext.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

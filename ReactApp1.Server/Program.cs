@@ -16,6 +16,8 @@ using ReactApp1.Server.Services.Foglalas;
 using Microsoft.Extensions.FileProviders;
 using ReactApp1.Server.Services.Email;
 using Microsoft.AspNetCore.CookiePolicy;
+using System.Security.Claims;
+using ReactApp1.Server.Services.Image;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
@@ -72,10 +74,15 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("InternalOnly", policy =>
         policy.RequireAssertion(ctx =>
-            ctx.Resource is HttpContext httpContext &&
-            httpContext.Request.Headers.TryGetValue("X-Internal-Request", out var value) &&
-            value == "True"
-        ));
+        {
+            if (ctx.Resource is HttpContext httpContext &&
+                httpContext.Request.Headers.TryGetValue("X-Internal-Request", out var value) &&
+                value == "True")
+            {
+                return true;
+            }
+            return ctx.User.FindFirstValue(ClaimTypes.Role) == "Admin";
+        }));
 });
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailService, SendGridEmailService>();
@@ -88,6 +95,7 @@ builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<ITeremService, TeremService>();
 builder.Services.AddScoped<IVetitesService, VetitesService>();
 builder.Services.AddScoped<IFoglalasService, FoglalasService>();
+builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddControllers()
                .AddNewtonsoftJson(options =>
                {

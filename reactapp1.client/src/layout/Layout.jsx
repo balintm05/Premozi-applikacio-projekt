@@ -142,18 +142,21 @@ export default function Layout() {
                             </button>
                             <div className={`navbar-collapse ${navbarCollapsed ? 'collapse' : ''} d-sm-inline-flex`}>
                                 <div className="navbar-brand d-none d-lg-block me-auto">
-                                    <a className="navbar-brand" href="/">Premozi hivatalos weboldala</a>
+                                    <a className="navbar-brand" href="/">Premozi</a>
                                 </div>
                                 <div className="d-flex justify-content-center flex-grow-1">
                                     <ul className="navbar-nav">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/">Főoldal</a>
+                                            <a className="nav-link" href="/">Kezdőlap</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/">Privacy</a>
+                                            <a className="nav-link" href="/musor">Műsor</a>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/musor/">Film</a>
+                                            <a className="nav-link" href="/jegyarak">Jegyárak</a>
+                                        </li>
+                                        <li className="nav-item">
+                                            <a className="nav-link" href="/kapcsolat">Kapcsolat</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -180,7 +183,7 @@ export default function Layout() {
 
                 <footer className="site-footer border-top py-3">
                     <div className="container">
-                        &copy; 2025 - Premozi - <a href="/">Főoldal</a>
+                        &copy; 2025 - Premozi
                     </div>
                 </footer>
             </div>

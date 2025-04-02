@@ -28,6 +28,10 @@ import ChangePasswordPage from './components/ChangePasswordPage';
 import PasswordResetPage from './components/PasswordResetPage';
 import AdminUserStatusPage from './admin/AdminUserStatusPage';
 import AdminForcePasswordChangePage from './admin/AdminForcePasswordChange';
+import Kapcsolat from './pages/kapcsolat';
+import Jegyarak from './pages/Jegyarak';
+import Musor from './pages/Musor';
+import ImageLibrary from './components/images/ImageLibrary';
 
 const App = () => {
     return (
@@ -35,18 +39,23 @@ const App = () => {
             <Router>
                 <Routes>
                     <Route element={<Layout />}>
-                        <Route index element={<Index />} />
-                        <Route path="/account/login" element={<Login />} />
-                        <Route path="/account/register" element={<Register />} />
-                        <Route path="/logout" element={<Logout />} />
-
-                        <Route path="/account/profile/details/:id?" element={<ProfilePage />} />
-                        <Route path="/account/change-email" element={<ChangeEmailPage />} />
-                        <Route path="/account/change-password" element={<ChangePasswordPage />} />
-
-                        <Route path="/auth/confirm-email" element={<EmailConfirmation />} />
-                        <Route path="/auth/2fa" element={<TwoFactorAuth />} />
-                        <Route path="/auth/reset-password" element={<PasswordResetPage />} />
+                        <Route>
+                            <Route index element={<Index />} />
+                            <Route path="/musor" element={<Musor />} />
+                            <Route path="/jegyarak" element={<Jegyarak />} />
+                            <Route path="/kapcsolat" element={<Kapcsolat />} />
+                        </Route>
+                        <Route>
+                            <Route path="/account/login" element={<Login />} />
+                            <Route path="/account/register" element={<Register />} />
+                            <Route path="/logout" element={<Logout />} />
+                            <Route path="/account/profile/details/:id?" element={<ProfilePage />} />
+                            <Route path="/account/change-email" element={<ChangeEmailPage />} />
+                            <Route path="/account/change-password" element={<ChangePasswordPage />} />
+                            <Route path="/auth/confirm-email" element={<EmailConfirmation />} />
+                            <Route path="/auth/2fa" element={<TwoFactorAuth />} />
+                            <Route path="/auth/reset-password" element={<PasswordResetPage />} />
+                        </Route>
 
                         <Route element={<AdminCheck />}>
                             <Route path="/admin/" element={<AdminIndex />} />
@@ -63,6 +72,7 @@ const App = () => {
                             <Route path="/admin/vetitesek/add" element={<VetitesEditAdmin />} />
                             <Route path="/admin/vetitesek/edit/:id" element={<VetitesEditAdmin />} />
                             <Route path="/admin/foglalas" element={<FoglalasListAdmin />} />
+                            <Route path="/admin/kepek" element={<ImageLibrary />}/>
                         </Route>
                         
                         <Route path="*" element={<PageNotFound />} />

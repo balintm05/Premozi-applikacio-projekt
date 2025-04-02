@@ -26,6 +26,7 @@ using ReactApp1.Server.Models;
 using Org.BouncyCastle.Crypto.Generators;
 using ReactApp1.Server.Services.Email;
 using Microsoft.AspNetCore.WebUtilities;
+using NuGet.Protocol;
 //using System.Data.Entity;
 
 //https://www.youtube.com/watch?v=6EEltKS8AwA
@@ -51,7 +52,7 @@ namespace ReactApp1.Server.Services.Auth
             {
                 return new TokenResponseDto { Error = new ErrorModel("A fiók fel van függesztve") };
             }
-
+            user.refreshTokenExpiry = DateTime.UtcNow.AddDays(3);
             return await CreateTokenResponse(user);
         }
 
@@ -77,7 +78,7 @@ namespace ReactApp1.Server.Services.Auth
             var user = new User();
             var hashedPw = new PasswordHasher<User>().HashPassword(user, request.password);
             user.passwordHash = hashedPw;
-            user.email = request.email;
+            user.email = request.email;          
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
             return await CreateTokenResponse(user);
@@ -325,22 +326,33 @@ namespace ReactApp1.Server.Services.Auth
         public async Task RefreshTokenAsync(string refToken, HttpContext httpContext)
         {
             var user = await ValidateRefreshTokenAsync(refToken);
-            var resp = await CreateTokenResponse(user);
-            if (string.IsNullOrEmpty(resp.RefreshToken))
+            if (user == null)
             {
+                if (string.IsNullOrEmpty(refToken))
+                {
+                    user = await context.Users.FirstAsync(u => u.refreshToken == refToken);
+                    user.refreshTokenExpiry = null;
+                    user.refreshToken = null;
+                    context.Users.Update(user);
+                    await context.SaveChangesAsync();
+                }
+                user = await context.Users.FirstAsync(u => u.refreshToken == refToken);
+                user.refreshTokenExpiry = null;
+                user.refreshToken = null;
+                context.Users.Update(user);
+                await context.SaveChangesAsync();
                 await logout(httpContext);
-                Console.WriteLine("huh");
+                return;
             }
-            if(user != null)
-            {
-                await SetTokensInsideCookie(await CreateTokenResponse(user), httpContext);
-            } 
+            var resp = await CreateTokenResponse(user);
+            await SetTokensInsideCookie(resp, httpContext);
         }
 
 
         private async Task<User?> ValidateRefreshTokenAsync(string refToken)
         {
-            var user = context.Users.FirstAsync(u => u.refreshToken == refToken && u.refreshTokenExpiry > DateTime.UtcNow).Result;
+            var user = await context.Users.FirstAsync(u => u.refreshToken == refToken && u.refreshTokenExpiry > DateTime.UtcNow);
+            Console.WriteLine(user.ToJson());
             return user;
         }
 
@@ -369,13 +381,6 @@ namespace ReactApp1.Server.Services.Auth
             if (user.refreshTokenExpiry == null)
             {
                 user.refreshTokenExpiry = DateTime.UtcNow.AddDays(3);
-            }
-            if (user.refreshTokenExpiry != null && user.refreshTokenExpiry < DateTime.UtcNow)
-            {
-                user.refreshToken = null;
-                user.refreshTokenExpiry = null;
-                await context.SaveChangesAsync();
-                return null;
             }
             var rToken = GenerateRefreshToken();
             user.refreshToken = rToken;

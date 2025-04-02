@@ -13,7 +13,8 @@ export default function AdminLayout({ children }) {
         { id: 'rooms', path: '/admin/termek', name: 'Termek' },
         { id: 'screenings', path: '/admin/vetitesek', name: 'Vetítések' },
         { id: 'foglalas', path: '/admin/foglalas', name: 'Foglalások' },
-        { id: 'users', path: '/admin/users', name: 'Felhasználók' }
+        { id: 'users', path: '/admin/users', name: 'Felhasználók' },
+        { id: 'images', path: '/admin/kepek', name: 'Képek' }
     ];
 
     return (
@@ -51,8 +52,8 @@ export default function AdminLayout({ children }) {
                                                 ? (darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)')
                                                 : 'transparent',
                                             borderLeft: `3px solid ${location.pathname.startsWith(tab.path)
-                                                    ? 'var(--active-link)'
-                                                    : 'transparent'
+                                                ? 'var(--active-link)'
+                                                : 'transparent'
                                                 }`,
                                             margin: '0.1rem 0',
                                             padding: '0.75rem 1rem',
@@ -66,9 +67,10 @@ export default function AdminLayout({ children }) {
                                     >
                                         <i
                                             className={`bi bi-${tab.id === 'users' ? 'people' :
-                                                    tab.id === 'films' ? 'film' :
-                                                        tab.id === 'rooms' ? 'building' :
-                                                            tab.id === 'screenings' ? 'calendar-event' :
+                                                tab.id === 'films' ? 'film' :
+                                                    tab.id === 'rooms' ? 'building' :
+                                                        tab.id === 'screenings' ? 'calendar-event' :
+                                                            tab.id === 'images' ? 'images' :
                                                                 'cart'
                                                 } me-2`}
                                         />

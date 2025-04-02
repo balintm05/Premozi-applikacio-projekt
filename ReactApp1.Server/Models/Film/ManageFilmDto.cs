@@ -17,6 +17,7 @@
         public string?  Szinkron { get; set; }
         public string?  TrailerLink { get; set; }
         public IFormFile? image { get; set; }
+        public int? imageId { get; set; }
         public string?  IMDB { get; set; }
         public string? Megjegyzes { get; set; }
     }

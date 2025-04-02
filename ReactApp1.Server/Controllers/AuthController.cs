@@ -201,10 +201,7 @@ namespace ReactApp1.Server.Controllers
                 ? Ok(new { success = true, message = "Kétlépcsős azonosítás letiltva" })
                 : BadRequest(new { success = false, message = "Nem sikerült letiltani a 2FA-t" });
         }
-
-        [AllowAnonymous]
-        [HttpPost("refresh-token")]
-        public async Task RefreshToken()
+        private async Task RefreshToken()
         {
             try
             {
