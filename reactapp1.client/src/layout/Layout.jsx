@@ -142,7 +142,17 @@ export default function Layout() {
                             </button>
                             <div className={`navbar-collapse ${navbarCollapsed ? 'collapse' : ''} d-sm-inline-flex`}>
                                 <div className="navbar-brand d-none d-lg-block me-auto">
-                                    <a className="navbar-brand" href="/">Premozi</a>
+                                    <a className="navbar-brand" href="/">
+                                        <img
+                                            src="https://localhost:7153/images/Premlogo.png"
+                                            style={{
+                                                height: '40px',
+                                                width: 'auto',
+                                                objectFit: 'contain'
+                                            }}
+                                            alt="Premozi Logo"
+                                        />
+                                    </a>
                                 </div>
                                 <div className="d-flex justify-content-center flex-grow-1">
                                     <ul className="navbar-nav">
@@ -182,9 +192,9 @@ export default function Layout() {
                 </div>
 
                 <footer className="site-footer border-top py-3">
-                    <div className="container" style={{ color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit' }}>
-                        &copy; 2025 - Premozi - <a href="/adatvedelem" style={{ color: 'inherit', textDecoration: 'none' }}>Adatvédelmi tájékoztató</a> - <a href="/impresszum" style={{ color: 'inherit', textDecoration: 'none' }}>Impresszum</a>
-                    </div>
+                    <div className="container" style={{color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit'}}>
+    &copy; 2025 - Premozi - <a href="/adatvedelem" style={{color: 'inherit', textDecoration: 'none'}}>Adatvédelmi tájékoztató</a> - <a href="/impresszum" style={{color: 'inherit', textDecoration: 'none'}}>Impresszum</a>
+</div>
                 </footer>
             </div>
         </ThemeContext.Provider>

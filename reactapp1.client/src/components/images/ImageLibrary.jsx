@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../../context/AuthContext";
 import AdminLayout from '../../admin/AdminLayout';
 import { FaTrash, FaUpload } from 'react-icons/fa';
@@ -10,6 +11,7 @@ function ImageLibrary() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadImages = async () => {
@@ -58,6 +60,7 @@ function ImageLibrary() {
             setImages([...images, response.data]);
             setSelectedFile(null);
             setUploadProgress(0);
+            window.location.reload();
         } catch (error) {
             setError(error.response?.data?.error?.message || "Sikertelen feltöltés");
             console.error("Feltöltési hiba:", error);
