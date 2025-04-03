@@ -4,19 +4,16 @@ import { api } from '../api/axiosConfig.js';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    // State and refs
     const [user, setUser] = useState(null);
     const activeRequests = useRef(new Set());
     const userRef = useRef(user);
     const isInitialized = useRef(false);
     userRef.current = user;
 
-    // Debug utilities
     const debugLog = (message) => {
         console.debug(`[AuthContext] ${message} at:`, new Date().toISOString());
     };
 
-    // Core authentication functions
     const updateUserState = useCallback((newUserData) => {
         const currentUserJson = JSON.stringify(userRef.current);
         const newUserJson = JSON.stringify(newUserData);
@@ -68,7 +65,6 @@ export const AuthProvider = ({ children }) => {
         }
     }, [updateUserState]);
 
-    // Session management
     const logout = useCallback(async () => {
         try {
             await api.delete('/auth/logout', {}, {
@@ -83,7 +79,6 @@ export const AuthProvider = ({ children }) => {
         }
     }, [updateUserState, cancelAllRequests]);
 
-    // Authentication methods
     const login = async (email, password) => {
         try {
             const response = await api.post('/auth/login', { email, password }, {
@@ -134,7 +129,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // 2FA management
     const resend2FACode = async (userId) => {
         try {
             const response = await api.post('/auth/resend-2fa-code', { userId }, {
@@ -177,11 +171,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Role utilities
     const hasRole = useCallback((role) => user?.role === role, [user]);
     const hasAnyRole = useCallback((roles) => roles.includes(user?.role), [user]);
 
-    // Initialization
     useEffect(() => {
         if (isInitialized.current) return;
         isInitialized.current = true;
