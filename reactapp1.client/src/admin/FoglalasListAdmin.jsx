@@ -183,7 +183,7 @@ function FoglalasListAdmin() {
                                                                     <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Műveletek</th>
                                                                     <td colSpan={3}>                                                                        
                                                                         <button
-                                                                            className={`btn btn-sm ms-2 ${darkMode ? 'btn-danger' : 'btn-outline-danger'}`}
+                                                                            className={`btn btn-sm ms-2 btn-danger`}
                                                                             onClick={(e) => {
                                                                                 e.stopPropagation();
                                                                                 handleDelete(foglalas.id);

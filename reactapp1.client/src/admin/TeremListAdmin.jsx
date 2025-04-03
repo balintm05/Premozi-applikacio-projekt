@@ -150,13 +150,13 @@ function TeremListAdmin() {
                                         <td>
                                             <div className="d-flex gap-2">
                                                 <button
-                                                    className={`btn btn-sm ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
+                                                    className={`btn btn-sm btn-primary`}
                                                     onClick={() => navigate(`/admin/termek/edit/${terem.id}`)}
                                                 >
                                                     Módosítás
                                                 </button>
                                                 <button
-                                                    className={`btn btn-sm ${darkMode ? 'btn-danger' : 'btn-outline-danger'}`}
+                                                    className={`btn btn-sm btn-danger`}
                                                     onClick={() => handleDelete(terem.id)}
                                                 >
                                                     Törlés

@@ -200,3 +200,7 @@ export default function Layout() {
         </ThemeContext.Provider>
     );
 }
+console.info(
+    "%cAz oldal betöltése sikeres volt, yippee!",
+    "font-weight: bold"
+);

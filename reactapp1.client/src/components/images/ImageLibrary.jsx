@@ -100,7 +100,7 @@ function ImageLibrary() {
     return (
         <AdminLayout>
             <ThemeWrapper className="container p-4">
-                <h2 className="mb-4" style={{ color: 'var(--text-color)' }}>Képkcönyvtár</h2>
+                <h2 className="mb-4" style={{ color: 'var(--text-color)' }}>Képkönyvtár</h2>
 
                 {error && (
                     <div className="alert alert-danger mb-4">

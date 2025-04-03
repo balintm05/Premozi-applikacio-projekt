@@ -59,7 +59,7 @@
 }
 
 :root {
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.1s ease, color 0.1s ease;
 }
 html, body {
     height: 100%;
@@ -76,7 +76,7 @@ html, body {
 html {
     background-color: var(--bg-color);
     color: var(--text-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.1s ease, color 0.1s ease;
 }
 html::before {
     content: '';
@@ -234,27 +234,27 @@ body::before {
      color: var(--btn-text) !important;
 }
 [data-theme="light"], [data-theme="dark"] {
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.1s ease, color 0.1s ease;
 }
 
 .main-nav, .site-footer {
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.1s ease, border-color 0.1s ease;
 }
 
 .nav-link, .user-dropdown, .dropdown-item, .login-btn {
-    transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+    transition: color 0.1s ease, background-color 0.1s ease, border-color 0.1s ease;
 }
 
 .dropdown-menu {
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.1s ease, border-color 0.1s ease;
 }
 
 .theme-icon {
-    transition: color 0.3s ease;
+    transition: color 0.1s ease;
 }
 
 .btn, .login-btn {
-    transition: all 0.3s ease;
+    transition: all 0.1s ease;
 }
 
 
@@ -339,7 +339,7 @@ body::before {
         border-radius: 8px;
         background-color: var(--content-bg);
         color: var(--auth-text);
-        transition: all 0.3s ease;
+        transition: all 0.1s ease;
     }
 
         .auth-form-group input:focus {
@@ -358,7 +358,7 @@ body::before {
     font-weight: 500;
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.1s ease;
     margin-top: 1rem;
 }
 
@@ -454,7 +454,7 @@ body::before {
     box-shadow: var(--auth-shadow);
     border: 1px solid var(--auth-border);
     transform: translateY(0);
-    transition: all 0.3s ease;
+    transition: all 0.1s ease;
     position: relative;
     overflow: hidden;
 }
@@ -608,7 +608,7 @@ body::before {
     border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.1s ease;
     text-decoration: none;
 }
 
@@ -637,7 +637,7 @@ body::before {
     border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.1s ease;
 }
 
     .user-dropdown-btn:hover {
@@ -661,7 +661,7 @@ body::before {
 }
 
 .dropdown-arrow {
-    transition: transform 0.3s ease;
+    transition: transform 0.1s ease;
     display: flex;
     align-items: center;
 }
@@ -670,7 +670,7 @@ body::before {
         transform: rotate(180deg);
     }
 .sidebar {
-    transition: all 0.3s ease;
+    transition: all 0.1s ease;
 }
 
 .sidebar .nav-link {

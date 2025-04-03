@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import ThemeWrapper from '../../layout/ThemeWrapper';
 import "./FilmAdatok.css";
+import YouTubeModal from '../../components/videos/YoutubeModal';
 
 const FilmAdatok = () => {
     const { id } = useParams();
@@ -83,8 +84,13 @@ const FilmAdatok = () => {
     return (
         <ThemeWrapper>
             <div className="film-container">
-                <div className="film-header">
-                    <h1>{film.cim} <span className="age-rating">{film.korhatar}</span></h1>
+                <div className="film-header" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <h1>{film.cim}</h1>
+                    <img
+                        src={`https://localhost:7153/images/(${film.korhatar}).png`}
+                        alt={`Korhatár: ${film.Korhatar}`}
+                        style={{ height: '40px' }}
+                    />
                 </div>
                 <div className="film-content">
                     <div className="poster-column">
@@ -99,19 +105,16 @@ const FilmAdatok = () => {
                         </div>
                         {film.trailerLink && (
                             <div className="trailer-container">
-                                <a
-                                    href={film.trailerLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="trailer-button"
-                                >
-                                    Trailer megtekintése
-                                </a>
+                                <YouTubeModal youtubeUrl={film.trailerLink}>
+                                    <button className="trailer-button">
+                                        Trailer megtekintése
+                                    </button>
+                                </YouTubeModal>
                             </div>
                         )}
                     </div>
                     <div className="info-column">
-                        <ThemeWrapper className="basic-info" noBg>
+                        <ThemeWrapper className="basic-info">
                             <div className="info-row">
                                 <div className="info-item">
                                     <span className="info-label">Műfaj:</span>
@@ -128,8 +131,8 @@ const FilmAdatok = () => {
                                     <span className="info-value">{film.jatekido} perc</span>
                                 </div>
                                 <div className="info-item">
-                                    <span className="info-label">IMDB:</span>
-                                    <span className="info-value">{film.imdb || 'Nincs információ'}</span>
+                                    <span className="info-label">Szinkron:</span>
+                                    <span className="info-value">{film.szinkron}</span>
                                 </div>
                             </div>
                         </ThemeWrapper>
@@ -140,54 +143,62 @@ const FilmAdatok = () => {
                         </ThemeWrapper>
 
                         <ThemeWrapper className="detailed-info">
-                            <h3>További információk</h3>
                             <div className="info-grid">
+                                <div className="info-item">
+                                    <span className="info-label">Eredeti nyelv:</span>
+                                    <span className="info-value">{film.eredetiNyelv || 'Nincs információ'}</span>
+                                </div>     
                                 <div className="info-item">
                                     <span className="info-label">Eredeti cím:</span>
                                     <span className="info-value">{film.eredetiCim || film.cim}</span>
                                 </div>
                                 <div className="info-item">
-                                    <span className="info-label">Szereplők:</span>
-                                    <span className="info-value">{film.szereplok || 'Nincs információ'}</span>
-                                </div>
+                                    <span className="info-label">Gyártó:</span>
+                                    <span className="info-value">{film.gyarto || 'Nincs információ'}</span>
+                                </div>                                     
                                 <div className="info-item">
                                     <span className="info-label">Rendező:</span>
                                     <span className="info-value">{film.rendezo || 'Nincs információ'}</span>
                                 </div>
                                 <div className="info-item">
-                                    <span className="info-label">Gyártó:</span>
-                                    <span className="info-value">{film.gyarto || 'Nincs információ'}</span>
-                                </div>
+                                    <span className="info-label">Szereplők:</span>
+                                    <span className="info-value">{film.szereplok || 'Nincs információ'}</span>
+                                </div>                                         
                                 <div className="info-item">
-                                    <span className="info-label">Eredeti nyelv:</span>
-                                    <span className="info-value">{film.eredetiNyelv || 'Nincs információ'}</span>
-                                </div>
-                                <div className="info-item">
-                                    <span className="info-label">Szinkron:</span>
-                                    <span className="info-value">{film.szinkron}</span>
+                                    <span className="info-label">IMDB:</span>
+                                    <span className="info-value">{film.imdb || 'Nincs információ'}</span>
                                 </div>
                             </div>
                         </ThemeWrapper>
                     </div>
                 </div>
-                <ThemeWrapper className="screenings-section" noBg>
+                <ThemeWrapper className="screenings-section">
                     <h2>Vetítések</h2>
 
-                    <div className="date-selector">
-                        <label htmlFor="screening-date">Dátum:</label>
-                        <input
-                            type="date"
-                            id="screening-date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            min={new Date().toISOString().split('T')[0]}
-                        />
+                    <div className="date-selector-container">
+                        <div className="date-picker-wrapper">
+                            <label htmlFor="screening-date" className="date-picker-label">
+                                <i className="bi bi-calendar3 me-2"></i>
+                                Válasszon dátumot:
+                            </label>
+                            <div className="date-input-container">
+                                <input
+                                    type="date"
+                                    id="screening-date"
+                                    className="date-picker-input"
+                                    value={selectedDate}
+                                    onChange={(e) => setSelectedDate(e.target.value)}
+                                    min={new Date().toISOString().split('T')[0]}
+                                />
+                                <i className="bi bi-chevron-down date-picker-icon"></i>
+                            </div>
+                        </div>
                     </div>
-
+                    <br></br>
                     {filteredScreenings.length > 0 ? (
                         <div className="screenings-list">
                             {filteredScreenings.map((screening) => (
-                                <ThemeWrapper key={screening.id} className="screening-item" noBg>
+                                <ThemeWrapper key={screening.id} className="screening-item mt-1" noBg>
                                     <div className="screening-time">{formatTime(screening.idopont)}</div>
                                     <div className="screening-room">
                                         {screening.terem?.nev || 'Ismeretlen terem'}
@@ -195,11 +206,12 @@ const FilmAdatok = () => {
                                     <div className="screening-language">
                                         Szinkron: {film.szinkron}
                                     </div>
+                                    <div className="screening-category">Típus: {film.kategoria}</div>
                                     <a
-                                        href={`/foglalas/${screening.id}`}
+                                        href={`/musor/foglalas/${screening.id}`}
                                         className="booking-button"
                                     >
-                                        Jegyvásárlás
+                                        Jegyfoglalás
                                     </a>
                                 </ThemeWrapper>
                             ))}

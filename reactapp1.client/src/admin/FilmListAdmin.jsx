@@ -5,6 +5,7 @@ import AdminLayout from './AdminLayout';
 import ThemeWrapper from '../layout/ThemeWrapper';
 import { useNavigate } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import YouTubeModal from "../components/videos/YoutubeModal";
 
 const BASE_URL = "https://localhost:7153";
 
@@ -202,9 +203,16 @@ function FilmListAdmin() {
                                                             <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Trailer</th>
                                                             <td>
                                                                 {film.trailerLink && (
-                                                                    <a href={film.trailerLink} target="_blank" rel="noopener noreferrer" className={darkMode ? 'text-info' : ''}>
-                                                                        Trailer megtekintése
-                                                                    </a>
+                                                                    <YouTubeModal youtubeUrl={film.trailerLink}>
+                                                                        <a
+                                                                            href="#"
+                                                                            onClick={(e) => e.preventDefault()}
+                                                                            className={darkMode ? 'text-info' : ''}
+                                                                            style={{ textDecoration: 'none', cursor: 'pointer' }}
+                                                                        >
+                                                                            Trailer megtekintése
+                                                                        </a>
+                                                                    </YouTubeModal>
                                                                 )}
                                                             </td>
                                                             <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Borítókép</th>
@@ -229,7 +237,16 @@ function FilmListAdmin() {
                                                             <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Műveletek</th>
                                                             <td colSpan={3}>
                                                                 <button
-                                                                    className={`btn btn-sm ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
+                                                                    className={`btn btn-sm btn-success`}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        navigate(`/musor/film/${film.id}`);
+                                                                    }}
+                                                                >
+                                                                    Oldal
+                                                                </button>
+                                                                <button
+                                                                    className={`btn btn-sm ms-2 btn-primary`}
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         navigate(`/admin/filmek/edit/${film.id}`);
@@ -238,7 +255,7 @@ function FilmListAdmin() {
                                                                     Szerkesztés
                                                                 </button>
                                                                 <button
-                                                                    className={`btn btn-sm ms-2 ${darkMode ? 'btn-danger' : 'btn-outline-danger'}`}
+                                                                    className={`btn btn-sm ms-2 btn-danger`}
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
                                                                         handleDelete(film.id);
