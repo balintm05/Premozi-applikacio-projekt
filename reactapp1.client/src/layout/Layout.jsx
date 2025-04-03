@@ -144,7 +144,7 @@ export default function Layout() {
                                 <div className="navbar-brand d-none d-lg-block me-auto">
                                     <a className="navbar-brand" href="/">
                                         <img
-                                            src="https://localhost:7153/images/Premlogo.png"
+                                            src="https://localhost:7153/images/Premlogo_sm.png"
                                             style={{
                                                 height: '40px',
                                                 width: 'auto',

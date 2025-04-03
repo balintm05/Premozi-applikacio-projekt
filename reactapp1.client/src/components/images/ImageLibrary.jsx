@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../../context/AuthContext";
 import AdminLayout from '../../admin/AdminLayout';
 import { FaTrash, FaUpload } from 'react-icons/fa';
+import ThemeWrapper from '../../layout/ThemeWrapper';
 
 function ImageLibrary() {
     const { api } = useContext(AuthContext);
@@ -91,23 +92,27 @@ function ImageLibrary() {
     if (loading) {
         return (
             <AdminLayout>
-                <div className="p-4">Képek betöltése...</div>
+                <ThemeWrapper className="p-4">Képek betöltése...</ThemeWrapper>
             </AdminLayout>
         );
     }
 
     return (
         <AdminLayout>
-            <div className="container p-4">
-                <h2 className="mb-4">Könyvtár</h2>
+            <ThemeWrapper className="container p-4">
+                <h2 className="mb-4" style={{ color: 'var(--text-color)' }}>Képkönyvtár</h2>
 
                 {error && (
                     <div className="alert alert-danger mb-4">
                         {error}
                     </div>
                 )}
-
-                <div className="card mb-4">
+                <div className="card mb-4" style={{
+                    backgroundColor: 'var(--content-bg)',
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--text-color)',
+                    boxShadow: 'var(--card-shadow)'
+                }}>
                     <div className="card-body">
                         <div className="input-group">
                             <input
@@ -115,6 +120,11 @@ function ImageLibrary() {
                                 className="form-control"
                                 onChange={handleFileChange}
                                 accept="image/*"
+                                style={{
+                                    backgroundColor: 'var(--content-bg)',
+                                    color: 'var(--text-color)',
+                                    borderColor: 'var(--border-color)'
+                                }}
                             />
                             <button
                                 className="btn btn-primary"
@@ -127,7 +137,7 @@ function ImageLibrary() {
                         </div>
                         {selectedFile && (
                             <div className="mt-2">
-                                <small>
+                                <small style={{ color: 'var(--text-color)' }}>
                                     Kiválasztva: {selectedFile.name} ({formatFileSize(selectedFile.size)})
                                 </small>
                             </div>
@@ -137,13 +147,20 @@ function ImageLibrary() {
 
                 <div className="row">
                     {images.length === 0 ? (
-                        <div className="col-12 text-center py-4">
+                        <div className="col-12 text-center py-4" style={{ color: 'var(--text-color)' }}>
                             <p>Nincsenek képek</p>
                         </div>
                     ) : (
                         images.map(image => (
                             <div key={image.id} className="col-md-4 col-lg-3 mb-4">
-                                <div className="card h-100">
+                                <div
+                                    className="card h-100"
+                                    style={{
+                                        backgroundColor: 'var(--content-bg)',
+                                        borderColor: 'var(--border-color)',
+                                        color: 'var(--text-color)'
+                                    }}
+                                >
                                     <img
                                         src={`https://localhost:7153${image.relativePath}`}
                                         className="card-img-top img-fluid"
@@ -154,12 +171,15 @@ function ImageLibrary() {
                                         <h6 className="card-title text-truncate">{image.originalFileName}</h6>
                                         <p className="card-text small">
                                             <span className="d-block">{formatFileSize(image.fileSize)}</span>
-                                            <span className="text-muted">
+                                            <span style={{ color: 'var(--text-muted)' }}>
                                                 {new Date(image.uploadDate).toLocaleString('hu-HU')}
                                             </span>
                                         </p>
                                     </div>
-                                    <div className="card-footer bg-transparent">
+                                    <div className="card-footer" style={{
+                                        backgroundColor: 'var(--content-bg)',
+                                        borderColor: 'var(--border-color)'
+                                    }}>
                                         <button
                                             className="btn btn-danger btn-sm w-100"
                                             onClick={() => handleDelete(image.id)}
@@ -173,7 +193,7 @@ function ImageLibrary() {
                         ))
                     )}
                 </div>
-            </div>
+            </ThemeWrapper>
         </AdminLayout>
     );
 }
