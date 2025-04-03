@@ -140,21 +140,22 @@ function FilmEditAdmin() {
             if (id && id !== 'add') {
                 formData.append('id', film.id);
             }
-            formData.append('Cim', film.Cim);
-            formData.append('Kategoria', film.Kategoria);
-            formData.append('Mufaj', film.Mufaj);
-            formData.append('Korhatar', film.Korhatar);
-            formData.append('Jatekido', film.Jatekido);
-            formData.append('Gyarto', film.Gyarto);
-            formData.append('Rendezo', film.Rendezo);
-            formData.append('Szereplok', film.Szereplok);
-            formData.append('Leiras', film.Leiras);
-            formData.append('EredetiNyelv', film.EredetiNyelv);
-            formData.append('EredetiCim', film.EredetiCim);
-            formData.append('Szinkron', film.Szinkron);
-            formData.append('TrailerLink', film.TrailerLink);
-            formData.append('IMDB', film.IMDB);
+            formData.append('Cim', film.Cim || '');
+            formData.append('Kategoria', film.Kategoria || '');
+            formData.append('Mufaj', film.Mufaj || '');
+            formData.append('Korhatar', film.Korhatar || '');
+            formData.append('Jatekido', film.Jatekido ? film.Jatekido.toString() : '0');
+            formData.append('Gyarto', film.Gyarto || '');
+            formData.append('Rendezo', film.Rendezo || '');
+            formData.append('Szereplok', film.Szereplok || '');
+            formData.append('Leiras', film.Leiras || '');
+            formData.append('EredetiNyelv', film.EredetiNyelv || '');
+            formData.append('EredetiCim', film.EredetiCim || '');
+            formData.append('Szinkron', film.Szinkron || '');
+            formData.append('TrailerLink', film.TrailerLink || '');
+            formData.append('IMDB', film.IMDB || '');
             formData.append('Megjegyzes', film.Megjegyzes || '');
+
             if (film.image) {
                 formData.append('image', film.image);
             } else if (film.imageId) {
@@ -162,21 +163,34 @@ function FilmEditAdmin() {
             } else if (id === 'add') {
                 throw new Error("Kérem válasszon képet vagy töltsön fel újat");
             }
+
             const method = id && id !== 'add' ? 'patch' : 'post';
             const url = id && id !== 'add' ? '/Film/edit' : '/Film/add';
+
             const response = await filmupload[method](url, formData);
+
             if (response.data?.errorMessage) {
                 if (response.data.errorMessage === "Sikeres hozzáadás" ||
                     response.data.errorMessage === "Sikeres módosítás") {
                     setSuccessMessage(response.data.errorMessage);
+
+                    if (id === 'add' && response.data?.film?.id) {
+                        navigate(`/admin/filmek/edit/${response.data.film.id}`);
+                    }
                     if (id && id !== 'add') {
-                        const updatedFilm = await api.get(`/Film/get/${id}`);
-                        setFilm(prev => ({
-                            ...prev,
-                            ...updatedFilm.data,
-                            Jatekido: updatedFilm.data.Jatekido.toString(),
-                            selectedImageUrl: updatedFilm.data.imagePath || ''
-                        }));
+                        try {
+                            const updatedFilm = await api.get(`/Film/get/${id}`);
+                            if (updatedFilm.data) {
+                                setFilm(prev => ({
+                                    ...prev,
+                                    ...updatedFilm.data,
+                                    Jatekido: updatedFilm.data.Jatekido ? updatedFilm.data.Jatekido.toString() : '0',
+                                    selectedImageUrl: updatedFilm.data.imagePath || ''
+                                }));
+                            }
+                        } catch (fetchError) {
+                            console.error("Error fetching updated film:", fetchError);
+                        }
                     }
                 } else {
                     setError(response.data.errorMessage);
