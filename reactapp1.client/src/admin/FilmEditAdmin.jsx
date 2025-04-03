@@ -43,43 +43,49 @@ function FilmEditAdmin() {
     const [libraryLoading, setLibraryLoading] = useState(false);
 
     useEffect(() => {
-        if (id && id !== 'undefined' && id !== 'add') {
-            api.get(`/Film/get/${id}`)
-                .then(response => {
-                    const filmData = response.data;
-                    if (filmData) {
-                        setFilm({
-                            id: filmData.id,
-                            Cim: filmData.Cim,
-                            Kategoria: filmData.Kategoria,
-                            Mufaj: filmData.Mufaj,
-                            Korhatar: filmData.Korhatar,
-                            Jatekido: filmData.Jatekido.toString(),
-                            Gyarto: filmData.Gyarto,
-                            Rendezo: filmData.Rendezo,
-                            Szereplok: filmData.Szereplok,
-                            Leiras: filmData.Leiras,
-                            EredetiNyelv: filmData.EredetiNyelv,
-                            EredetiCim: filmData.EredetiCim,
-                            Szinkron: filmData.Szinkron,
-                            TrailerLink: filmData.TrailerLink,
-                            IMDB: filmData.IMDB,
-                            Megjegyzes: filmData.Megjegyzes || '',
-                            imageId: filmData.ImageID,
-                            selectedImageUrl: filmData.imagePath || ''
-                        });
-                    }
-                    setLoading(false);
-                })
-                .catch(error => {
-                    setError(error.response?.data?.error || "Hiba történt a film betöltésekor");
-                    setLoading(false);
-                });
-        } else {
-            setLoading(false);
-        }
-    }, [id, api]);
+        const loadFilmData = async () => {
+            try {
+                if (id && id !== 'undefined' && id !== 'add') {
+                    setLoading(true);
+                    const response = await api.get(`/Film/get/${id}`);
 
+                    if (!response.data) {
+                        throw new Error("Nem található film ezzel az ID-vel");
+                    }
+
+                    const filmData = response.data;
+                    setFilm({
+                        id: filmData.id,
+                        Cim: filmData.cim || '',
+                        Kategoria: filmData.kategoria || '',
+                        Mufaj: filmData.mufaj || '',
+                        Korhatar: filmData.korhatar || '',
+                        Jatekido: filmData.jatekido?.toString() || '',
+                        Gyarto: filmData.gyarto || '',
+                        Rendezo: filmData.rendezo || '',
+                        Szereplok: filmData.szereplok || '',
+                        Leiras: filmData.leiras || '',
+                        EredetiNyelv: filmData.eredetiNyelv || '',
+                        EredetiCim: filmData.eredetiCim || '',
+                        Szinkron: filmData.szinkron || '',
+                        TrailerLink: filmData.trailerLink || '',
+                        IMDB: filmData.imdb || '',
+                        Megjegyzes: filmData.megjegyzes || '',
+                        image: null,
+                        imageId: filmData.imageID || null,
+                        selectedImageUrl: "https://localhost:7153" + filmData.images.relativePath || ''
+                    });
+                }
+            } catch (error) {
+                setError(error.message || "Hiba történt a film betöltésekor");
+                navigate('/admin/filmek', { replace: true });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadFilmData();
+    }, [id, api, navigate]);
     const loadImageLibrary = async () => {
         setLibraryLoading(true);
         try {
@@ -534,83 +540,63 @@ function FilmEditAdmin() {
                 </div>
             )}
             <style>{`
-                .modal-backdrop {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    z-index: 1040;
-                    width: 100vw;
-                    height: 100vh;
-                    background-color: rgba(0, 0, 0, 0.5);
-                }
-                .dark-modal .modal-backdrop {
-                    background-color: rgba(0, 0, 0, 0.7);
-                }
-                .modal {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    z-index: 1050;
-                    width: 100%;
-                    height: 100%;
-                    overflow-x: hidden;
-                    overflow-y: auto;
-                    outline: 0;
-                }
-                .modal-content {
-                    opacity: 1 !important;
-                }
-                .modal-dialog {
-                    position: relative;
-                    width: auto;
-                    margin: 0.5rem;
-                    pointer-events: none;
-                }
-                .modal-content {
-                    position: relative;
-                    display: flex;
-                    flex-direction: column;
-                    width: 100%;
-                    pointer-events: auto;
-                    background-clip: padding-box;
-                    border: 1px solid rgba(0, 0, 0, 0.2);
-                    border-radius: 0.3rem;
-                    outline: 0;
-                }
-                .dark-modal .modal-content {
-                    background-color: #343a40;
-                    border-color: #6c757d;
-                }
-                .modal-header {
-                    display: flex;
-                    align-items: flex-start;
-                    justify-content: space-between;
-                    padding: 1rem;
-                    border-bottom: 1px solid #dee2e6;
-                    border-top-left-radius: 0.3rem;
-                    border-top-right-radius: 0.3rem;
-                }
-                .dark-modal .modal-header {
-                    border-color: #495057;
-                }
-                .modal-body {
-                    position: relative;
-                    flex: 1 1 auto;
-                    padding: 1rem;
-                }
-                .modal-footer {
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-end;
-                    padding: 1rem;
-                    border-top: 1px solid #dee2e6;
-                    border-bottom-right-radius: 0.3rem;
-                    border-bottom-left-radius: 0.3rem;
-                }
-                .dark-modal .modal-footer {
-                    border-color: #495057;
-                }
-            `}</style>
+  .modal-backdrop {
+    background-color: ${darkMode ? '#000' : '#fff'} !important;
+    opacity: 1 !important;
+  }
+
+  .modal {
+    display: block !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
+
+  .modal-dialog {
+    position: relative;
+    margin: 30px auto;
+    width: 90%;
+    max-width: 800px;
+  }
+
+  .modal-content {
+    background-color: ${darkMode ? '#222' : '#fff'} !important;
+    border: 2px solid ${darkMode ? '#444' : '#ddd'} !important;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  }
+
+  .modal-header {
+    background-color: ${darkMode ? '#333' : '#f8f9fa'} !important;
+    border-bottom: 1px solid ${darkMode ? '#444' : '#ddd'} !important;
+    padding: 15px;
+  }
+
+  .modal-body {
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+    background-color: ${darkMode ? '#222' : '#fff'} !important;
+  }
+
+  .modal-footer {
+    background-color: ${darkMode ? '#333' : '#f8f9fa'} !important;
+    border-top: 1px solid ${darkMode ? '#444' : '#ddd'} !important;
+    padding: 15px;
+  }
+
+  .modal-body .row {
+    margin: 0;
+  }
+
+  .modal-body .col-md-4 {
+    padding: 10px;
+  }
+`}</style>
         </AdminLayout>
     );
 }

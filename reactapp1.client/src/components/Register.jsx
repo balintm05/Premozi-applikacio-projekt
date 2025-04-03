@@ -31,7 +31,7 @@ const Register = () => {
         try {
             const result = await register(formData.email, formData.password);
             if (result.success) {
-                navigate('/account/login', { state: { message: "Sikeres regisztráció, kérjük hitelesítse az email címét" } });
+                setError("Sikeres regisztráció, kérjük hitelesítse az email címét");
             } else {
                 setError(result.error || "Hiba történt a regisztráció során");
             }
