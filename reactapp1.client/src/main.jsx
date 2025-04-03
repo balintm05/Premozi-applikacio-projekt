@@ -34,6 +34,7 @@ import Musor from './pages/Musor';
 import ImageLibrary from './components/images/ImageLibrary';
 import AdatvedelmiTajekoztato from './pages/AdatvedelmiTajekoztato';
 import Impresszum from './pages/Impresszum';
+import FilmAdatok from './pages/film/FilmAdatok';
 
 const App = () => {
     return (
@@ -43,7 +44,10 @@ const App = () => {
                     <Route element={<Layout />}>
                         <Route>
                             <Route index element={<Index />} />
-                            <Route path="/musor" element={<Musor />} />
+                            <Route>
+                                <Route path="/musor" element={<Musor />} />
+                                <Route path="/musor/film/:id" element={<FilmAdatok />} />
+                            </Route>                           
                             <Route path="/jegyarak" element={<Jegyarak />} />
                             <Route path="/kapcsolat" element={<Kapcsolat />} />
                             <Route path="/adatvedelem" element={<AdatvedelmiTajekoztato />} />
