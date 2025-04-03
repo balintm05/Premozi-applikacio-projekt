@@ -193,7 +193,7 @@ const FilmAdatok = () => {
                                         {screening.terem?.nev || 'Ismeretlen terem'}
                                     </div>
                                     <div className="screening-language">
-                                        {film.szinkron === 'dubbed' ? 'Szinkronizált' : 'Eredeti nyelven'}
+                                        Szinkron: {film.szinkron}
                                     </div>
                                     <a
                                         href={`/foglalas/${screening.id}`}
