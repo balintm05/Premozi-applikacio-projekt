@@ -167,7 +167,7 @@ function FoglalasListAdmin() {
                                                                     <th className={`w-25 ${darkMode ? 'bg-gray-700' : 'bg-light'}`}>Foglalt székek</th>
                                                                     <td>
                                                                         {foglalas.foglaltSzekek.length > 0 ?
-                                                                            foglalas.foglaltSzekek.map(szek => `${szek.x}-${szek.y}`).join(', ') :
+                                                                            foglalas.foglaltSzekek.map(szek => `${szek.x+1}-${szek.y+1}`).join(', ') :
                                                                             'Nincsenek foglalt székek'}
                                                                     </td>
                                                                     <th className={`w-25 ${darkMode ? 'bg-gray-700' : 'bg-light'}`}>Vetítés</th>
