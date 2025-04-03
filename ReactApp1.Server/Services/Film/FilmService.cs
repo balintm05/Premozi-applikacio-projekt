@@ -116,12 +116,8 @@ namespace ReactApp1.Server.Services.Film
             return await context.Film.Include(x => x.Images).ToListAsync();
         }
         public async Task<Entities.Film?> getFilm(int id)
-        {
-            var film = await context.Film.Include(x => x.Images).ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == id)).FirstAsync();
-            if(film == null)
-            {
-                return null;
-            }
+        { 
+            var film = await context.Film.Include(x=>x.Vetitesek).ThenInclude(x=>x.Terem).Include(x => x.Images).FirstOrDefaultAsync(x=>x.id==id);
             return film;
         }
 

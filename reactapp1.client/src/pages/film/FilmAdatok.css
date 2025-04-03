@@ -5,194 +5,269 @@
     color: var(--text-color);
 }
 
-.film-fejlec {
+.film-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+    .film-header h1 {
+        font-size: 2.2rem;
+        margin: 0;
+        color: var(--text-color);
+    }
+
+.age-rating {
+    display: inline-block;
+    background-color: var(--link-color);
+    color: var(--btn-text);
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.film-content {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 30px;
     gap: 30px;
+    margin-bottom: 40px;
+}
+
+.poster-column {
+    flex: 0 0 300px;
+}
+
+.info-column {
+    flex: 1;
+    min-width: 300px;
 }
 
 .film-poster {
-    flex: 0 0 300px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
     .film-poster img {
         width: 100%;
         height: auto;
         display: block;
-        transition: transform 0.3s ease;
     }
 
-    .film-poster:hover img {
-        transform: scale(1.03);
-    }
-
-.film-info {
-    flex: 1;
-    min-width: 300px;
-}
-
-    .film-info h1 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        color: var(--text-color);
-    }
-
-    .film-info h2 {
-        font-size: 1.5rem;
-        margin: 1.5rem 0 1rem;
-        color: var(--text-color);
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 0.5rem;
-    }
-
-.info-sor {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-    gap: 1rem;
-}
-
-    .info-sor p {
-        margin: 0;
-        flex: 1;
-    }
-
-.film-leiras {
-    line-height: 1.6;
-    margin: 1.5rem 0;
-}
-
-.film-details p {
-    margin: 0.5rem 0;
-}
-
-.trailer-container {
-    margin-top: 2rem;
-}
-
-.trailer-link {
+.trailer-button {
     display: inline-block;
-    padding: 0.75rem 1.5rem;
-    background-color: var(--btn-bg);
+    background-color: var(--link-color);
     color: var(--btn-text);
+    padding: 10px 20px;
     border-radius: 4px;
     text-decoration: none;
     font-weight: bold;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s;
 }
 
-    .trailer-link:hover {
-        background-color: var(--btn-hover);
+    .trailer-button:hover {
+        background-color: var(--active-link);
     }
 
-.vetitesek {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border-color);
+
+
+.info-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 15px;
 }
 
-    .vetitesek h2 {
-        font-size: 1.8rem;
-        margin-bottom: 1.5rem;
+    .info-row:last-child {
+        margin-bottom: 0;
+    }
+
+.info-item {
+    flex: 1;
+    min-width: 150px;
+}
+
+.info-label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.info-value {
+    display: block;
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.film-description {
+    margin-bottom: 30px;
+}
+
+    .film-description h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
         color: var(--text-color);
     }
 
-.datum-valaszto {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-    .datum-valaszto label {
-        font-weight: 500;
+    .film-description p {
+        line-height: 1.6;
+        margin: 0;
+        color: var(--text-color);
     }
 
-    .datum-valaszto input {
-        padding: 0.5rem;
+.detailed-info h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--text-color);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.screenings-section {
+    background-color: var(--nav-bg);
+    padding: 25px;
+    border-radius: 8px;
+    color: var(--text-color);
+}
+
+    .screenings-section h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: var(--text-color);
+    }
+
+.date-selector {
+    margin-bottom: 20px;
+}
+
+    .date-selector label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: var(--text-color);
+    }
+
+    .date-selector input {
+        padding: 8px 12px;
         border: 1px solid var(--border-color);
         border-radius: 4px;
+        font-size: 1rem;
         background-color: var(--content-bg);
         color: var(--text-color);
     }
 
-.vetites-lista {
+.screenings-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
 }
 
-.vetites-elem {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.5rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.screening-item {
     background-color: var(--content-bg);
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-color);
 }
 
-    .vetites-elem:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    }
-
-.vetites-idopont {
-    font-size: 1.25rem;
+.screening-time {
     font-weight: bold;
-    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    flex: 0 0 70px;
     color: var(--text-color);
 }
 
-.vetites-terem, .vetites-nyelv {
-    margin-bottom: 0.5rem;
+.screening-room {
+    flex: 1;
     color: var(--text-color);
+    opacity: 0.8;
 }
 
-.jegyvasarlas {
-    display: block;
-    text-align: center;
-    padding: 0.75rem;
-    background-color: var(--btn-bg);
+.screening-language {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.booking-button {
+    background-color: var(--link-color);
     color: var(--btn-text);
-    border: none;
+    padding: 8px 15px;
     border-radius: 4px;
     text-decoration: none;
-    font-weight: bold;
-    margin-top: 1rem;
-    transition: background-color 0.3s ease;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+    flex: 0 0 auto;
 }
 
-    .jegyvasarlas:hover {
-        background-color: var(--btn-hover);
+    .booking-button:hover {
+        background-color: var(--active-link);
     }
 
-.betoltes, .hiba {
+.no-screenings {
+    padding: 20px;
     text-align: center;
-    padding: 50px;
-    font-size: 1.25rem;
     color: var(--text-color);
+    background-color: var(--content-bg);
+    border-radius: 6px;
+    opacity: 0.8;
 }
 
 @media (max-width: 768px) {
-    .film-fejlec {
+    .film-content {
         flex-direction: column;
     }
 
-    .film-poster {
-        margin-right: 0;
-        margin-bottom: 20px;
-        flex: 0 0 auto;
+    .poster-column {
+        flex: 1;
     }
 
-    .info-sor {
+    .info-row {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 15px;
     }
 
-    .vetites-lista {
+    .screenings-list {
         grid-template-columns: 1fr;
     }
+}
+
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+.basic-info,
+.detailed-info {
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background: var(--card-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .basic-info,
+.light-mode .detailed-info {
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .basic-info,
+.dark-mode .detailed-info {
+    background: #1a1a1a;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }

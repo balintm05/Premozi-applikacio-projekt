@@ -73,7 +73,7 @@ namespace ReactApp1.Server.Controllers
             var film = await filmService.getFilm(id);
             if (film == null)
             {
-                return BadRequest(new ErrorModel(""));
+                return BadRequest(new ErrorModel("A film nem található"));
             }
             return Ok(film);
         }

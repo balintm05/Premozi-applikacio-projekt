@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import ThemeWrapper from '../../layout/ThemeWrapper';
@@ -9,153 +8,208 @@ const FilmAdatok = () => {
     const { id } = useParams();
     const { api } = useContext(AuthContext);
     const [film, setFilm] = useState(null);
-    const [screenings, setScreenings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
     useEffect(() => {
-        const fetchFilmData = async () => {
+        const fetchData = async () => {
             try {
-                const filmResponse = await api.get(`/Film/get/${id}`);
-                if (!filmResponse.data) {
-                    throw new Error('Film not found');
+                const response = await api.get(`/Film/get/${id}`);
+                if (response.data?.errorMessage) {
+                    setError(response.data.errorMessage);
                 }
-                const screeningsResponse = await api.get('/Vetites/get');
-                const filmScreenings = screeningsResponse.data
-                    .filter(item => item.Vetites?.Filmid === parseInt(id))
-                    .map(item => item.Vetites);
-
-                setFilm(filmResponse.data);
-                setScreenings(filmScreenings);
+                else if (response.data) {
+                    setFilm(response.data);
+                }
+                else {
+                    setError("Film not found");
+                }
             } catch (err) {
-                setError(err.response?.data?.Error?.errorMessage || 'Hiba tˆrtÈnt az adatok betˆltÈse kˆzben');
-                console.error('Error fetching film data:', err);
+                if (err.response?.data?.errorMessage) {
+                    setError(err.response.data.errorMessage);
+                }
+                else {
+                    setError(err.message || "Hiba t√∂rt√©nt az adatok bet√∂lt√©se k√∂zben");
+                }
+                console.error("Error fetching data:", err);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchFilmData();
+        fetchData();
     }, [id, api]);
 
     const formatTime = (dateTime) => {
         return new Date(dateTime).toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
     };
 
-    const filteredScreenings = screenings.filter(screening => {
-        return new Date(screening.Idopont).toISOString().split('T')[0] === selectedDate;
-    });
+    const formatDate = (dateString) => {
+        if (!dateString) return 'Nincs inform√°ci√≥';
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('hu-HU', options);
+    };
+
+    const filteredScreenings = film?.vetitesek?.filter(screening => {
+        const screeningDate = new Date(screening.idopont).toISOString().split('T')[0];
+        return screeningDate === selectedDate && new Date(screening.idopont) >= new Date();
+    }).sort((a, b) => new Date(a.idopont) - new Date(b.idopont)) || [];
 
     if (loading) return (
         <ThemeWrapper className="betoltes">
-            BetˆltÈs...
+            Bet√∂lt√©s...
         </ThemeWrapper>
     );
 
     if (error) return (
         <ThemeWrapper className="hiba">
-            {error}
+            <div className="alert alert-danger mb-4">
+                {error}
+            </div>
         </ThemeWrapper>
     );
 
     if (!film) return (
         <ThemeWrapper className="hiba">
-            Nem tal·lhatÛ film
+            Nem tal√°lhat√≥ film
         </ThemeWrapper>
     );
 
-    const imageUrl = film.ImageID
-        ? `https://localhost:7153/api/Image/get/${film.ImageID}`
+    const imageUrl = film.images?.relativePath
+        ? `https://localhost:7153${film.images.relativePath}`
         : '/placeholder-image.jpg';
 
     return (
-        <ThemeWrapper className="film-container">
-            <div className="film-fejlec">
-                <h1>{film.Cim} ({film.Korhatar})</h1>
-                <div className="film-poster">
-                    <img
-                        src={imageUrl}
-                        alt={`${film.Cim} poszter`}
-                        onError={(e) => {
-                            e.target.src = '/placeholder-image.jpg';
-                        }}
-                    />
+        <ThemeWrapper>
+            <div className="film-container">
+                <div className="film-header">
+                    <h1>{film.cim} <span className="age-rating">{film.korhatar}</span></h1>
                 </div>
-                <div className="film-info">
-                    <h2>Tov·bbi inform·ciÛ:</h2>
-                    <div className="info-sor">
-                        <p>M˚faj: <span>{film.Mufaj}</span></p>
-                        <p>KategÛria: <span>{film.Kategoria}</span></p>
-                    </div>
-                    <div className="info-sor">
-                        <p>J·tÈkidı: <span>{film.Jatekido} perc</span></p>
-                        <p>IMDB ÈrtÈkelÈs: <span>{film.IMDB}</span></p>
-                    </div>
-                    <p className="film-leiras">{film.Leiras}</p>
-
-                    <div className="film-details">
-                        <p><strong>Eredeti cÌm:</strong> {film.EredetiCim}</p>
-                        <p><strong>Szereplık:</strong> {film.Szereplok}</p>
-                        <p><strong>Rendezı:</strong> {film.Rendezo}</p>
-                        <p><strong>Gy·rtÛ:</strong> {film.Gyarto}</p>
-                        <p><strong>Eredeti nyelv:</strong> {film.EredetiNyelv}</p>
-                        <p><strong>Szinkron:</strong> {film.Szinkron}</p>
-                    </div>
-
-                    {film.TrailerLink && (
-                        <div className="trailer-container">
-                            <a
-                                href={film.TrailerLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="trailer-link"
-                            >
-                                Trailer megtekintÈse
-                            </a>
+                <div className="film-content">
+                    <div className="poster-column">
+                        <div className="film-poster">
+                            <img
+                                src={imageUrl}
+                                alt={`${film.cim} poszter`}
+                                onError={(e) => {
+                                    e.target.src = '/placeholder-image.jpg';
+                                }}
+                            />
                         </div>
-                    )}
-                </div>
-            </div>
-
-            <div className="vetitesek">
-                <h2>VetÌtÈsek</h2>
-                <div className="datum-valaszto">
-                    <label htmlFor="vetites-datum">D·tum:</label>
-                    <input
-                        type="date"
-                        id="vetites-datum"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                        min={new Date().toISOString().split('T')[0]}
-                    />
-                </div>
-
-                {filteredScreenings.length > 0 ? (
-                    <div className="vetites-lista">
-                        {filteredScreenings.map((screening) => (
-                            <div key={screening.id} className="vetites-elem">
-                                <div className="vetites-idopont">
-                                    {formatTime(screening.Idopont)}
-                                </div>
-                                <div className="vetites-terem">
-                                    {screening.Terem?.Nev || 'Ismeretlen terem'}
-                                </div>
-                                <div className="vetites-nyelv">
-                                    {film.Szinkron === 'dubbed' ? 'Szinkroniz·lt' : 'Eredeti nyelven'}
-                                </div>
+                        {film.trailerLink && (
+                            <div className="trailer-container">
                                 <a
-                                    href={`/jegyvasarlas/${screening.id}`}
-                                    className="jegyvasarlas"
+                                    href={film.trailerLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="trailer-button"
                                 >
-                                    Jegyv·s·rl·s
+                                    Trailer megtekint√©se
                                 </a>
                             </div>
-                        ))}
+                        )}
                     </div>
-                ) : (
-                    <p>Nincsenek vetÌtÈsek a kiv·lasztott napon.</p>
-                )}
+                    <div className="info-column">
+                        <ThemeWrapper className="basic-info" noBg>
+                            <div className="info-row">
+                                <div className="info-item">
+                                    <span className="info-label">M≈±faj:</span>
+                                    <span className="info-value">{film.mufaj || 'Nincs inform√°ci√≥'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="info-label">Kateg√≥ria:</span>
+                                    <span className="info-value">{film.kategoria || 'Nincs inform√°ci√≥'}</span>
+                                </div>
+                            </div>
+                            <div className="info-row">
+                                <div className="info-item">
+                                    <span className="info-label">J√°t√©kid≈ë:</span>
+                                    <span className="info-value">{film.jatekido} perc</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="info-label">IMDB:</span>
+                                    <span className="info-value">{film.imdb || 'Nincs inform√°ci√≥'}</span>
+                                </div>
+                            </div>
+                        </ThemeWrapper>
+
+                        <ThemeWrapper className="film-description" noBg>
+                            <h3>Le√≠r√°s</h3>
+                            <p>{film.leiras || 'Nincs el√©rhet≈ë le√≠r√°s.'}</p>
+                        </ThemeWrapper>
+
+                        <ThemeWrapper className="detailed-info">
+                            <h3>Tov√°bbi inform√°ci√≥k</h3>
+                            <div className="info-grid">
+                                <div className="info-item">
+                                    <span className="info-label">Eredeti c√≠m:</span>
+                                    <span className="info-value">{film.eredetiCim || film.cim}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="info-label">Szerepl≈ëk:</span>
+                                    <span className="info-value">{film.szereplok || 'Nincs inform√°ci√≥'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="info-label">Rendez≈ë:</span>
+                                    <span className="info-value">{film.rendezo || 'Nincs inform√°ci√≥'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="info-label">Gy√°rt√≥:</span>
+                                    <span className="info-value">{film.gyarto || 'Nincs inform√°ci√≥'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="info-label">Eredeti nyelv:</span>
+                                    <span className="info-value">{film.eredetiNyelv || 'Nincs inform√°ci√≥'}</span>
+                                </div>
+                                <div className="info-item">
+                                    <span className="info-label">Szinkron:</span>
+                                    <span className="info-value">{film.szinkron}</span>
+                                </div>
+                            </div>
+                        </ThemeWrapper>
+                    </div>
+                </div>
+                <ThemeWrapper className="screenings-section" noBg>
+                    <h2>Vet√≠t√©sek</h2>
+
+                    <div className="date-selector">
+                        <label htmlFor="screening-date">D√°tum:</label>
+                        <input
+                            type="date"
+                            id="screening-date"
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                            min={new Date().toISOString().split('T')[0]}
+                        />
+                    </div>
+
+                    {filteredScreenings.length > 0 ? (
+                        <div className="screenings-list">
+                            {filteredScreenings.map((screening) => (
+                                <ThemeWrapper key={screening.id} className="screening-item" noBg>
+                                    <div className="screening-time">{formatTime(screening.idopont)}</div>
+                                    <div className="screening-room">
+                                        {screening.terem?.nev || 'Ismeretlen terem'}
+                                    </div>
+                                    <div className="screening-language">
+                                        {film.szinkron === 'dubbed' ? 'Szinkroniz√°lt' : 'Eredeti nyelven'}
+                                    </div>
+                                    <a
+                                        href={`/foglalas/${screening.id}`}
+                                        className="booking-button"
+                                    >
+                                        Jegyv√°s√°rl√°s
+                                    </a>
+                                </ThemeWrapper>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="no-screenings">
+                            Nincsenek vet√≠t√©sek a kiv√°lasztott napon.
+                        </div>
+                    )}
+                </ThemeWrapper>
             </div>
         </ThemeWrapper>
     );
