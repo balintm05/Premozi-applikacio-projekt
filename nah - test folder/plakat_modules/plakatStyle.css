@@ -10,7 +10,7 @@
  border: 2px solid black !important;
  height: 350px;
  border: 0px none;
- perspective: 1000px; /* Remove this if you don't want the 3D effect */
+ perspective: 500px; /* Remove this if you don't want the 3D effect */
 }
 
 /* This container is needed to position the front and back side */
