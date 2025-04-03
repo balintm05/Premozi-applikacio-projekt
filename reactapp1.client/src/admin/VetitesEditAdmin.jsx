@@ -27,47 +27,46 @@ function VetitesEditAdmin() {
     const [successMessage, setSuccessMessage] = useState(null);
 
     useEffect(() => {
-        Promise.all([
-            api.get('/Film/get'),
-            api.get('/Terem/get')
-        ]).then(([filmsResponse, roomsResponse]) => {
-            setFilmek(filmsResponse.data || []);
-            setTermek(roomsResponse.data?.map(item => item.terem) || []);
+        const loadVetitesData = async () => {
+            try {
+                const [filmsResponse, roomsResponse] = await Promise.all([
+                    api.get('/Film/get'),
+                    api.get('/Terem/get')
+                ]);
 
-            if (id && id !== 'undefined' && id !== 'add') {
-                api.get(`/Vetites/get/${id}`)
-                    .then(response => {
-                        const vetitesData = response.data?.vetites || response.data?.Vetites;
-                        if (vetitesData) {
-                            setVetites({
-                                id: vetitesData.id,
-                                filmid: vetitesData.Filmid?.toString() || vetitesData.filmid?.toString(),
-                                teremid: vetitesData.Teremid?.toString() || vetitesData.teremid?.toString(),
-                                idopont: vetitesData.Idopont
-                                    ? new Date(vetitesData.Idopont).toISOString().slice(0, 16)
-                                    : vetitesData.idopont
-                                        ? new Date(vetitesData.idopont).toISOString().slice(0, 16)
-                                        : '',
-                                megjegyzes: vetitesData.Megjegyzes || vetitesData.megjegyzes || ''
-                            });
-                            if (vetitesData.VetitesSzekek || vetitesData.vetitesSzekek) {
-                                setVetitesSzekek(vetitesData.VetitesSzekek || vetitesData.vetitesSzekek);
-                            }
-                        }
-                        setLoading(false);
-                    })
-                    .catch(error => {
-                        setError(error.response?.data?.error || "Hiba a vetítés betöltésekor");
-                        setLoading(false);
-                    });
-            } else {
+                setFilmek(filmsResponse.data || []);
+                setTermek(roomsResponse.data?.map(item => item.terem) || []);
+
+                if (id && id !== 'undefined' && id !== 'add') {
+                    setLoading(true);
+                    const response = await api.get(`/Vetites/get/${id}`);
+                    const vetitesData = response.data?.vetites || response.data?.Vetites;
+
+                    if (vetitesData) {
+                        setVetites({
+                            id: vetitesData.id,
+                            filmid: vetitesData.Filmid?.toString() || vetitesData.filmid?.toString() || '',
+                            teremid: vetitesData.Teremid?.toString() || vetitesData.teremid?.toString() || '',
+                            idopont: vetitesData.Idopont
+                                ? new Date(vetitesData.Idopont).toISOString().slice(0, 16)
+                                : vetitesData.idopont
+                                    ? new Date(vetitesData.idopont).toISOString().slice(0, 16)
+                                    : '',
+                            megjegyzes: vetitesData.Megjegyzes || vetitesData.megjegyzes || ''
+                        });
+                        setVetitesSzekek(vetitesData.VetitesSzekek || vetitesData.vetitesSzekek || []);
+                    }
+                }
+            } catch (error) {
+                setError(error.message || "Hiba történt az adatok betöltésekor");
+                navigate('/admin/vetitesek', { replace: true });
+            } finally {
                 setLoading(false);
             }
-        }).catch(error => {
-            setError("Hiba az adatok betöltésekor");
-            setLoading(false);
-        });
-    }, [id, api]);
+        };
+
+        loadVetitesData();
+    }, [id, api, navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -95,30 +94,28 @@ function VetitesEditAdmin() {
             });
 
             if (response.data?.errorMessage) {
-                if (response.data.errorMessage !== "Sikeres hozzáadás" &&
-                    response.data.errorMessage !== "Sikeres módosítás") {
-                    setError(response.data.errorMessage);
-                    return;
-                }
-            }
-
-            setSuccessMessage(id && id !== 'add'
-                ? "A vetítés sikeresen frissítve!"
-                : "A vetítés sikeresen létrehozva!");
-
-            if (id === 'add') {
-                const newId = response.data?.vetites?.id || response.data?.Vetites?.id;
-                if (newId) {
-                    navigate(`/admin/vetitesek/edit/${newId}`);
+                if (response.data.errorMessage === "Sikeres módosítás" ||
+                    response.data.errorMessage === "Sikeres hozzáadás") {
+                    setSuccessMessage(response.data.errorMessage);
+                    if (id === 'add') {
+                        const newId = response.data?.vetites?.id || response.data?.Vetites?.id;
+                        if (newId) {
+                            navigate(`/admin/vetitesek/edit/${newId}`);
+                        } else {
+                            setVetites({
+                                id: '',
+                                filmid: '',
+                                teremid: '',
+                                idopont: '',
+                                megjegyzes: ''
+                            });
+                        }
+                    }
                 } else {
-                    setVetites({
-                        id: '',
-                        filmid: '',
-                        teremid: '',
-                        idopont: '',
-                        megjegyzes: ''
-                    });
+                    setError(response.data.errorMessage);
                 }
+            } else {
+                setError("Váratlan hiba történt");
             }
         } catch (error) {
             const errorMessage = error.response?.data?.errorMessage ||

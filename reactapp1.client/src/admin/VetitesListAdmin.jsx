@@ -62,7 +62,16 @@ function VetitesListAdmin() {
     const handleFilterChange = (e) => {
         setFilter({ ...filter, [e.target.name]: e.target.value });
     };
-
+    const handleDelete = async (id) => {
+        if (window.confirm("Biztosan törölni szeretnéd ezt a vetítést?")) {
+            try {
+                await api.delete(`/Vetites/delete/${id}`);
+                setAllVetitesek(allVetitesek.filter(vetites => vetites.id !== id));
+            } catch (error) {
+                setError(error.response?.data?.error || "Hiba a vetítés törlésekor");
+            }
+        }
+    };
     useEffect(() => {
         const controller = new AbortController();
 
@@ -70,7 +79,6 @@ function VetitesListAdmin() {
             signal: controller.signal
         })
             .then(response => {
-                // Extract vetites from each response item
                 const vetitesData = Array.isArray(response.data)
                     ? response.data.map(item => item.vetites).filter(Boolean)
                     : [];
@@ -188,7 +196,7 @@ function VetitesListAdmin() {
                                             </button>
                                             <button
                                                 className={`btn btn-sm ${darkMode ? 'btn-danger' : 'btn-outline-danger'}`}
-                                                onClick={() => navigate(`/admin/vetitesek/delete/${vetites.id}`)}
+                                                onClick={() => handleDelete(vetites.id)}
                                             >
                                                 Törlés
                                             </button>

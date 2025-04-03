@@ -25,30 +25,36 @@ function TeremEditAdmin() {
     const [successMessage, setSuccessMessage] = useState(null);
 
     useEffect(() => {
-        if (id && id !== 'undefined' && id !== 'add') {
-            api.get(`/Terem/get/${id}`)
-                .then(response => {
-                    const teremData = response.data?.terem;
-                    if (teremData) {
-                        setTerem({
-                            id: teremData.id,
-                            nev: teremData.nev,
-                            sorok: teremData.szekek ? Math.max(...teremData.szekek.map(s => s.x)) + 1 : '',
-                            oszlopok: teremData.szekek ? Math.max(...teremData.szekek.map(s => s.y)) + 1 : '',
-                            megjegyzes: teremData.megjegyzes || ''
-                        });
-                        setSzekek(teremData.szekek || []);
+        const loadTeremData = async () => {
+            try {
+                if (id && id !== 'undefined' && id !== 'add') {
+                    setLoading(true);
+                    const response = await api.get(`/Terem/get/${id}`);
+
+                    if (!response.data?.terem) {
+                        throw new Error("Nem található terem ezzel az ID-vel");
                     }
-                    setLoading(false);
-                })
-                .catch(error => {
-                    setError(error.response?.data?.error || "Hiba a terem betöltésekor");
-                    setLoading(false);
-                });
-        } else {
-            setLoading(false);
-        }
-    }, [id, api]);
+
+                    const teremData = response.data.terem;
+                    setTerem({
+                        id: teremData.id,
+                        nev: teremData.nev || '',
+                        sorok: teremData.szekek ? Math.max(...teremData.szekek.map(s => s.x)) + 1 : '',
+                        oszlopok: teremData.szekek ? Math.max(...teremData.szekek.map(s => s.y)) + 1 : '',
+                        megjegyzes: teremData.megjegyzes || ''
+                    });
+                    setSzekek(teremData.szekek || []);
+                }
+            } catch (error) {
+                setError(error.message || "Hiba történt a terem betöltésekor");
+                navigate('/admin/termek', { replace: true });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadTeremData();
+    }, [id, api, navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -113,14 +119,17 @@ function TeremEditAdmin() {
             });
 
             if (response.data?.errorMessage) {
-                setError(response.data.errorMessage);
-            } else {
-                setSuccessMessage(id && id !== 'add'
-                    ? "A terem sikeresen frissítve!"
-                    : "A terem sikeresen létrehozva!");
-                if (id === 'add' && response.data?.terem?.id) {
-                    navigate(`/admin/termek/edit/${response.data.terem.id}`);
+                if (response.data.errorMessage === "Sikeres módosítás" ||
+                    response.data.errorMessage === "Sikeres hozzáadás") {
+                    setSuccessMessage(response.data.errorMessage);
+                    if (id === 'add' && response.data?.terem?.id) {
+                        navigate(`/admin/termek/edit/${response.data.terem.id}`);
+                    }
+                } else {
+                    setError(response.data.errorMessage);
                 }
+            } else {
+                setError("Váratlan hiba történt");
             }
         } catch (error) {
             setError(error.response?.data?.message || "Hiba történt a mentés során");

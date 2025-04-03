@@ -182,8 +182,8 @@ export default function Layout() {
                 </div>
 
                 <footer className="site-footer border-top py-3">
-                    <div className="container">
-                        &copy; 2025 - Premozi
+                    <div className="container" style={{ color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit' }}>
+                        &copy; 2025 - Premozi - <a href="/adatvedelem" style={{ color: 'inherit', textDecoration: 'none' }}>Adatvédelmi tájékoztató</a> - <a href="/impresszum" style={{ color: 'inherit', textDecoration: 'none' }}>Impresszum</a>
                     </div>
                 </footer>
             </div>

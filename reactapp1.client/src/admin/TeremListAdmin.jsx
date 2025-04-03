@@ -32,7 +32,16 @@ function TeremListAdmin() {
     const handleFilterChange = (e) => {
         setFilter({ ...filter, [e.target.name]: e.target.value });
     };
-
+    const handleDelete = async (id) => {
+        if (window.confirm("Biztosan törölni szeretnéd ezt a termet?")) {
+            try {
+                await api.delete(`/Terem/delete/${id}`);
+                setAllTermek(allTermek.filter(terem => terem.id !== id));
+            } catch (error) {
+                setError(error.response?.data?.error || "Hiba a terem törlésekor");
+            }
+        }
+    };
     useEffect(() => {
         const controller = new AbortController();
 
@@ -148,7 +157,7 @@ function TeremListAdmin() {
                                                 </button>
                                                 <button
                                                     className={`btn btn-sm ${darkMode ? 'btn-danger' : 'btn-outline-danger'}`}
-                                                    onClick={() => navigate(`/admin/termek/delete/${terem.id}`)}
+                                                    onClick={() => handleDelete(terem.id)}
                                                 >
                                                     Törlés
                                                 </button>

@@ -42,7 +42,16 @@ function FilmListAdmin() {
     const handleFilterChange = useCallback((e) => {
         setFilter(prev => ({ ...prev, [e.target.name]: e.target.value }));
     }, []);
-
+    const handleDelete = async (id) => {
+        if (window.confirm("Biztosan törölni szeretnéd ezt a filmet?")) {
+            try {
+                await api.delete(`/Film/delete/${id}`);
+                setAllFilms(allFilms.filter(film => film.id !== id));
+            } catch (error) {
+                setError(error.response?.data?.error || "Hiba a film törlésekor");
+            }
+        }
+    };
     useEffect(() => {
         const controller = new AbortController();
 
@@ -232,9 +241,8 @@ function FilmListAdmin() {
                                                                     className={`btn btn-sm ms-2 ${darkMode ? 'btn-danger' : 'btn-outline-danger'}`}
                                                                     onClick={(e) => {
                                                                         e.stopPropagation();
-                                                                        navigate(`/admin/filmek/delete/${film.id}`);
-                                                                    }}
-                                                                >
+                                                                        handleDelete(film.id);
+                                                                    }}>
                                                                     Törlés
                                                                 </button>
                                                             </td>

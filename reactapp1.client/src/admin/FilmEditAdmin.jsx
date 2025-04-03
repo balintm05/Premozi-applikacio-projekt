@@ -129,7 +129,6 @@ function FilmEditAdmin() {
             selectedImageUrl: URL.createObjectURL(e.target.files[0])
         }));
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
@@ -138,13 +137,9 @@ function FilmEditAdmin() {
 
         try {
             const formData = new FormData();
-
-            // For edits, include the film ID
             if (id && id !== 'add') {
                 formData.append('id', film.id);
             }
-
-            // Append all required fields
             formData.append('Cim', film.Cim);
             formData.append('Kategoria', film.Kategoria);
             formData.append('Mufaj', film.Mufaj);
@@ -171,23 +166,23 @@ function FilmEditAdmin() {
             const url = id && id !== 'add' ? '/Film/edit' : '/Film/add';
             const response = await filmupload[method](url, formData);
             if (response.data?.errorMessage) {
-                setError(response.data.errorMessage);
+                if (response.data.errorMessage === "Sikeres hozzáadás" ||
+                    response.data.errorMessage === "Sikeres módosítás") {
+                    setSuccessMessage(response.data.errorMessage);
+                    if (id && id !== 'add') {
+                        const updatedFilm = await api.get(`/Film/get/${id}`);
+                        setFilm(prev => ({
+                            ...prev,
+                            ...updatedFilm.data,
+                            Jatekido: updatedFilm.data.Jatekido.toString(),
+                            selectedImageUrl: updatedFilm.data.imagePath || ''
+                        }));
+                    }
+                } else {
+                    setError(response.data.errorMessage);
+                }
             } else {
-                setSuccessMessage(id && id !== 'add'
-                    ? "A film sikeresen frissítve!"
-                    : "A film sikeresen hozzáadva!");
-                if (id === 'add' && response.data?.film?.id) {
-                    navigate(`/admin/filmek/edit/${response.data.film.id}`);
-                }
-                if (id && id !== 'add') {
-                    const updatedFilm = await api.get(`/Film/get/${id}`);
-                    setFilm(prev => ({
-                        ...prev,
-                        ...updatedFilm.data,
-                        Jatekido: updatedFilm.data.Jatekido.toString(),
-                        selectedImageUrl: updatedFilm.data.imagePath || ''
-                    }));
-                }
+                setError("Váratlan hiba történt");
             }
         } catch (error) {
             setError(error.response?.data?.errorMessage ||
