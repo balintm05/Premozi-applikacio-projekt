@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ReactApp1.Server.Migrations
 {
     /// <inheritdoc />
@@ -66,6 +68,22 @@ namespace ReactApp1.Server.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Images", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "JegyTipus",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Nev = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Ar = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JegyTipus", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -293,7 +311,8 @@ namespace ReactApp1.Server.Migrations
                     Vetitesid = table.Column<int>(type: "int", nullable: false),
                     X = table.Column<int>(type: "int", nullable: false),
                     Y = table.Column<int>(type: "int", nullable: false),
-                    FoglalasAdatokid = table.Column<int>(type: "int", nullable: false)
+                    FoglalasAdatokid = table.Column<int>(type: "int", nullable: false),
+                    JegyTipusId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -305,6 +324,12 @@ namespace ReactApp1.Server.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_FoglaltSzekek_JegyTipus_JegyTipusId",
+                        column: x => x.JegyTipusId,
+                        principalTable: "JegyTipus",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_FoglaltSzekek_VetitesSzekek_Vetitesid_X_Y",
                         columns: x => new { x.Vetitesid, x.X, x.Y },
                         principalTable: "VetitesSzekek",
@@ -312,6 +337,16 @@ namespace ReactApp1.Server.Migrations
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.InsertData(
+                table: "JegyTipus",
+                columns: new[] { "id", "Ar", "Nev" },
+                values: new object[,]
+                {
+                    { 1, 2000, "Normál" },
+                    { 2, 1500, "Diák" },
+                    { 3, 1500, "Nyugdíjas" }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Email2FACodes_UserID",
@@ -327,6 +362,11 @@ namespace ReactApp1.Server.Migrations
                 name: "IX_FoglalasAdatok_UserID",
                 table: "FoglalasAdatok",
                 column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FoglaltSzekek_JegyTipusId",
+                table: "FoglaltSzekek",
+                column: "JegyTipusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FoglaltSzekek_Vetitesid_X_Y",
@@ -374,6 +414,9 @@ namespace ReactApp1.Server.Migrations
 
             migrationBuilder.DropTable(
                 name: "FoglalasAdatok");
+
+            migrationBuilder.DropTable(
+                name: "JegyTipus");
 
             migrationBuilder.DropTable(
                 name: "VetitesSzekek");

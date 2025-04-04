@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using ReactApp1.Server.Entities.Foglalas;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -14,6 +15,7 @@ namespace ReactApp1.Server.Models.Rendeles
         public string? VetitesID { get; set; }
         public List<string>? X {  get; set; }
         public List<string>? Y { get; set; }
+        public List<string>? jegytipusId { get; set; }
         public ErrorModel? Error { get; set; }
     }
 }

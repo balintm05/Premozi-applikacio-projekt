@@ -10,6 +10,9 @@ namespace ReactApp1.Server.Entities.Foglalas
         public int X { get; set; }
         public int Y { get; set; }
         public int FoglalasAdatokid { get; set; }
+        public int JegyTipusId { get; set; }
+        [ForeignKey("JegyTipusId")]
+        public virtual JegyTipus JegyTipus { get; set; }
         public virtual FoglalasAdatok FoglalasAdatok { get; set; }
         public virtual VetitesSzekek VetitesSzekek { get; set; }
     }

@@ -14,6 +14,12 @@ namespace ReactApp1.Server.Controllers
     //[Authorize]
     public class FoglalasController(IFoglalasService foglalasService) : ControllerBase
     {
+        [AllowAnonymous]
+        [HttpGet("getJegyTipus")]
+        public async Task<ActionResult<List<JegyTipus>>> GetJegyTipus()
+        {
+            return await foglalasService.getJegyTipusok();
+        }
         [Authorize(Roles ="Admin")]
         [HttpGet("get")]
         public async Task<ActionResult<List<GetFoglalasResponse>>?> GetFoglalas()

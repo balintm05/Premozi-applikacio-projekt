@@ -35,6 +35,8 @@ import ImageLibrary from './components/images/ImageLibrary';
 import AdatvedelmiTajekoztato from './pages/AdatvedelmiTajekoztato';
 import Impresszum from './pages/Impresszum';
 import FilmAdatok from './pages/film/FilmAdatok';
+import Foglalas from './components/foglalas/Foglalas';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
     return (
@@ -47,6 +49,9 @@ const App = () => {
                             <Route>
                                 <Route path="/musor" element={<Musor />} />
                                 <Route path="/musor/film/:id" element={<FilmAdatok />} />
+                                <Route path="/foglalas" element={<ProtectedRoute />}>
+                                    <Route path="/foglalas/:id" element={<Foglalas />} />
+                                </Route>
                             </Route>                           
                             <Route path="/jegyarak" element={<Jegyarak />} />
                             <Route path="/kapcsolat" element={<Kapcsolat />} />
@@ -65,7 +70,7 @@ const App = () => {
                             <Route path="/auth/reset-password" element={<PasswordResetPage />} />
                         </Route>
 
-                        <Route element={<AdminCheck />}>
+                        <Route path="/admin" element={<AdminCheck />}>
                             <Route path="/admin/" element={<AdminIndex />} />
                             <Route path="/admin/users" element={<UserListAdmin />} />
                             <Route path="/admin/user/:id/status" element={<AdminUserStatusPage />} />

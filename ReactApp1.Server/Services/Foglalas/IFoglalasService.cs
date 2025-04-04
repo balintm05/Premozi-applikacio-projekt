@@ -6,6 +6,7 @@ namespace ReactApp1.Server.Services.Foglalas
 {
     public interface IFoglalasService
     {
+        Task<List<JegyTipus>> getJegyTipusok();
         Task<List<GetFoglalasResponse>?> GetFoglalas();
         Task<List<GetFoglalasResponse>?> GetFoglalasByVetites(int vid);
         Task<List<GetFoglalasResponse>?> GetFoglalasByUser(int uid);

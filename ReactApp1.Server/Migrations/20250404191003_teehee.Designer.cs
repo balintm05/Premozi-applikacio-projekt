@@ -12,7 +12,7 @@ using ReactApp1.Server.Data;
 namespace ReactApp1.Server.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20250401090540_teehee")]
+    [Migration("20250404191003_teehee")]
     partial class teehee
     {
         /// <inheritdoc />
@@ -162,12 +162,57 @@ namespace ReactApp1.Server.Migrations
                     b.Property<int>("Y")
                         .HasColumnType("int");
 
+                    b.Property<int>("JegyTipusId")
+                        .HasColumnType("int");
+
                     b.HasKey("FoglalasAdatokid", "Vetitesid", "X", "Y");
+
+                    b.HasIndex("JegyTipusId");
 
                     b.HasIndex("Vetitesid", "X", "Y")
                         .IsUnique();
 
                     b.ToTable("FoglaltSzekek");
+                });
+
+            modelBuilder.Entity("ReactApp1.Server.Entities.Foglalas.JegyTipus", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<int>("Ar")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nev")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("id");
+
+                    b.ToTable("JegyTipus");
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            Ar = 2000,
+                            Nev = "Normál"
+                        },
+                        new
+                        {
+                            id = 2,
+                            Ar = 1500,
+                            Nev = "Diák"
+                        },
+                        new
+                        {
+                            id = 3,
+                            Ar = 1500,
+                            Nev = "Nyugdíjas"
+                        });
                 });
 
             modelBuilder.Entity("ReactApp1.Server.Entities.HttpLog", b =>
@@ -458,6 +503,12 @@ namespace ReactApp1.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ReactApp1.Server.Entities.Foglalas.JegyTipus", "JegyTipus")
+                        .WithMany()
+                        .HasForeignKey("JegyTipusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("ReactApp1.Server.Entities.Vetites.VetitesSzekek", "VetitesSzekek")
                         .WithOne("FoglaltSzekek")
                         .HasForeignKey("ReactApp1.Server.Entities.Foglalas.FoglaltSzekek", "Vetitesid", "X", "Y")
@@ -465,6 +516,8 @@ namespace ReactApp1.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("FoglalasAdatok");
+
+                    b.Navigation("JegyTipus");
 
                     b.Navigation("VetitesSzekek");
                 });

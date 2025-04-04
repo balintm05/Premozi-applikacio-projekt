@@ -40,6 +40,13 @@ function FoglalasListAdmin() {
         });
     }, [foglalasok, filter]);
 
+    const calculateTotalPrice = (foglalas) => {
+        if (!foglalas.foglaltSzekek || foglalas.foglaltSzekek.length === 0) return 0;
+        return foglalas.foglaltSzekek.reduce((total, szek) => {
+            return total + (szek.jegyTipus?.ar || 0);
+        }, 0);
+    };
+
     const handleFilterChange = (e) => {
         setFilter({ ...filter, [e.target.name]: e.target.value });
     };
@@ -115,6 +122,7 @@ function FoglalasListAdmin() {
                             <th>Felhasználó ID</th>
                             <th>Vetítés ID</th>
                             <th>Dátum</th>
+                            <th>Összeg</th>
                             <th></th>
                         </tr>
                         <tr className={darkMode ? 'bg-secondary' : 'bg-light'}>
@@ -130,6 +138,7 @@ function FoglalasListAdmin() {
                                 </th>
                             ))}
                             <th></th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -139,6 +148,7 @@ function FoglalasListAdmin() {
                                 const vetitesData = foglalas.foglaltSzekek[0]?.vetitesSzekek?.vetites || {};
                                 const filmCim = vetitesData.film?.cim || 'Nincs film';
                                 const teremNev = vetitesData.terem?.nev || 'Nincs terem';
+                                const totalPrice = calculateTotalPrice(foglalas);
 
                                 return (
                                     <Fragment key={`foglalas-${foglalas.id}`}>
@@ -150,6 +160,7 @@ function FoglalasListAdmin() {
                                             <td>{foglalas.userID}</td>
                                             <td>{vetitesId}</td>
                                             <td>{new Date(foglalas.foglalasIdopontja).toLocaleString()}</td>
+                                            <td>{totalPrice} Ft</td>
                                             <td className="text-center">
                                                 {expandedRows[foglalas.id] ?
                                                     <FaChevronUp className={darkMode ? 'text-light' : 'text-dark'} /> :
@@ -159,7 +170,7 @@ function FoglalasListAdmin() {
                                         </tr>
                                         {expandedRows[foglalas.id] && (
                                             <tr className={darkMode ? 'bg-gray-800' : ''}>
-                                                <td colSpan={5} className="p-0 border-0">
+                                                <td colSpan={6} className="p-0 border-0">
                                                     <div className={`p-3 ${darkMode ? 'bg-gray-800' : 'bg-light'}`}>
                                                         <table className={`table table-bordered mb-0 ${darkMode ? 'table-dark' : ''}`}>
                                                             <tbody>
@@ -167,7 +178,9 @@ function FoglalasListAdmin() {
                                                                     <th className={`w-25 ${darkMode ? 'bg-gray-700' : 'bg-light'}`}>Foglalt székek</th>
                                                                     <td>
                                                                         {foglalas.foglaltSzekek.length > 0 ?
-                                                                            foglalas.foglaltSzekek.map(szek => `${szek.x+1}-${szek.y+1}`).join(', ') :
+                                                                            foglalas.foglaltSzekek.map(szek =>
+                                                                                `${szek.x + 1}-${szek.y + 1} (${szek.jegyTipus?.nev || 'Ismeretlen'} - ${szek.jegyTipus?.ar || 0} Ft)`
+                                                                            ).join(', ') :
                                                                             'Nincsenek foglalt székek'}
                                                                     </td>
                                                                     <th className={`w-25 ${darkMode ? 'bg-gray-700' : 'bg-light'}`}>Vetítés</th>
@@ -176,12 +189,12 @@ function FoglalasListAdmin() {
                                                                 <tr>
                                                                     <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Felhasználó</th>
                                                                     <td>{foglalas.user?.email || `ID: ${foglalas.userID}`}</td>
-                                                                    <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Foglalás ideje</th>
-                                                                    <td>{new Date(foglalas.foglalasIdopontja).toLocaleString()}</td>
+                                                                    <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Összesen</th>
+                                                                    <td>{totalPrice} Ft</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Műveletek</th>
-                                                                    <td colSpan={3}>                                                                        
+                                                                    <td colSpan={3}>
                                                                         <button
                                                                             className={`btn btn-sm ms-2 btn-danger`}
                                                                             onClick={(e) => {
@@ -204,7 +217,7 @@ function FoglalasListAdmin() {
                             })
                         ) : (
                             <tr className={darkMode ? 'table-dark' : ''}>
-                                <td colSpan={5} className="text-center py-4">
+                                <td colSpan={6} className="text-center py-4">
                                     {foglalasok.length === 0 ? "Nincsenek foglalások" : "Nincs találat"}
                                 </td>
                             </tr>

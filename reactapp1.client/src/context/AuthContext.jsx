@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
     const activeRequests = useRef(new Set());
     const userRef = useRef(user);
     const isInitialized = useRef(false);
+    const [loading, setLoading] = useState(true);
     userRef.current = user;
 
     const debugLog = (message) => {
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const checkAuthStatus = useCallback(async () => {
-        debugLog('Checking authentication status');
+        setLoading(true);
         const controller = new AbortController();
         activeRequests.current.add(controller);
 
@@ -61,9 +62,11 @@ export const AuthProvider = ({ children }) => {
             }
             return false;
         } finally {
+            setLoading(false);
             activeRequests.current.delete(controller);
         }
     }, [updateUserState]);
+
 
     const logout = useCallback(async () => {
         try {

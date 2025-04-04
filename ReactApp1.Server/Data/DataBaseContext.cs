@@ -19,6 +19,7 @@ namespace ReactApp1.Server.Data
         public DbSet<HttpLog> HttpLogs { get; set; }
         public DbSet<Images> Images { get; set; }
         public DbSet<Email2FACodes> Email2FACodes { get; set; }
+        public DbSet<JegyTipus> JegyTipus { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Szekek>(entity =>
@@ -55,6 +56,35 @@ namespace ReactApp1.Server.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.LogTime).HasDefaultValueSql("UTC_TIMESTAMP");
             });
+            modelBuilder.Entity<JegyTipus>(entity =>
+            {
+                entity.HasKey(jt => jt.id);
+                entity.Property(jt => jt.Nev).IsRequired();
+                entity.Property(jt => jt.Ar).IsRequired();
+                entity.HasData(
+                    new JegyTipus { id = 1, Nev = "Normál", Ar = 2000 },
+                    new JegyTipus { id = 2, Nev = "Diák", Ar = 1500 },
+                    new JegyTipus { id = 3, Nev = "Nyugdíjas", Ar = 1500 }
+        );
+            });
+            modelBuilder.Entity<FoglaltSzekek>(entity =>
+            {
+                entity.HasKey(fs => new { fs.FoglalasAdatokid, fs.Vetitesid, fs.X, fs.Y });
+
+                entity.HasOne(fs => fs.FoglalasAdatok)
+                      .WithMany(fa => fa.FoglaltSzekek)
+                      .HasForeignKey(fs => fs.FoglalasAdatokid);
+
+                entity.HasOne(fs => fs.VetitesSzekek)
+                      .WithOne(vs => vs.FoglaltSzekek)
+                      .HasForeignKey<FoglaltSzekek>(fs => new { fs.Vetitesid, fs.X, fs.Y });
+
+                entity.HasOne(fs => fs.JegyTipus)
+                      .WithMany() 
+                      .HasForeignKey(fs => fs.JegyTipusId)
+                      .IsRequired();
+            });
+            
             base.OnModelCreating(modelBuilder);
         }
     }
