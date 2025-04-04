@@ -28,7 +28,7 @@ function VetitesListAdmin() {
                 const vetitesData = Array.isArray(response.data)
                     ? response.data.map(item => ({
                         ...item.vetites,
-                        terem: item.vetites.terem 
+                        terem: item.vetites.terem
                     })).filter(Boolean)
                     : [];
                 setAllVetitesek(vetitesData);
@@ -48,13 +48,13 @@ function VetitesListAdmin() {
     const filteredVetitesek = useMemo(() => {
         return allVetitesek.filter(vetites => {
             const vetitesId = vetites?.id?.toString() || '';
-            const filmNev = vetites?.film?.cim?.toLowerCase() || '';
-            const teremNev = vetites?.terem?.nev?.toLowerCase() || '';
+            const filmId = vetites?.film?.id?.toString() || '';
+            const teremId = vetites?.terem?.id?.toString() || '';
 
             return (
                 (filter.id === "" || vetitesId.includes(filter.id)) &&
-                (filter.film === "" || filmNev.includes(filter.film.toLowerCase())) &&
-                (filter.terem === "" || teremNev.includes(filter.terem.toLowerCase()))
+                (filter.film === "" || filmId.includes(filter.film)) &&
+                (filter.terem === "" || teremId.includes(filter.terem))
             );
         });
     }, [allVetitesek, filter]);
@@ -135,8 +135,8 @@ function VetitesListAdmin() {
                     <thead>
                         <tr className={darkMode ? 'bg-dark text-light' : 'bg-light'}>
                             <th>ID</th>
-                            <th>Film</th>
-                            <th>Terem</th>
+                            <th>Film ID</th>
+                            <th>Terem ID</th>
                             <th>Időpont</th>
                             <th>Megjegyzés</th>
                             <th>Műveletek</th>
@@ -159,7 +159,7 @@ function VetitesListAdmin() {
                                     onChange={handleFilterChange}
                                     value={filter.film}
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
-                                    placeholder="Keresés film"
+                                    placeholder="Keresés film ID"
                                 />
                             </th>
                             <th>
@@ -169,7 +169,7 @@ function VetitesListAdmin() {
                                     onChange={handleFilterChange}
                                     value={filter.terem}
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
-                                    placeholder="Keresés terem"
+                                    placeholder="Keresés terem ID"
                                 />
                             </th>
                             <th></th>
@@ -182,8 +182,8 @@ function VetitesListAdmin() {
                             filteredVetitesek.map(vetites => (
                                 <tr key={`vetites-${vetites.id}`} className={darkMode ? 'table-dark' : ''}>
                                     <td>{vetites.id}</td>
-                                    <td>{vetites.film?.cim || '-'}</td>
-                                    <td>{vetites.terem?.nev || '-'}</td>
+                                    <td>{vetites.film?.id || '-'}</td>
+                                    <td>{vetites.terem?.id || '-'}</td>
                                     <td>{vetites.idopont ? new Date(vetites.idopont).toLocaleString() : '-'}</td>
                                     <td>{vetites.megjegyzes || '-'}</td>
                                     <td>
