@@ -4,6 +4,8 @@ import { AuthContext } from "../../context/AuthContext";
 import AdminLayout from '../../admin/AdminLayout';
 import { FaTrash, FaUpload } from 'react-icons/fa';
 import ThemeWrapper from '../../layout/ThemeWrapper';
+import ReactDOM from 'react-dom';
+import './ImageModal.css';
 
 function ImageLibrary() {
     const { api } = useContext(AuthContext);
@@ -12,6 +14,8 @@ function ImageLibrary() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [error, setError] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -26,7 +30,6 @@ function ImageLibrary() {
                 setLoading(false);
             }
         };
-
         loadImages();
     }, [api]);
 
@@ -79,6 +82,38 @@ function ImageLibrary() {
             setError("Nem sikerült törölni a képet");
             console.error("Törlési hiba:", error);
         }
+    };
+
+    const handleImageClick = (image) => {
+        setSelectedImage(image);
+        setIsImageModalOpen(true);
+    };
+
+    const ImageModal = () => {
+        if (!isImageModalOpen || !selectedImage) return null;
+
+        return ReactDOM.createPortal(
+            <div className="image-modal-overlay" onClick={() => setIsImageModalOpen(false)}>
+                <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+                    <button className="close-button" onClick={() => setIsImageModalOpen(false)}>
+                        &times;
+                    </button>
+                    <div className="image-container">
+                        <img
+                            src={`https://localhost:7153${selectedImage.relativePath}`}
+                            alt={selectedImage.originalFileName}
+                            className="modal-image"
+                        />
+                        <div className="image-info">
+                            <p>{selectedImage.originalFileName}</p>
+                            <p>{formatFileSize(selectedImage.fileSize)}</p>
+                            <p>{new Date(selectedImage.uploadDate).toLocaleString('hu-HU')}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>,
+            document.body
+        );
     };
 
     const formatFileSize = (bytes) => {
@@ -153,20 +188,30 @@ function ImageLibrary() {
                     ) : (
                         images.map(image => (
                             <div key={image.id} className="col-md-4 col-lg-3 mb-4">
-                                <div
-                                    className="card h-100"
-                                    style={{
-                                        backgroundColor: 'var(--content-bg)',
-                                        borderColor: 'var(--border-color)',
-                                        color: 'var(--text-color)'
-                                    }}
-                                >
-                                    <img
-                                        src={`https://localhost:7153${image.relativePath}`}
+                                <div className="card h-100" style={{
+                                    backgroundColor: 'var(--content-bg)',
+                                    borderColor: 'var(--border-color)',
+                                    color: 'var(--text-color)'
+                                }}>
+                                    <div
                                         className="card-img-top img-fluid"
-                                        alt={image.originalFileName}
-                                        style={{ height: '200px', objectFit: 'cover' }}
-                                    />
+                                        style={{
+                                            height: '200px',
+                                            overflow: 'hidden',
+                                            cursor: 'pointer'
+                                        }}
+                                        onClick={() => handleImageClick(image)}
+                                    >
+                                        <img
+                                            src={`https://localhost:7153${image.relativePath}`}
+                                            alt={image.originalFileName}
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                    </div>
                                     <div className="card-body">
                                         <h6 className="card-title text-truncate">{image.originalFileName}</h6>
                                         <p className="card-text small">
@@ -193,6 +238,8 @@ function ImageLibrary() {
                         ))
                     )}
                 </div>
+
+                <ImageModal />
             </ThemeWrapper>
         </AdminLayout>
     );

@@ -30,7 +30,7 @@ import AdminUserStatusPage from './admin/AdminUserStatusPage';
 import AdminForcePasswordChangePage from './admin/AdminForcePasswordChange';
 import Kapcsolat from './pages/kapcsolat';
 import Jegyarak from './pages/Jegyarak';
-import Musor from './pages/Musor';
+import Musor from './pages/musor/Musor';
 import ImageLibrary from './components/images/ImageLibrary';
 import AdatvedelmiTajekoztato from './pages/AdatvedelmiTajekoztato';
 import Impresszum from './pages/Impresszum';

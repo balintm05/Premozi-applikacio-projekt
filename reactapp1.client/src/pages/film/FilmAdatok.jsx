@@ -106,7 +106,7 @@ const FilmAdatok = () => {
                 <div className="film-header" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                     <h1>{film.cim}</h1>
                     <img
-                        src={`https://localhost:7153/images/(${film.korhatar}).png`}
+                        src={`https://localhost:7153/images/${film.korhatar}.png`}
                         alt={`Korhatár: ${film.Korhatar}`}
                         style={{ height: '40px' }}
                     />
@@ -126,7 +126,7 @@ const FilmAdatok = () => {
                             <div className="trailer-container">
                                 <YouTubeModal youtubeUrl={film.trailerLink}>
                                     <button className="trailer-button">
-                                        Trailer megtekintése
+                                        Előzetes megtekintése
                                     </button>
                                 </YouTubeModal>
                             </div>
@@ -213,10 +213,10 @@ const FilmAdatok = () => {
                             </div>
                             {selectedDate && (
                                 <button
-                                    className="clear-date-button"
+                                    className="clear-date-button btn btn-secondary mt-1"
                                     onClick={() => setSelectedDate('')}
                                 >
-                                    Összes dátum
+                                    Minden időpont
                                 </button>
                             )}
                         </div>
@@ -226,9 +226,11 @@ const FilmAdatok = () => {
                         <div className="screenings-list">
                             {Object.entries(groupedScreenings).map(([date, screenings]) => (
                                 <div key={date} className="date-group">
-                                    <h3 className="screening-date-header">{formatDate(date)}</h3>
+                                    {!selectedDate && (
+                                        <h3 className="screening-date-header mt-1 mb-3">{formatDate(date)}</h3>
+                                    )}
                                     {screenings.map((screening) => (
-                                        <ThemeWrapper key={screening.id} className="screening-item mt-1 mb-2" noBg>
+                                        <ThemeWrapper key={screening.id} className="screening-item mb-2" noBg>
                                             <div className="screening-time">{formatTime(screening.idopont)}</div>
                                             <div className="screening-room">
                                                 {screening.terem?.nev || 'Ismeretlen terem'}
@@ -238,7 +240,7 @@ const FilmAdatok = () => {
                                             </div>
                                             <div className="screening-category">Típus: {film.kategoria}</div>
                                             <a
-                                                href={`/musor/foglalas/${screening.id}`}
+                                                href={`/foglalas/${screening.id}`}
                                                 className="booking-button"
                                             >
                                                 Jegyfoglalás

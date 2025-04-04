@@ -3,19 +3,19 @@
     --text-color: #212529;
     --nav-bg: #e9ecef;
     --nav-text: #212529;
-    --content-bg: var(--bg-color);
-    --footer-bg: #e9ecef; 
+    --content-bg: #e6e6e6;
+    --footer-bg: #e9ecef;
     --footer-text: #212529;
     --link-color: #0a58ca;
     --border-color: #ced4da;
     --dropdown-bg: #ffffff;
     --dropdown-text: #212529;
     --dropdown-hover: #f1f3f5;
-    --btn-bg: #495057; 
+    --btn-bg: #495057;
     --btn-text: #ffffff;
-    --btn-hover: #343a40; 
+    --btn-hover: #343a40;
     --theme-icon-color: #ffc107;
-    --active-link: #0d6efd; 
+    --active-link: #0d6efd;
     --auth-card-bg: #ffffff;
     --auth-text: #2d3748;
     --auth-border: #e2e8f0;
@@ -29,23 +29,23 @@
 }
 
 [data-theme="dark"] {
-    --bg-color: #1a1a1a; 
+    --bg-color: #2a2a2a;
     --text-color: #f8f9fa;
     --nav-bg: #212529;
     --nav-text: #f8f9fa;
-    --content-bg: var(--bg-color);
+    --content-bg: #222222;
     --footer-bg: #212529;
-    --footer-text: #adb5bd; 
+    --footer-text: #adb5bd;
     --link-color: #6ea8fe;
     --border-color: #495057;
     --dropdown-bg: #343a40;
     --dropdown-text: #f8f9fa;
-    --dropdown-hover: #3e444b; 
+    --dropdown-hover: #3e444b;
     --btn-bg: #495057;
     --btn-text: #ffffff;
-    --btn-hover: #5a6268; 
+    --btn-hover: #5a6268;
     --theme-icon-color: #ffc107;
-    --active-link: #3d8bfd; 
+    --active-link: #3d8bfd;
     --auth-card-bg: #2d3748;
     --auth-text: #f7fafc;
     --auth-border: #4a5568;
@@ -111,12 +111,18 @@ body::before {
     pointer-events: none;
     opacity: 0.5; 
 }
+
 .main-content {
     flex: 1 0 auto;
     width: 90vw;
     max-width: 1800px;
     margin: 0 auto;
     padding: 20px 0;
+    background-color: var(--content-bg); 
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    border-radius: 8px; 
+    margin-top: 20px; 
+    margin-bottom: 20px; 
 }
 
 .main-nav {

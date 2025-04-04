@@ -81,7 +81,7 @@ function ProfilePage() {
         <ThemeWrapper noBg>
             <div className="profile-container">
                 <div className="profile-header">
-                    <h1>{isAdminView ? "Felhasználó kezelése" : "Profilom"}</h1>
+                    <h1>{isAdminView ? "Felhasználó kezelése" : "Profil"}</h1>
                     {hasRole("Admin") && <span className="admin-badge">Admin nézet</span>}
                 </div>
 

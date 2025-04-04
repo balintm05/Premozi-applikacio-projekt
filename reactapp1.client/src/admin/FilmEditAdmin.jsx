@@ -6,6 +6,8 @@ import AdminLayout from './AdminLayout';
 import ThemeWrapper from '../layout/ThemeWrapper';
 import { filmupload } from "../api/axiosConfig";
 import { FaImage } from 'react-icons/fa';
+import ReactDOM from 'react-dom';
+import '../components/images/ImageModal.css';
 
 function FilmEditAdmin() {
     const { id } = useParams();
@@ -41,6 +43,7 @@ function FilmEditAdmin() {
     const [showImageLibrary, setShowImageLibrary] = useState(false);
     const [libraryImages, setLibraryImages] = useState([]);
     const [libraryLoading, setLibraryLoading] = useState(false);
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
     useEffect(() => {
         const loadFilmData = async () => {
@@ -86,6 +89,7 @@ function FilmEditAdmin() {
 
         loadFilmData();
     }, [id, api, navigate]);
+
     const loadImageLibrary = async () => {
         setLibraryLoading(true);
         try {
@@ -129,6 +133,35 @@ function FilmEditAdmin() {
             selectedImageUrl: URL.createObjectURL(e.target.files[0])
         }));
     };
+
+    const handleImageClick = () => {
+        if (film.selectedImageUrl) {
+            setIsImageModalOpen(true);
+        }
+    };
+
+    const ImageModal = () => {
+        if (!isImageModalOpen || !film.selectedImageUrl) return null;
+
+        return ReactDOM.createPortal(
+            <div className="image-modal-overlay" onClick={() => setIsImageModalOpen(false)}>
+                <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+                    <button className="close-button" onClick={() => setIsImageModalOpen(false)}>
+                        &times;
+                    </button>
+                    <div className="image-container">
+                        <img
+                            src={film.selectedImageUrl}
+                            alt="Film borítókép"
+                            className="modal-image"
+                        />
+                    </div>
+                </div>
+            </div>,
+            document.body
+        );
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
@@ -288,6 +321,7 @@ function FilmEditAdmin() {
                                 <option value="12">12</option>
                                 <option value="16">16</option>
                                 <option value="18">18</option>
+                                <option value="X">Kizárólag felnőttek számára ajánlott</option>
                             </select>
                         </div>
 
@@ -397,7 +431,7 @@ function FilmEditAdmin() {
                         </div>
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
-                            <label htmlFor="TrailerLink" className="form-label">Trailer link*</label>
+                            <label htmlFor="TrailerLink" className="form-label">Előzetes link*</label>
                             <input
                                 type="text"
                                 className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -455,12 +489,17 @@ function FilmEditAdmin() {
                             </div>
                             {film.selectedImageUrl && (
                                 <div className="mt-2">
-                                    <img
-                                        src={film.selectedImageUrl}
-                                        alt="Kiválasztott borítókép"
-                                        style={{ maxWidth: '200px', maxHeight: '200px' }}
-                                        className="img-thumbnail"
-                                    />
+                                    <div
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={handleImageClick}
+                                    >
+                                        <img
+                                            src={film.selectedImageUrl}
+                                            alt="Kiválasztott borítókép"
+                                            style={{ maxWidth: '200px', maxHeight: '200px' }}
+                                            className="img-thumbnail"
+                                        />
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -485,6 +524,7 @@ function FilmEditAdmin() {
                     </button>
                 </div>
             </form>
+
             {showImageLibrary && (
                 <div className={`modal-backdrop fade show`} style={{ display: 'block' }}>
                     <div
@@ -554,6 +594,8 @@ function FilmEditAdmin() {
                     </div>
                 </div>
             )}
+
+            <ImageModal />
             <style>{`
   .modal-backdrop {
     background-color: ${darkMode ? '#000' : '#fff'} !important;

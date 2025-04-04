@@ -6,6 +6,8 @@ import ThemeWrapper from '../layout/ThemeWrapper';
 import { useNavigate } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import YouTubeModal from "../components/videos/YoutubeModal";
+import ReactDOM from 'react-dom';
+import '../components/images/ImageModal.css';
 
 const BASE_URL = "https://localhost:7153";
 
@@ -22,6 +24,8 @@ function FilmListAdmin() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expandedRows, setExpandedRows] = useState({});
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
     const toggleRow = (id) => {
         setExpandedRows(prev => ({
@@ -43,6 +47,7 @@ function FilmListAdmin() {
     const handleFilterChange = useCallback((e) => {
         setFilter(prev => ({ ...prev, [e.target.name]: e.target.value }));
     }, []);
+
     const handleDelete = async (id) => {
         if (window.confirm("Biztosan törölni szeretnéd ezt a filmet?")) {
             try {
@@ -53,6 +58,34 @@ function FilmListAdmin() {
             }
         }
     };
+
+    const handleImageClick = (imageUrl) => {
+        setSelectedImage(imageUrl);
+        setIsImageModalOpen(true);
+    };
+
+    const ImageModal = () => {
+        if (!isImageModalOpen || !selectedImage) return null;
+
+        return ReactDOM.createPortal(
+            <div className="image-modal-overlay" onClick={() => setIsImageModalOpen(false)}>
+                <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+                    <button className="close-button" onClick={() => setIsImageModalOpen(false)}>
+                        &times;
+                    </button>
+                    <div className="image-container">
+                        <img
+                            src={selectedImage}
+                            alt="Film borítókép"
+                            className="modal-image"
+                        />
+                    </div>
+                </div>
+            </div>,
+            document.body
+        );
+    };
+
     useEffect(() => {
         const controller = new AbortController();
 
@@ -107,7 +140,7 @@ function FilmListAdmin() {
 
     return (
         <AdminLayout>
-            <ThemeWrapper className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3  p-3 border-bottom">
+            <ThemeWrapper className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 p-3 border-bottom">
                 <h1 className="h2">Filmek kezelése</h1>
                 <button
                     className={`btn ${darkMode ? 'btn-success' : 'btn-outline-success'}`}
@@ -169,7 +202,12 @@ function FilmListAdmin() {
                                                             <th className={`w-25 ${darkMode ? 'bg-gray-700' : 'bg-light'}`}>Műfaj</th>
                                                             <td>{film.mufaj}</td>
                                                             <th className={`w-25 ${darkMode ? 'bg-gray-700' : 'bg-light'}`}>Korhatár</th>
-                                                            <td>{film.korhatar}</td>
+                                                            <td><img
+                                                                src={`https://localhost:7153/images/${film.korhatar}.png`}
+                                                                style={{ height: "25px" }}
+                                                                alt={`Korhatár besorolás: ${film.korhatar}`}
+                                                                className="h-6"
+                                                            /></td>
                                                         </tr>
                                                         <tr>
                                                             <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Játékidő</th>
@@ -200,7 +238,7 @@ function FilmListAdmin() {
                                                             <td>{film.imdb}</td>
                                                         </tr>
                                                         <tr>
-                                                            <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Trailer</th>
+                                                            <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Előzetes</th>
                                                             <td>
                                                                 {film.trailerLink && (
                                                                     <YouTubeModal youtubeUrl={film.trailerLink}>
@@ -210,7 +248,7 @@ function FilmListAdmin() {
                                                                             className={darkMode ? 'text-info' : ''}
                                                                             style={{ textDecoration: 'none', cursor: 'pointer' }}
                                                                         >
-                                                                            Trailer megtekintése
+                                                                            Előzetes megtekintése
                                                                         </a>
                                                                     </YouTubeModal>
                                                                 )}
@@ -218,18 +256,23 @@ function FilmListAdmin() {
                                                             <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Borítókép</th>
                                                             <td>
                                                                 {film.images?.relativePath && (
-                                                                    <img
-                                                                        src={`${BASE_URL}${film.images.relativePath}`}
-                                                                        alt={film.cim}
-                                                                        style={{
-                                                                            width: '100px',
-                                                                            height: 'auto',
-                                                                            objectFit: 'cover'
-                                                                        }}
-                                                                        onError={(e) => {
-                                                                            e.target.src = '/placeholder-image.jpg';
-                                                                        }}
-                                                                    />
+                                                                    <div
+                                                                        style={{ cursor: 'pointer' }}
+                                                                        onClick={() => handleImageClick(`${BASE_URL}${film.images.relativePath}`)}
+                                                                    >
+                                                                        <img
+                                                                            src={`${BASE_URL}${film.images.relativePath}`}
+                                                                            alt={film.cim}
+                                                                            style={{
+                                                                                width: '100px',
+                                                                                height: 'auto',
+                                                                                objectFit: 'cover'
+                                                                            }}
+                                                                            onError={(e) => {
+                                                                                e.target.src = '/placeholder-image.jpg';
+                                                                            }}
+                                                                        />
+                                                                    </div>
                                                                 )}
                                                             </td>
                                                         </tr>
@@ -281,6 +324,8 @@ function FilmListAdmin() {
                     </tbody>
                 </table>
             </ThemeWrapper>
+
+            <ImageModal />
         </AdminLayout>
     );
 }

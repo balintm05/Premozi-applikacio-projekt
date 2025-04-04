@@ -113,7 +113,7 @@ namespace ReactApp1.Server.Services.Film
 
         public async Task<List<Entities.Film>?> getFilm()
         {
-            return await context.Film.Include(x => x.Images).ToListAsync();
+            return await context.Film.Include(x => x.Images).Include(x=>x.Vetitesek).ToListAsync();
         }
         public async Task<Entities.Film?> getFilm(int id)
         { 
