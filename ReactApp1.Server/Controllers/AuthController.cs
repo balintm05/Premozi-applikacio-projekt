@@ -326,7 +326,7 @@ namespace ReactApp1.Server.Controllers
         }
 
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpDelete("logout")]
         public async Task<ActionResult> Logout()
         {
