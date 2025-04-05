@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThemeWrapper from '../../layout/ThemeWrapper';
+import { ThemeContext } from '../../layout/Layout';
 import "./FoglalasSuccess.css";
 
 const FoglalasSuccess = () => {
     const navigate = useNavigate();
     const [countdown, setCountdown] = useState(10);
     const { state } = useLocation();
+    const { darkMode } = useContext(ThemeContext);
 
     useEffect(() => {
         if (!state?.fromFoglalas) {
@@ -14,14 +16,14 @@ const FoglalasSuccess = () => {
         }
         const timer = setInterval(() => {
             setCountdown(prev => {
-                if (prev <= 1) {
+                if (prev <= 0) {
                     clearInterval(timer);
-                    navigate('/musor');
+                    navigate('/');
                     return 0;
                 }
                 return prev - 1;
             });
-        }, 10000);
+        }, 1000);
 
         return () => clearInterval(timer);
     }, [navigate, state]);
@@ -37,7 +39,7 @@ const FoglalasSuccess = () => {
                     <div className="alert alert-success mb-4">
                         A foglalását sikeresen rögzítettük. A részleteket tartalmazó emailt elküldtük a megadott címre.
                         <div className="countdown-text">
-                            Átirányítás a műsorhoz {countdown} másodperc múlva...
+                            Átirányítás a főoldalra {countdown} másodperc múlva...
                         </div>
                     </div>
                     <div className="progress-slider-container">
@@ -49,10 +51,10 @@ const FoglalasSuccess = () => {
 
                     <div className="text-center mt-4">
                         <button
-                            className="btn btn-primary"
+                            className="btn btn-success-foglalas"
                             onClick={() => navigate('/musor')}
                         >
-                            Vissza a műsorhoz most
+                            Vissza a főoldalra most
                         </button>
                     </div>
                 </div>

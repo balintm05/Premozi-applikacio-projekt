@@ -49,7 +49,7 @@ namespace ReactApp1.Server.Controllers
             }
             return Ok(foglalasok);
         }
-        //[Authorize]
+        [Authorize]
         [HttpPost("add")]
         public async Task<ActionResult<Models.ErrorModel?>> AddFoglalas(ManageFoglalasDto request)
         {

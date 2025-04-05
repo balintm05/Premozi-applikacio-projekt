@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import ThemeWrapper from '../../layout/ThemeWrapper';
 import "./FilmAdatok.css";
 import YouTubeModal from '../../components/videos/YoutubeModal';
+import PageNotFound from '../../errors/PageNotFound';
 
 const FilmAdatok = () => {
     const { id } = useParams();
@@ -12,7 +13,10 @@ const FilmAdatok = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState('');
-
+    const navigate = useNavigate();
+    const handleNavigation = (path) => {
+        navigate(path);
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -81,6 +85,9 @@ const FilmAdatok = () => {
             Betöltés...
         </ThemeWrapper>
     );
+    if (error || !film) {
+        return <PageNotFound />;
+    }
 
     if (error) return (
         <ThemeWrapper className="hiba">
@@ -239,12 +246,12 @@ const FilmAdatok = () => {
                                                 Szinkron: {film.szinkron}
                                             </div>
                                             <div className="screening-category">Típus: {film.kategoria}</div>
-                                            <a
-                                                href={`/foglalas/${screening.id}`}
+                                            <button
+                                                onClick={() => handleNavigation(`/foglalas/${screening.id}`)}
                                                 className="booking-button"
                                             >
                                                 Jegyfoglalás
-                                            </a>
+                                            </button>
                                         </ThemeWrapper>
                                     ))}
                                 </div>

@@ -137,6 +137,9 @@ function ProfilePage() {
 
                 {isViewingOwnProfile ? (
                     <div className="profile-actions">
+                        <button className="btn btn-primary" onClick={() => navigate("/account/profile/foglalasok")}>
+                            Foglalásaim megtekintése
+                        </button>
                         <button className="btn btn-primary" onClick={() => navigate("/account/change-email")}>
                             Email módosítása
                         </button>

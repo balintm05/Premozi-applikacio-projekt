@@ -1,13 +1,14 @@
 import { useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 function Logout() {
     const { logout } = useContext(AuthContext);
-
+    const navigate = useNavigate();
     useEffect(() => {
         const performLogout = async () => {
             await logout();
-            window.location.href = "/";
+            navigate("/");
         };
         performLogout();
     }, [logout]);

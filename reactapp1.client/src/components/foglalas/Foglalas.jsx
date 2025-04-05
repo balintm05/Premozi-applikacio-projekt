@@ -121,7 +121,6 @@ const Foglalas = () => {
         fetchData();
 
         return () => {
-            console.log('Foglalas component unmounting');
             componentMounted.current = false;
             abortController.abort();
         };
@@ -372,8 +371,8 @@ const Foglalas = () => {
                     </div>
 
                     <div className="ticket-selection">
-                        <h2 className="mb-3">Székek</h2>
-
+                        <h2>Székek</h2>
+                        <p className="mb-3">A helyekre kattintva választhat jegytípust</p>
                         <div className="selected-seats-info">
                             {selectedSeats.length > 0 ? (
                                 <ul className="selected-seats-list">
@@ -428,6 +427,7 @@ const Foglalas = () => {
                         >
                             Foglalás megerősítése
                         </button>
+                        <p className="mt-3">Jelenleg csak a helyszínen való fizetés lehetséges, megértésüket köszönjük!</p>
                     </div>
                 </div>
             </div>

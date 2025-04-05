@@ -23,17 +23,17 @@ namespace ReactApp1.Server.Services.Foglalas
         {
             var foglalasok = await context.FoglalasAdatok
         .AsNoTracking() 
-        .Include(x => x.User)
+        .Include(x => x.User).IgnoreAutoIncludes()
         .Include(x => x.FoglaltSzekek)
             .ThenInclude(x => x.VetitesSzekek)
                 .ThenInclude(x => x.Vetites)
-                    .ThenInclude(x => x.Film)
+                    .ThenInclude(x => x.Film).IgnoreAutoIncludes()
         .Include(x => x.FoglaltSzekek)
             .ThenInclude(x => x.VetitesSzekek)
                 .ThenInclude(x => x.Vetites)
-                    .ThenInclude(x => x.Terem)
+                    .ThenInclude(x => x.Terem).IgnoreAutoIncludes()
         .Include(x => x.FoglaltSzekek)
-            .ThenInclude(x => x.JegyTipus)
+            .ThenInclude(x => x.JegyTipus).IgnoreAutoIncludes()
         .Select(f => new GetFoglalasResponse(f)) 
         .ToListAsync();
 
@@ -44,17 +44,17 @@ namespace ReactApp1.Server.Services.Foglalas
         {
             var foglalasok = await context.FoglalasAdatok
         .AsNoTracking() 
-        .Include(x => x.User)
+        .Include(x => x.User).IgnoreAutoIncludes()
         .Include(x => x.FoglaltSzekek)
             .ThenInclude(x => x.VetitesSzekek)
                 .ThenInclude(x => x.Vetites)
-                    .ThenInclude(x => x.Film)
+                    .ThenInclude(x => x.Film).IgnoreAutoIncludes()
         .Include(x => x.FoglaltSzekek)
             .ThenInclude(x => x.VetitesSzekek)
                 .ThenInclude(x => x.Vetites)
-                    .ThenInclude(x => x.Terem)
+                    .ThenInclude(x => x.Terem).IgnoreAutoIncludes()
         .Include(x => x.FoglaltSzekek)
-            .ThenInclude(x => x.JegyTipus)
+            .ThenInclude(x => x.JegyTipus).IgnoreAutoIncludes()
         .Select(f => new GetFoglalasResponse(f))
         .ToListAsync();
 
@@ -68,30 +68,27 @@ namespace ReactApp1.Server.Services.Foglalas
         public async Task<List<GetFoglalasResponse>?> GetFoglalasByUser(int uid)
         {
             var foglalasok = await context.FoglalasAdatok
-                .Include(x => x.User)
+                .AsNoTracking()
+                .Include(x => x.User).IgnoreAutoIncludes()
                 .Include(x => x.FoglaltSzekek)
                     .ThenInclude(x => x.VetitesSzekek)
                         .ThenInclude(x => x.Vetites)
-                            .ThenInclude(x => x.Film)
+                            .ThenInclude(x => x.Film).IgnoreAutoIncludes()
                 .Include(x => x.FoglaltSzekek)
                     .ThenInclude(x => x.VetitesSzekek)
                         .ThenInclude(x => x.Vetites)
-                            .ThenInclude(x => x.Terem)
+                            .ThenInclude(x => x.Terem).IgnoreAutoIncludes()
                 .Include(x => x.FoglaltSzekek)
-                    .ThenInclude(x => x.JegyTipus)
+                    .ThenInclude(x => x.JegyTipus).IgnoreAutoIncludes()
                 .Where(x => x.UserID == uid)
+                .Select(f => new GetFoglalasResponse(f))
                 .ToListAsync();
 
             if (foglalasok.Count == 0)
             {
                 return null;
             }
-            var resp = new List<GetFoglalasResponse>();
-            foreach (var foglalas in foglalasok)
-            {
-                resp.Add(new GetFoglalasResponse(foglalas));
-            }
-            return resp;
+            return foglalasok;
         }
 
         public async Task<Models.ErrorModel?> addFoglalas(ManageFoglalasDto request)
@@ -364,7 +361,16 @@ namespace ReactApp1.Server.Services.Foglalas
 
         public async Task<Models.ErrorModel?> deleteFoglalas(int id)
         {
-            var foglalas = await context.FoglalasAdatok.FindAsync(id);
+            var foglalas = await context.FoglalasAdatok
+                .Include(f => f.User)
+                .Include(f => f.FoglaltSzekek)
+                    .ThenInclude(fs => fs.VetitesSzekek)
+                        .ThenInclude(vs => vs.Vetites)
+                            .ThenInclude(v => v.Film)
+                .Include(f => f.FoglaltSzekek)
+                    .ThenInclude(fs => fs.JegyTipus)
+                .FirstOrDefaultAsync(f => f.id == id);
+
             if (foglalas == null)
             {
                 return new ErrorModel("Nem található az adatbázisban foglalás a megadott id-vel");
@@ -383,6 +389,36 @@ namespace ReactApp1.Server.Services.Foglalas
             context.UpdateRange(vetitesszekek);
             context.FoglalasAdatok.Remove(foglalas);
             await context.SaveChangesAsync();
+
+            try
+            {
+                var user = foglalas.User;
+                var vetites = foglalas.FoglaltSzekek.FirstOrDefault()?.VetitesSzekek?.Vetites;
+                var film = vetites?.Film;
+                var jegyTipusok = foglalas.FoglaltSzekek.Select(fs => fs.JegyTipus).ToList();
+
+                var seatsList = string.Join(", ", foglalas.FoglaltSzekek.Select((fs, index) =>
+                    $"{fs.VetitesSzekek.X + 1}. sor {fs.VetitesSzekek.Y + 1}. szék ({jegyTipusok[index].Nev} - {jegyTipusok[index].Ar} Ft)"));
+
+                var totalPrice = jegyTipusok.Sum(j => j.Ar);
+
+                var emailSubject = "Foglalás törölve";
+                var emailBody = $@"
+            <h2>Tisztelt {user.email}!</h2>
+            <p>A következő foglalása törölve lett:</p>
+            <p><strong>Film:</strong> {film?.Cim ?? "Ismeretlen film"}</p>
+            <p><strong>Vetítés ideje:</strong> {vetites?.Idopont.ToString("yyyy.MM.dd HH:mm") ?? "Ismeretlen időpont"}</p>
+            <p><strong>Foglalt helyek:</strong> {seatsList}</p>
+            <p><strong>Összesen:</strong> {totalPrice} Ft</p>
+            <p><strong>Foglalás azonosító:</strong> {foglalas.id}</p>
+        ";
+
+                await emailService.SendEmailAsync(user.email, emailSubject, emailBody);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error sending deletion confirmation email: {ex.Message}");
+            }
 
             return new ErrorModel("Sikeres törlés");
         }

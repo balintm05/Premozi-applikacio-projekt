@@ -1,30 +1,36 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import "./Layout.css";
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { FaSun, FaMoon } from "react-icons/fa";
 
-
 function UserDropdown() {
-    const { id,  user, logout } = useContext(AuthContext);
+    const { id, user, logout } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
 
     const toggleDropdown = () => setIsOpen(!isOpen);
     const closeDropdown = () => setIsOpen(false);
 
+    const handleNavigation = (path) => {
+        closeDropdown();
+        navigate(path);
+    };
+
     if (!user) {
         return (
             <div className="ms-auto">
-                <a href="/account/login">
-                    <button className="auth-nav-btn">
-                        <span className="auth-nav-btn-icon">
-                            <svg viewBox="0 0 24 24" width="18" height="18">
-                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-                            </svg>
-                        </span>
-                        Bejelentkezés
-                    </button>
-                </a>
+                <button
+                    className="auth-nav-btn"
+                    onClick={() => navigate("/account/login")}
+                >
+                    <span className="auth-nav-btn-icon">
+                        <svg viewBox="0 0 24 24" width="18" height="18">
+                            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                        </svg>
+                    </span>
+                    Bejelentkezés
+                </button>
             </div>
         );
     }
@@ -60,46 +66,45 @@ function UserDropdown() {
                 }}
             >
                 <li>
-                    <a
+                    <button
                         className="dropdown-item"
-                        href="/account/profile/details"
-                        onClick={closeDropdown}
+                        onClick={() => handleNavigation("/account/profile/details")}
                         style={{ color: 'var(--dropdown-text)' }}
                     >
                         Profil
-                    </a>
+                    </button>
                 </li>
                 {user.role === "Admin" && (
                     <li>
-                        <a
+                        <button
                             className="dropdown-item"
-                            href="/admin/"
-                            onClick={closeDropdown}
+                            onClick={() => handleNavigation("/admin/")}
                             style={{ color: 'var(--dropdown-text)' }}
                         >
                             Adminisztrátori funkciók
-                        </a>
+                        </button>
                     </li>
                 )}
                 <li>
                     <hr className="dropdown-divider" style={{ borderColor: 'var(--border-color)' }} />
                 </li>
                 <li>
-                    <a
+                    <button
                         className="dropdown-item"
-                        onClick={() => { closeDropdown(); logout(); }}
+                        onClick={() => { handleNavigation("/account/logout") }}
                         style={{
                             color: 'var(--dropdown-text)',
                             cursor: 'pointer'
                         }}
                     >
                         Kijelentkezés
-                    </a>
+                    </button>
                 </li>
             </ul>
         </div>
     );
 }
+
 export const ThemeContext = React.createContext();
 export default function Layout() {
     const [darkMode, setDarkMode] = useState(() => {
@@ -112,10 +117,12 @@ export default function Layout() {
     });
 
     const [navbarCollapsed, setNavbarCollapsed] = useState(true);
+    const navigate = useNavigate();
 
     const toggleNavbar = () => {
         setNavbarCollapsed(!navbarCollapsed);
     };
+
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
         localStorage.setItem('darkMode', JSON.stringify(darkMode));
@@ -142,7 +149,11 @@ export default function Layout() {
                             </button>
                             <div className={`navbar-collapse ${navbarCollapsed ? 'collapse' : ''} d-sm-inline-flex`}>
                                 <div className="navbar-brand d-none d-lg-block me-auto">
-                                    <a className="navbar-brand" href="/">
+                                    <button
+                                        className="navbar-brand"
+                                        onClick={() => navigate("/")}
+                                        style={{ background: 'none', border: 'none', padding: 0 }}
+                                    >
                                         <img
                                             src="https://localhost:7153/images/Premlogo_sm.png"
                                             style={{
@@ -152,21 +163,41 @@ export default function Layout() {
                                             }}
                                             alt="Premozi Logo"
                                         />
-                                    </a>
+                                    </button>
                                 </div>
                                 <div className="d-flex justify-content-center flex-grow-1">
                                     <ul className="navbar-nav">
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/">Kezdőlap</a>
+                                            <button
+                                                className="nav-link"
+                                                onClick={() => navigate("/")}
+                                            >
+                                                Kezdőlap
+                                            </button>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/musor">Műsor</a>
+                                            <button
+                                                className="nav-link"
+                                                onClick={() => navigate("/musor")}
+                                            >
+                                                Műsor
+                                            </button>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/jegyarak">Jegyárak</a>
+                                            <button
+                                                className="nav-link"
+                                                onClick={() => navigate("/jegyarak")}
+                                            >
+                                                Jegyárak
+                                            </button>
                                         </li>
                                         <li className="nav-item">
-                                            <a className="nav-link" href="/kapcsolat">Kapcsolat</a>
+                                            <button
+                                                className="nav-link"
+                                                onClick={() => navigate("/kapcsolat")}
+                                            >
+                                                Kapcsolat
+                                            </button>
                                         </li>
                                     </ul>
                                 </div>
@@ -192,9 +223,21 @@ export default function Layout() {
                 </div>
 
                 <footer className="site-footer border-top py-3">
-                    <div className="container" style={{color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit'}}>
-    &copy; 2025 - Premozi - <a href="/adatvedelem" style={{color: 'inherit', textDecoration: 'none'}}>Adatvédelmi tájékoztató</a> - <a href="/impresszum" style={{color: 'inherit', textDecoration: 'none'}}>Impresszum</a>
-</div>
+                    <div className="container" style={{ color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit' }}>
+                        &copy; 2025 - Premozi -
+                        <button
+                            onClick={() => navigate("/adatvedelem")}
+                            style={{ color: 'inherit', textDecoration: 'none', background: 'none', border: 'none' }}
+                        >
+                            Adatvédelmi tájékoztató
+                        </button> -
+                        <button
+                            onClick={() => navigate("/impresszum")}
+                            style={{ color: 'inherit', textDecoration: 'none', background: 'none', border: 'none' }}
+                        >
+                            Impresszum
+                        </button>
+                    </div>
                 </footer>
             </div>
         </ThemeContext.Provider>

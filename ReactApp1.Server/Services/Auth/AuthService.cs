@@ -352,7 +352,6 @@ namespace ReactApp1.Server.Services.Auth
         private async Task<User?> ValidateRefreshTokenAsync(string refToken)
         {
             var user = await context.Users.FirstAsync(u => u.refreshToken == refToken && u.refreshTokenExpiry > DateTime.UtcNow);
-            Console.WriteLine(user.ToJson());
             return user;
         }
 
@@ -404,7 +403,7 @@ namespace ReactApp1.Server.Services.Auth
                 issuer: configuration["AppSettings:Issuer"],
                 audience: configuration["AppSettings:Audience"],
                 claims: Claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddMinutes(15),
                 signingCredentials: credentials
                 );
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
@@ -415,7 +414,7 @@ namespace ReactApp1.Server.Services.Auth
         {
             httpcontext.Response.Cookies.Append("accessToken", token.AccessToken, new CookieOptions
             {
-                Expires = DateTimeOffset.UtcNow.AddMinutes(10),
+                Expires = DateTimeOffset.UtcNow.AddMinutes(15),
                 HttpOnly = true,
                 IsEssential = true,
                 Secure = true,

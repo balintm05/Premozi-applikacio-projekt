@@ -38,6 +38,7 @@ import FilmAdatok from './pages/film/FilmAdatok';
 import Foglalas from './components/foglalas/Foglalas';
 import ProtectedRoute from './components/ProtectedRoute';
 import FoglalasSuccess from './components/foglalas/FoglalasSuccess';
+import ProfileFoglalasok from './components/profile/ProfileFoglalasok';
 
 const App = () => {
     return (
@@ -65,8 +66,9 @@ const App = () => {
                         <Route>
                             <Route path="/account/login" element={<Login />} />
                             <Route path="/account/register" element={<Register />} />
-                            <Route path="/logout" element={<Logout />} />
+                            <Route path="/account/logout" element={<Logout />} />
                             <Route path="/account/profile/details/:id?" element={<ProfilePage />} />
+                            <Route path="/account/profile/foglalasok" element={<ProfileFoglalasok />} />
                             <Route path="/account/change-email" element={<ChangeEmailPage />} />
                             <Route path="/account/change-password" element={<ChangePasswordPage />} />
                             <Route path="/auth/confirm-email" element={<EmailConfirmation />} />

@@ -334,8 +334,8 @@ namespace ReactApp1.Server.Services.Film
                         Seats = g.Select(x => x.seat).ToList()
                     }).ToList();
                 var emailBody = new StringBuilder()
-                    .AppendLine("<h2>Tisztelt Felhasználó!</h2>")
-                    .AppendLine($"<p>A következő foglalásait töröltük, mert a <strong>{filmTitle}</strong> film törlésre került:</p>");
+                    .AppendLine($"<h2>Tisztelt {user.email}!</h2>")
+                    .AppendLine($"<p>A következő foglalásait töröltük, mert a/az <strong>{filmTitle}</strong> című film törlésre került:</p>");
                 foreach (var vetites in vetitesek)
                 {
                     emailBody.AppendLine($"<h3>{vetites.Vetites.Terem?.Nev ?? "Ismeretlen terem"} - {vetites.Vetites.Idopont:yyyy.MM.dd HH:mm}</h3>")
