@@ -73,7 +73,6 @@ export const AuthProvider = ({ children }) => {
             await api.delete('/auth/logout', {}, {
                 withCredentials: true
             });
-            window.open("/", "_self");
         } catch (error) {
             console.error('Logout error:', error);
         } finally {

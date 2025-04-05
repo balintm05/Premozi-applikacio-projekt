@@ -79,6 +79,13 @@ const TwoFactorAuth = () => {
         button: { backgroundColor: '#007bff' },
         error: { backgroundColor: '#fee2e2', borderColor: '#f8d7da' }
     };
+    if (isLoading) {
+        return (<ThemeWrapper noBg className="betoltes">
+            <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                <div className="spinner"></div>
+            </div>
+        </ThemeWrapper>);
+    }
     return (
         <ThemeWrapper style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{

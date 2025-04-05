@@ -122,12 +122,15 @@ function ImageLibrary() {
         const sizes = ['Bájt', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    };
-
+    };    
     if (loading) {
         return (
             <AdminLayout>
-                <ThemeWrapper className="p-4">Képek betöltése...</ThemeWrapper>
+                <ThemeWrapper className="betoltes">
+                    <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                        <div className="spinner"></div>
+                    </div>
+                </ThemeWrapper>
             </AdminLayout>
         );
     }

@@ -26,7 +26,13 @@ function ProfileFoglalasok() {
                         reservation.foglalasAdatok?.foglaltSzekek?.length > 0 &&
                         reservation.foglalasAdatok.foglaltSzekek[0]?.vetitesSzekek?.vetites
                     );
-                    setReservations(validReservations);
+                    const sortedReservations = validReservations.sort((a, b) => {
+                        const dateA = new Date(a.foglalasAdatok.foglalasIdopontja);
+                        const dateB = new Date(b.foglalasAdatok.foglalasIdopontja);
+                        return dateB - dateA; 
+                    });
+
+                    setReservations(sortedReservations);
                 } else {
                     setError("Nem sikerült betölteni a foglalásokat");
                 }
@@ -68,17 +74,13 @@ function ProfileFoglalasok() {
             minute: '2-digit'
         });
     };
-
-    if (loading) {
-        return (
-            <ThemeWrapper>
-                <div className="profile-loading">
-                    <div className="spinner"></div>
-                    <p>Foglalások betöltése...</p>
-                </div>
-            </ThemeWrapper>
-        );
-    }
+    if (loading) return (
+        <ThemeWrapper className="betoltes">
+            <div className="profile-loading">
+                <div className="spinner"></div>
+            </div>
+        </ThemeWrapper>
+    );
 
     if (error) {
         return (

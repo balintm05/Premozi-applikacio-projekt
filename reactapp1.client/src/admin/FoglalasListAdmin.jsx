@@ -89,9 +89,11 @@ function FoglalasListAdmin() {
     if (loading) {
         return (
             <AdminLayout>
-                <div className="admin-content-container">
-                    <p>Betöltés...</p>
-                </div>
+                <ThemeWrapper className="betoltes">
+                    <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                        <div className="spinner"></div>
+                    </div>
+                </ThemeWrapper>
             </AdminLayout>
         );
     }

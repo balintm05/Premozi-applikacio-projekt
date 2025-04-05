@@ -218,7 +218,11 @@ function TeremEditAdmin() {
     };
 
     if (loading) {
-        return <AdminLayout><p>Betöltés...</p></AdminLayout>;
+        return (<AdminLayout><ThemeWrapper className="betoltes">
+            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                <div className="spinner"></div>
+            </div>
+        </ThemeWrapper></AdminLayout>);
     }
 
     return (

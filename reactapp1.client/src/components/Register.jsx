@@ -41,7 +41,13 @@ const Register = () => {
             setIsLoading(false);
         }
     };
-
+    if (isLoading) {
+        return (<ThemeWrapper noBg className="betoltes">
+            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                <div className="spinner"></div>
+            </div>
+        </ThemeWrapper>);
+    }
     if (user) return null;
 
     return (

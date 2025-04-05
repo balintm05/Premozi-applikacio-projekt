@@ -61,7 +61,13 @@ export default function PasswordResetPage() {
             </Box>
         );
     }
-
+    if (loading) {
+        return (<ThemeWrapper className="betoltes">
+            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                <div className="spinner"></div>
+            </div>
+        </ThemeWrapper>);
+    }
     return (
         <Box sx={{ maxWidth: 500, mx: 'auto', mt: 4, p: 3 }}>
             <Typography variant="h4" gutterBottom>Jelszó visszaállítása</Typography>

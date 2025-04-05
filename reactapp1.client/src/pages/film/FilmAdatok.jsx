@@ -82,7 +82,9 @@ const FilmAdatok = () => {
 
     if (loading) return (
         <ThemeWrapper className="betoltes">
-            Betöltés...
+            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                <div className="spinner"></div>
+            </div>
         </ThemeWrapper>
     );
     if (error || !film) {

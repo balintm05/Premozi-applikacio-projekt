@@ -56,10 +56,9 @@ function ProfilePage() {
     };
 
     if (loading) return (
-        <ThemeWrapper>
+        <ThemeWrapper className="betoltes">
             <div className="profile-loading">
                 <div className="spinner"></div>
-                <p>Adatok betöltése...</p>
             </div>
         </ThemeWrapper>
     );

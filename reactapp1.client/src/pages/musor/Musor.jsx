@@ -35,8 +35,6 @@ const Musor = () => {
         const now = new Date();
         const nextWeek = new Date();
         nextWeek.setDate(now.getDate() + 30);
-
-        // First filter films with screenings in the next 30 days
         const filteredFilms = films.filter(film => {
             if (!film.vetitesek || film.vetitesek.length === 0) return false;
             return film.vetitesek.some(screening => {
@@ -44,8 +42,6 @@ const Musor = () => {
                 return screeningDate >= now && screeningDate <= nextWeek;
             });
         });
-
-        // Then sort by number of screenings in descending order
         return filteredFilms.sort((a, b) => {
             const aCount = a.vetitesek ? a.vetitesek.length : 0;
             const bCount = b.vetitesek ? b.vetitesek.length : 0;
@@ -59,7 +55,9 @@ const Musor = () => {
 
     if (loading) return (
         <ThemeWrapper className="betoltes">
-            Betöltés...
+            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                <div className="spinner"></div>
+            </div>
         </ThemeWrapper>
     );
 
