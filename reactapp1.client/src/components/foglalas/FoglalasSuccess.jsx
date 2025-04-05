@@ -16,7 +16,7 @@ const FoglalasSuccess = () => {
         }
         const timer = setInterval(() => {
             setCountdown(prev => {
-                if (prev <= 0) {
+                if (prev <= 1) {
                     clearInterval(timer);
                     navigate('/');
                     return 0;
@@ -45,7 +45,7 @@ const FoglalasSuccess = () => {
                     <div className="progress-slider-container">
                         <div
                             className="progress-slider"
-                            style={{ width: `${progressPercentage}%` }}
+                            style={{ width: `${progressPercentage-10}%` }}
                         ></div>
                     </div>
 

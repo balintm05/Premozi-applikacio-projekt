@@ -72,8 +72,6 @@
         background-color: var(--active-link);
     }
 
-
-
 .info-row {
     display: flex;
     flex-wrap: wrap;
@@ -165,6 +163,7 @@
         pointer-events: none;
         box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
     }
+
 .screening-item {
     background-color: var(--content-bg);
     padding: 16px;
@@ -173,7 +172,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    transition: transform 0.1s ease, box-shadow 0.1s ease;  
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
     border: 1px solid var(--border-color);
 }
 
@@ -201,12 +200,14 @@
     opacity: 0.8;
     flex: 0 0 120px;
 }
+
 .screening-category {
     font-size: 0.9rem;
     color: var(--text-color);
     opacity: 0.8;
     flex: 0 0 120px;
 }
+
 .booking-button {
     background-color: var(--link-color);
     color: var(--btn-text);
@@ -237,31 +238,6 @@
     border: 1px dashed var(--border-color);
 }
 
-@media (max-width: 768px) {
-    .film-content {
-        flex-direction: column;
-    }
-
-    .poster-column {
-        flex: 1;
-    }
-
-    .info-row {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .screenings-list {
-        grid-template-columns: 1fr;
-    }
-}
-
-
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 15px;
-}
 .basic-info,
 .detailed-info {
     padding: 24px;
@@ -281,7 +257,7 @@
 
 .dark-mode .basic-info,
 .dark-mode .detailed-info {
-    background: #1e1e1e; 
+    background: #1e1e1e;
     border: 1px solid rgba(255, 255, 255, 0.05);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), 0 3px 6px rgba(0, 0, 0, 0.3);
     position: relative;
@@ -299,6 +275,7 @@
         pointer-events: none;
         box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
     }
+
 .date-selector-container {
     max-width: 300px;
 }
@@ -373,6 +350,7 @@
     .dark-mode .date-picker-input:hover {
         border-color: var(--link-color);
     }
+
 .trailer-button {
     display: inline-block;
     background-color: var(--link-color);
@@ -398,5 +376,95 @@
 }
 
 .trailer-container .video-container {
-    padding-bottom: 56.25%; 
+    padding-bottom: 56.25%;
+}
+
+.screening-date-header {
+    font-size: 1.2rem;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 12px !important;
+}
+
+.screenings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+@media (max-width: 768px) {
+    .film-content {
+        flex-direction: column;
+    }
+
+    .poster-column {
+        flex: 1;
+    }
+
+    .info-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .screening-item {
+        flex-wrap: wrap;
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .screening-time,
+    .screening-room,
+    .screening-language,
+    .screening-category {
+        flex: 1 1 auto;
+        min-width: 100px;
+        margin-bottom: 4px;
+    }
+
+    .booking-button {
+        flex: 1 0 100%;
+        margin-top: 8px;
+        text-align: center;
+    }
+
+    .date-selector-container {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .screening-item {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .screening-time,
+    .screening-room,
+    .screening-language,
+    .screening-category {
+        flex: 1 1 100%;
+        padding: 4px 0;
+    }
+
+    .booking-button {
+        width: 100%;
+    }
+
+    .date-picker-input {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+
+    .clear-date-button {
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    .film-header h1 {
+        font-size: 1.8rem;
+    }
 }

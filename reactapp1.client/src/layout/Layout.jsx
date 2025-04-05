@@ -4,8 +4,8 @@ import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { FaSun, FaMoon } from "react-icons/fa";
 
-function UserDropdown() {
-    const { id, user, logout } = useContext(AuthContext);
+function UserDropdown({ setNavbarCollapsed }) {  
+    const { user } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -15,6 +15,7 @@ function UserDropdown() {
     const handleNavigation = (path) => {
         closeDropdown();
         navigate(path);
+        setNavbarCollapsed(true); 
     };
 
     if (!user) {
@@ -22,7 +23,10 @@ function UserDropdown() {
             <div className="ms-auto">
                 <button
                     className="auth-nav-btn"
-                    onClick={() => navigate("/account/login")}
+                    onClick={() => {
+                        navigate("/account/login");
+                        setNavbarCollapsed(true);  
+                    }}
                 >
                     <span className="auth-nav-btn-icon">
                         <svg viewBox="0 0 24 24" width="18" height="18">
@@ -34,6 +38,7 @@ function UserDropdown() {
             </div>
         );
     }
+
 
     return (
         <div className="nav-item dropdown ms-auto">
@@ -56,7 +61,7 @@ function UserDropdown() {
                 </span>
             </button>
             <ul
-                className={`dropdown-menu dropdown-menu-start ${isOpen ? 'show' : ''}`}
+                className={`dropdown-menu dropdown-menu-start ${isOpen ? 'show' : ''} text-center`}
                 aria-labelledby="navbarScrollingDropdown"
                 style={{
                     left: 'auto',
@@ -81,7 +86,7 @@ function UserDropdown() {
                             onClick={() => handleNavigation("/admin/")}
                             style={{ color: 'var(--dropdown-text)' }}
                         >
-                            Adminisztrátori funkciók
+                            Kezelőfelület
                         </button>
                     </li>
                 )}
@@ -183,7 +188,10 @@ export default function Layout() {
                                     <li className="nav-item">
                                         <button
                                             className="nav-link"
-                                            onClick={() => navigate("/")}
+                                            onClick={() => {
+                                                navigate("/");
+                                                setNavbarCollapsed(true);
+                                            }}
                                         >
                                             Kezdőlap
                                         </button>
@@ -191,7 +199,10 @@ export default function Layout() {
                                     <li className="nav-item">
                                         <button
                                             className="nav-link"
-                                            onClick={() => navigate("/musor")}
+                                            onClick={() => {
+                                                navigate("/musor");
+                                                setNavbarCollapsed(true);
+                                            }}
                                         >
                                             Műsor
                                         </button>
@@ -199,7 +210,10 @@ export default function Layout() {
                                     <li className="nav-item">
                                         <button
                                             className="nav-link"
-                                            onClick={() => navigate("/jegyarak")}
+                                            onClick={() => {
+                                                navigate("/jegyarak");
+                                                setNavbarCollapsed(true);
+                                            }}
                                         >
                                             Jegyárak
                                         </button>
@@ -207,7 +221,10 @@ export default function Layout() {
                                     <li className="nav-item">
                                         <button
                                             className="nav-link"
-                                            onClick={() => navigate("/kapcsolat")}
+                                            onClick={() => {
+                                                navigate("/kapcsolat");
+                                                setNavbarCollapsed(true);
+                                            }}
                                         >
                                             Kapcsolat
                                         </button>
@@ -222,7 +239,7 @@ export default function Layout() {
                                     >
                                         {darkMode ? <FaSun className="theme-icon" /> : <FaMoon className="theme-icon" />}
                                     </button>
-                                    <UserDropdown />
+                                    <UserDropdown setNavbarCollapsed={setNavbarCollapsed} />
                                 </div>
                             </div>
                         </div>

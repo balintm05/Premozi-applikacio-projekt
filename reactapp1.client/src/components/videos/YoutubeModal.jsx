@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './YouTubeModal.css';
 
 const YouTubeModal = ({ youtubeUrl, children }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkIfMobile = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        checkIfMobile();
+        window.addEventListener('resize', checkIfMobile);
+
+        return () => {
+            window.removeEventListener('resize', checkIfMobile);
+        };
+    }, []);
 
     const extractYouTubeId = (url) => {
         const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -15,13 +29,21 @@ const YouTubeModal = ({ youtubeUrl, children }) => {
 
     if (!videoId) return children;
 
+    const handleClick = () => {
+        if (isMobile) {
+            window.open(youtubeUrl, '_blank');
+        } else {
+            setIsOpen(true);
+        }
+    };
+
     return (
         <>
-            <div className="trailer-container" onClick={() => setIsOpen(true)}>
+            <div className="trailer-container" onClick={handleClick}>
                 {children}
             </div>
 
-            {isOpen && ReactDOM.createPortal(
+            {!isMobile && isOpen && ReactDOM.createPortal(
                 <div className="youtube-modal-overlay" onClick={() => setIsOpen(false)}>
                     <div className="youtube-modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="close-button" onClick={() => setIsOpen(false)}>

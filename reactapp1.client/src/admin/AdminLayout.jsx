@@ -37,7 +37,7 @@ export default function AdminLayout({ children }) {
                             }}
                         >
                             <h4 className="fw-bold" style={{ color: darkMode ? 'var(--nav-text)' : '#212529' }}>
-                                Adminisztrátor felület
+                                Kezelőfelület
                             </h4>
                         </div>
                         <ul className="nav flex-column">
