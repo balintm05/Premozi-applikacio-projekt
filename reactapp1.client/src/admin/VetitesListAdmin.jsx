@@ -134,8 +134,8 @@ function VetitesListAdmin() {
                 </button>
             </ThemeWrapper>
 
-            <ThemeWrapper className="table-responsive">
-                <table className={`table table-bordered ${darkMode ? 'table-dark' : ''}`}>
+            <ThemeWrapper className="table-responsive" style={{ overflowX: 'auto' }}>
+                <table className={`table table-bordered ${darkMode ? 'table-dark' : ''}`} style={{ minWidth: '768px' }}>
                     <thead>
                         <tr className={darkMode ? 'bg-dark text-light' : 'bg-light'}>
                             <th>ID</th>
@@ -153,7 +153,7 @@ function VetitesListAdmin() {
                                     onChange={handleFilterChange}
                                     value={filter.id}
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
-                                    placeholder="Keresés ID"
+                                    placeholder="ID"
                                 />
                             </th>
                             <th>
@@ -163,7 +163,7 @@ function VetitesListAdmin() {
                                     onChange={handleFilterChange}
                                     value={filter.film}
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
-                                    placeholder="Keresés film ID"
+                                    placeholder="Film ID"
                                 />
                             </th>
                             <th>
@@ -173,7 +173,7 @@ function VetitesListAdmin() {
                                     onChange={handleFilterChange}
                                     value={filter.terem}
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
-                                    placeholder="Keresés terem ID"
+                                    placeholder="Terem ID"
                                 />
                             </th>
                             <th></th>
@@ -191,16 +191,18 @@ function VetitesListAdmin() {
                                     <td>{vetites.idopont ? new Date(vetites.idopont).toLocaleString() : '-'}</td>
                                     <td>{vetites.megjegyzes || '-'}</td>
                                     <td>
-                                        <div className="d-flex gap-2">
+                                        <div className="d-flex flex-wrap gap-2">
                                             <button
                                                 className={`btn btn-sm btn-primary`}
                                                 onClick={() => navigate(`/admin/vetitesek/edit/${vetites.id}`)}
+                                                style={{ padding: '0.5rem 1rem' }}
                                             >
                                                 Módosítás
                                             </button>
                                             <button
                                                 className={`btn btn-sm btn-danger`}
                                                 onClick={() => handleDelete(vetites.id)}
+                                                style={{ padding: '0.5rem 1rem' }}
                                             >
                                                 Törlés
                                             </button>

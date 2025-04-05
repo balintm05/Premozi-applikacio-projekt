@@ -148,16 +148,15 @@ function TeremEditAdmin() {
         return (
             <div className="mt-4 d-flex flex-column align-items-center">
                 <h4>Székek elrendezése</h4>
-                <div
-                    className="seat-grid"
-                    style={{
-                        display: 'grid',
-                        gridTemplateColumns: `repeat(${cols}, 40px)`,
-                        gap: '5px',
-                        marginTop: '10px',
-                        width: `${gridWidth}px`
-                    }}
-                >
+                <div className="seat-grid" style={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(${cols}, minmax(30px, 40px))`,
+                    gap: '5px',
+                    marginTop: '10px',
+                    width: '100%',
+                    overflowX: 'auto',
+                    paddingBottom: '10px'
+                }}>
                     {Array.from({ length: rows * cols }).map((_, index) => {
                         const row = Math.floor(index / cols);
                         const col = index % cols;
@@ -245,7 +244,7 @@ function TeremEditAdmin() {
 
             <form onSubmit={handleSubmit}>
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-12 col-md-6">
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
                             <label htmlFor="nev" className="form-label">Név</label>
                             <input
@@ -300,16 +299,17 @@ function TeremEditAdmin() {
                         </div>
                     </div>
 
-                    <div className="col-md-6">
+                    <div className="col-12 col-md-6">
                         {renderSeatGrid()}
                     </div>
                 </div>
 
-                <div className="d-flex gap-2 mt-3">
+                <div className="d-flex flex-wrap gap-2 mt-3">
                     <button
                         type="submit"
                         className={`btn ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
                         disabled={isSaving}
+                        style={{ padding: '0.5rem 1rem', flex: '1 1 auto' }}
                     >
                         {isSaving ? 'Mentés...' : (id && id !== 'add' ? 'Mentés' : 'Hozzáadás')}
                     </button>
@@ -318,6 +318,7 @@ function TeremEditAdmin() {
                         className={`btn ${darkMode ? 'btn-secondary' : 'btn-outline-secondary'}`}
                         onClick={() => navigate('/admin/termek')}
                         disabled={isSaving}
+                        style={{ padding: '0.5rem 1rem', flex: '1 1 auto' }}
                     >
                         Mégse
                     </button>

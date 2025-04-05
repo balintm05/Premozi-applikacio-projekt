@@ -791,3 +791,114 @@ body::before {
     animation: spin 1s linear infinite;
     margin: 0 auto 1rem;
 }
+@media (max-width: 992px) {
+    .navbar-collapse {
+        padding: 1rem;
+        background-color: var(--nav-bg);
+        border-radius: 8px;
+        margin-top: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .navbar-nav {
+        margin-bottom: 1rem;
+    }
+
+    .nav-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .nav-link {
+        padding: 0.75rem 1rem !important;
+        border-radius: 6px;
+        background-color: var(--dropdown-hover);
+        margin: 0.25rem 0;
+    }
+
+    .user-dropdown-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dropdown-menu {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        width: 100%;
+        border-radius: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 15px;
+    }
+
+    .auth-card {
+        padding: 1.5rem;
+        border-radius: 0;
+    }
+
+    .site-footer {
+        padding: 1rem 0;
+        text-align: center;
+    }
+
+        .site-footer .container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+    .navbar-brand {
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .auth-card {
+        padding: 1.25rem;
+    }
+
+    .auth-form-group input {
+        padding: 0.75rem;
+    }
+
+    .auth-submit-btn {
+        padding: 0.75rem;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+.navbar-toggler {
+    transition: all 0.2s ease;
+    margin-left: auto;
+}
+
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 3px var(--auth-input-focus);
+    }
+
+body {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    left: auto;
+}
+
+button, .nav-link, .dropdown-item {
+    min-height: 35px; 
+    touch-action: manipulation;
+}

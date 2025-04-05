@@ -139,15 +139,32 @@ export default function Layout() {
                     <nav className="navbar navbar-expand-sm navbar-toggleable-sm main-nav">
                         <div className="container-fluid">
                             <button
+                                className="navbar-brand d-lg-none me-2"
+                                onClick={() => navigate("/")}
+                                style={{ background: 'none', border: 'none', padding: 0 }}
+                            >
+                                <img
+                                    src="https://localhost:7153/images/Premlogo_sm.png"
+                                    className="navbar-logo"
+                                    alt="Premozi Logo"
+                                />
+                            </button>
+
+                            <button
                                 className="navbar-toggler"
                                 type="button"
                                 onClick={toggleNavbar}
                                 aria-expanded={!navbarCollapsed}
                                 aria-label="Toggle navigation"
+                                aria-controls="navbarContent"
                             >
                                 <span className="navbar-toggler-icon"></span>
                             </button>
-                            <div className={`navbar-collapse ${navbarCollapsed ? 'collapse' : ''} d-sm-inline-flex`}>
+
+                            <div
+                                id="navbarContent"
+                                className={`navbar-collapse ${navbarCollapsed ? 'collapse' : ''} justify-content-between`}
+                            >
                                 <div className="navbar-brand d-none d-lg-block me-auto">
                                     <button
                                         className="navbar-brand"
@@ -156,52 +173,48 @@ export default function Layout() {
                                     >
                                         <img
                                             src="https://localhost:7153/images/Premlogo_sm.png"
-                                            style={{
-                                                height: '40px',
-                                                width: 'auto',
-                                                objectFit: 'contain'
-                                            }}
+                                            className="navbar-logo"
                                             alt="Premozi Logo"
                                         />
                                     </button>
                                 </div>
-                                <div className="d-flex justify-content-center flex-grow-1">
-                                    <ul className="navbar-nav">
-                                        <li className="nav-item">
-                                            <button
-                                                className="nav-link"
-                                                onClick={() => navigate("/")}
-                                            >
-                                                Kezdőlap
-                                            </button>
-                                        </li>
-                                        <li className="nav-item">
-                                            <button
-                                                className="nav-link"
-                                                onClick={() => navigate("/musor")}
-                                            >
-                                                Műsor
-                                            </button>
-                                        </li>
-                                        <li className="nav-item">
-                                            <button
-                                                className="nav-link"
-                                                onClick={() => navigate("/jegyarak")}
-                                            >
-                                                Jegyárak
-                                            </button>
-                                        </li>
-                                        <li className="nav-item">
-                                            <button
-                                                className="nav-link"
-                                                onClick={() => navigate("/kapcsolat")}
-                                            >
-                                                Kapcsolat
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div className="d-flex align-items-center ms-auto">
+
+                                <ul className="navbar-nav mx-auto mx-lg-0">
+                                    <li className="nav-item">
+                                        <button
+                                            className="nav-link"
+                                            onClick={() => navigate("/")}
+                                        >
+                                            Kezdőlap
+                                        </button>
+                                    </li>
+                                    <li className="nav-item">
+                                        <button
+                                            className="nav-link"
+                                            onClick={() => navigate("/musor")}
+                                        >
+                                            Műsor
+                                        </button>
+                                    </li>
+                                    <li className="nav-item">
+                                        <button
+                                            className="nav-link"
+                                            onClick={() => navigate("/jegyarak")}
+                                        >
+                                            Jegyárak
+                                        </button>
+                                    </li>
+                                    <li className="nav-item">
+                                        <button
+                                            className="nav-link"
+                                            onClick={() => navigate("/kapcsolat")}
+                                        >
+                                            Kapcsolat
+                                        </button>
+                                    </li>
+                                </ul>
+
+                                <div className="d-flex align-items-center ms-lg-auto mt-3 mt-lg-0">
                                     <button
                                         className="theme-toggle btn btn-link"
                                         onClick={toggleTheme}

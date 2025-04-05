@@ -142,16 +142,15 @@ function VetitesEditAdmin() {
         return (
             <div className="mt-4 d-flex flex-column align-items-center">
                 <h4>Székfoglalások állapota</h4>
-                <div
-                    className="seat-grid"
-                    style={{
-                        display: 'grid',
-                        gridTemplateColumns: `repeat(${maxY}, 40px)`,
-                        gap: '5px',
-                        marginTop: '10px',
-                        width: `${gridWidth}px`
-                    }}
-                >
+                <div className="seat-grid" style={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(${maxY}, minmax(30px, 40px))`,
+                    gap: '5px',
+                    marginTop: '10px',
+                    width: '100%',
+                    overflowX: 'auto',
+                    paddingBottom: '10px'
+                }}>
                     {Array.from({ length: maxX * maxY }).map((_, index) => {
                         const row = Math.floor(index / maxY);
                         const col = index % maxY;
@@ -274,7 +273,7 @@ function VetitesEditAdmin() {
 
             <form onSubmit={handleSubmit}>
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-12 col-md-6">
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
                             <label htmlFor="filmid" className="form-label">Film</label>
                             <select
@@ -335,27 +334,31 @@ function VetitesEditAdmin() {
                         </div>
                     </div>
 
-                    <div className="col-md-6">
+                    <div className="col-12 col-md-6">
                         {renderSeatGrid()}
                     </div>
                 </div>
 
                 <div className="d-flex gap-2 mt-3">
-                    <button
-                        type="submit"
-                        className={`btn ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
-                        disabled={isSaving}
-                    >
-                        {isSaving ? 'Mentés...' : (id && id !== 'add' ? 'Mentés' : 'Hozzáadás')}
-                    </button>
-                    <button
-                        type="button"
-                        className={`btn ${darkMode ? 'btn-secondary' : 'btn-outline-secondary'}`}
-                        onClick={() => navigate('/admin/vetitesek')}
-                        disabled={isSaving}
-                    >
-                        Mégse
-                    </button>
+                    <div className="d-flex flex-wrap gap-2 mt-3">
+                        <button
+                            type="submit"
+                            className={`btn ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
+                            disabled={isSaving}
+                            style={{ padding: '0.5rem 1rem', flex: '1 1 auto' }}
+                        >
+                            {isSaving ? 'Mentés...' : (id && id !== 'add' ? 'Mentés' : 'Hozzáadás')}
+                        </button>
+                        <button
+                            type="button"
+                            className={`btn ${darkMode ? 'btn-secondary' : 'btn-outline-secondary'}`}
+                            onClick={() => navigate('/admin/vetitesek')}
+                            disabled={isSaving}
+                            style={{ padding: '0.5rem 1rem', flex: '1 1 auto' }}
+                        >
+                            Mégse
+                        </button>
+                    </div>
                 </div>
             </form>
         </AdminLayout>

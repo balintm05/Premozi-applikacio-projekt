@@ -116,8 +116,8 @@ function FoglalasListAdmin() {
                 <h1 className="h2">Foglalások kezelése</h1>
             </ThemeWrapper>
 
-            <ThemeWrapper className="table-responsive">
-                <table className={`table table-bordered ${darkMode ? 'table-dark' : ''}`}>
+            <ThemeWrapper className="table-responsive" style={{ overflowX: 'auto' }}>
+                <table className={`table table-bordered ${darkMode ? 'table-dark' : ''}`} style={{ minWidth: '768px' }}>
                     <thead>
                         <tr className={darkMode ? 'bg-dark text-light' : 'bg-light'}>
                             <th>ID</th>
@@ -174,7 +174,8 @@ function FoglalasListAdmin() {
                                             <tr className={darkMode ? 'bg-gray-800' : ''}>
                                                 <td colSpan={6} className="p-0 border-0">
                                                     <div className={`p-3 ${darkMode ? 'bg-gray-800' : 'bg-light'}`}>
-                                                        <table className={`table table-bordered mb-0 ${darkMode ? 'table-dark' : ''}`}>
+                                                        <div className="table-responsive" style={{ overflowX: 'auto' }}>
+                                                            <table className={`table table-bordered mb-0 ${darkMode ? 'table-dark' : ''}`} style={{ minWidth: '600px' }}>
                                                             <tbody>
                                                                 <tr>
                                                                     <th className={`w-25 ${darkMode ? 'bg-gray-700' : 'bg-light'}`}>Foglalt székek</th>
@@ -197,19 +198,21 @@ function FoglalasListAdmin() {
                                                                 <tr>
                                                                     <th className={darkMode ? 'bg-gray-700' : 'bg-light'}>Műveletek</th>
                                                                     <td colSpan={3}>
-                                                                        <button
-                                                                            className={`btn btn-sm ms-2 btn-danger`}
-                                                                            onClick={(e) => {
-                                                                                e.stopPropagation();
-                                                                                handleDelete(foglalas.id);
-                                                                            }}
-                                                                        >
-                                                                            Törlés
-                                                                        </button>
+                                                                            <button
+                                                                                className={`btn btn-sm btn-danger`}
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    handleDelete(foglalas.id);
+                                                                                }}
+                                                                                style={{ padding: '0.5rem 1rem' }}
+                                                                            >
+                                                                                Törlés
+                                                                            </button>
                                                                     </td>
                                                                 </tr>
                                                             </tbody>
-                                                        </table>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </td>
                                             </tr>

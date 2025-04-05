@@ -270,7 +270,7 @@ function FilmEditAdmin() {
 
             <form onSubmit={handleSubmit}>
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-12 col-md-6">
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
                             <label htmlFor="Cim" className="form-label">Cím*</label>
                             <input
@@ -371,7 +371,7 @@ function FilmEditAdmin() {
                         </div>
                     </div>
 
-                    <div className="col-md-6">
+                    <div className="col-12 col-md-6">
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
                             <label htmlFor="Szereplok" className="form-label">Szereplők*</label>
                             <textarea
@@ -474,7 +474,7 @@ function FilmEditAdmin() {
 
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
                             <label htmlFor="image" className="form-label">Borítókép*</label>
-                            <div className="d-flex gap-2 mb-2">
+                            <div className="d-flex flex-column flex-md-row gap-2 mb-2">
                                 <input
                                     type="file"
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
@@ -486,7 +486,7 @@ function FilmEditAdmin() {
                                 />
                                 <button
                                     type="button"
-                                    className={`btn ${darkMode ? 'btn-secondary' : 'btn-outline-secondary'}`}
+                                    className={`btn ${darkMode ? 'btn-secondary' : 'btn-outline-secondary'} mt-2 mt-md-0`}
                                     onClick={handleOpenImageLibrary}
                                 >
                                     <FaImage className="me-1" /> Könyvtárból
@@ -501,7 +501,11 @@ function FilmEditAdmin() {
                                         <img
                                             src={film.selectedImageUrl}
                                             alt="Kiválasztott borítókép"
-                                            style={{ maxWidth: '200px', maxHeight: '200px' }}
+                                            style={{
+                                                maxWidth: '100%',
+                                                height: 'auto',
+                                                maxHeight: '200px'
+                                            }}
                                             className="img-thumbnail"
                                         />
                                     </div>
@@ -619,12 +623,27 @@ function FilmEditAdmin() {
   }
 
   .modal-dialog {
-    position: relative;
-    margin: 30px auto;
-    width: 90%;
-    max-width: 800px;
-  }
-
+        position: relative;
+        margin: 10px auto;
+        width: auto;
+        max-width: 800px;
+    }
+    @media (max-width: 768px) {
+        .modal-dialog {
+            margin: 0;
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .modal-content {
+            border-radius: 0;
+            min-height: 100vh;
+        }
+        
+        .modal-body {
+            max-height: calc(100vh - 200px);
+        }
+    }
   .modal-content {
     background-color: ${darkMode ? '#222' : '#fff'} !important;
     border: 2px solid ${darkMode ? '#444' : '#ddd'} !important;

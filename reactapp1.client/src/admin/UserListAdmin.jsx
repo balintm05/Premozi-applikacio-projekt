@@ -72,8 +72,8 @@ function UserListAdmin() {
                 <h1 className="h2">Felhasználók kezelése</h1>
             </ThemeWrapper>
 
-            <ThemeWrapper className="table-responsive">
-                <table className={`table table-bordered ${darkMode ? 'table-dark' : ''}`}>
+            <ThemeWrapper className="table-responsive" style={{ overflowX: 'auto' }}>
+                <table className={`table table-bordered ${darkMode ? 'table-dark' : ''}`} style={{ minWidth: '768px' }}>
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -92,6 +92,7 @@ function UserListAdmin() {
                                     onChange={handleFilterChange}
                                     value={filter.userID}
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
+                                    placeholder="ID"
                                 />
                             </th>
                             <th>
@@ -101,6 +102,7 @@ function UserListAdmin() {
                                     onChange={handleFilterChange}
                                     value={filter.email}
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
+                                    placeholder="Email"
                                 />
                             </th>
                             <th></th>
@@ -135,6 +137,7 @@ function UserListAdmin() {
                                     onChange={handleFilterChange}
                                     value={filter.Megjegyzes}
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
+                                    placeholder="Megjegyzés"
                                 />
                             </th>
                             <th></th>
@@ -152,9 +155,10 @@ function UserListAdmin() {
                                 <td>
                                     <div className="gap-2">
                                         <button
-                                            className={`btn btn-primary`}
+                                            className={`btn btn-sm btn-primary`}
                                             onClick={() => navigate(`/account/profile/details/${row.userID}`)}
                                             style={{
+                                                padding: '0.5rem 1rem',
                                                 borderRight: `1px solid ${darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`
                                             }}
                                         >

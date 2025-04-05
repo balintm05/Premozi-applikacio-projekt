@@ -103,8 +103,8 @@ function TeremListAdmin() {
                 </button>
             </ThemeWrapper>
 
-            <ThemeWrapper className="table-responsive">
-                <table className={`table table-bordered ${darkMode ? 'table-dark' : ''}`}>
+            <ThemeWrapper className="table-responsive" style={{ overflowX: 'auto' }}>
+                <table className={`table table-bordered ${darkMode ? 'table-dark' : ''}`} style={{ minWidth: '768px' }}>
                     <thead>
                         <tr className={darkMode ? 'bg-dark text-light' : 'bg-light'}>
                             <th>ID</th>
@@ -121,7 +121,7 @@ function TeremListAdmin() {
                                     onChange={handleFilterChange}
                                     value={filter.id}
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
-                                    placeholder="Keresés ID"
+                                    placeholder="ID"
                                 />
                             </th>
                             <th>
@@ -131,7 +131,7 @@ function TeremListAdmin() {
                                     onChange={handleFilterChange}
                                     value={filter.nev}
                                     className={`form-control ${darkMode ? 'bg-dark text-white border-light' : ''}`}
-                                    placeholder="Keresés név"
+                                    placeholder="Név"
                                 />
                             </th>
                             <th></th>
@@ -150,20 +150,23 @@ function TeremListAdmin() {
                                         <td>{szekekCount}</td>
                                         <td>{terem.megjegyzes || '-'}</td>
                                         <td>
-                                            <div className="d-flex gap-2">
+                                            <div className="d-flex flex-wrap gap-2">
                                                 <button
                                                     className={`btn btn-sm btn-primary`}
                                                     onClick={() => navigate(`/admin/termek/edit/${terem.id}`)}
+                                                    style={{ padding: '0.5rem 1rem' }}
                                                 >
                                                     Módosítás
                                                 </button>
                                                 <button
                                                     className={`btn btn-sm btn-danger`}
                                                     onClick={() => handleDelete(terem.id)}
+                                                    style={{ padding: '0.5rem 1rem' }}
                                                 >
                                                     Törlés
                                                 </button>
                                             </div>
+
                                         </td>
                                     </tr>
                                 );
