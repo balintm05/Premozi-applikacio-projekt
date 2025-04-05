@@ -43,7 +43,7 @@ namespace ReactApp1.Server.Services.Vetites
     {
         public async Task<List<GetVetitesResponse>?> getVetites()
         {
-            var vetitesek = await context.Vetites.Include(x=>x.VetitesSzekek).Include(x=>x.Film).Include(x=>x.Terem).ToListAsync();
+            var vetitesek = await context.Vetites.IgnoreAutoIncludes().Include(x => x.VetitesSzekek).Include(x => x.Terem).IgnoreAutoIncludes().Include(x => x.Film).ThenInclude(x => x.Images).IgnoreAutoIncludes().ToListAsync();
             var response = new List<GetVetitesResponse>();
             foreach(var vetites in vetitesek)
             {
@@ -53,13 +53,12 @@ namespace ReactApp1.Server.Services.Vetites
         }
         public async Task<GetVetitesResponse?> getVetites(int id)
         {
-            var vetites = await context.Vetites.FindAsync(id);
-            var szekek = await context.VetitesSzekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Vetitesid == id)).ToListAsync();
+            var vetites = await context.Vetites.IgnoreAutoIncludes().Include(x => x.VetitesSzekek).Include(x => x.Terem).IgnoreAutoIncludes().Include(x => x.Film).ThenInclude(x => x.Images).IgnoreAutoIncludes().ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == id)).ToListAsync();
             if (vetites == null)
             {
                 return new GetVetitesResponse("Nincs ilyen id-jű vetítés az adatbázisban");
             }
-            return new GetVetitesResponse(vetites);
+            return new GetVetitesResponse(vetites.First());
         }
         public async Task<ErrorModel> addVetites(ManageVetitesDto request)
         {            

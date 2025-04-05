@@ -227,7 +227,7 @@ const FilmAdatok = () => {
                             {Object.entries(groupedScreenings).map(([date, screenings]) => (
                                 <div key={date} className="date-group">
                                     {!selectedDate && (
-                                        <h3 className="screening-date-header mt-1 mb-3">{formatDate(date)}</h3>
+                                        <h3 className="screening-date-header mt-3 mb-3">{formatDate(date)}</h3>
                                     )}
                                     {screenings.map((screening) => (
                                         <ThemeWrapper key={screening.id} className="screening-item mb-2" noBg>

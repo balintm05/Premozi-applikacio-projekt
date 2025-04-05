@@ -18,6 +18,7 @@ using ReactApp1.Server.Services.Email;
 using Microsoft.AspNetCore.CookiePolicy;
 using System.Security.Claims;
 using ReactApp1.Server.Services.Image;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
@@ -31,6 +32,11 @@ builder.Services.AddCors(options =>
                .WithExposedHeaders("set-cookie");
     });
 });
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {

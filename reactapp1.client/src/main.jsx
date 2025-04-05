@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Index from "./pages/Index.jsx";
 import Layout from "./layout/Layout.jsx";
@@ -37,6 +37,7 @@ import Impresszum from './pages/Impresszum';
 import FilmAdatok from './pages/film/FilmAdatok';
 import Foglalas from './components/foglalas/Foglalas';
 import ProtectedRoute from './components/ProtectedRoute';
+import FoglalasSuccess from './components/foglalas/FoglalasSuccess';
 
 const App = () => {
     return (
@@ -46,13 +47,16 @@ const App = () => {
                     <Route element={<Layout />}>
                         <Route>
                             <Route index element={<Index />} />
-                            <Route>
-                                <Route path="/musor" element={<Musor />} />
-                                <Route path="/musor/film/:id" element={<FilmAdatok />} />
-                                <Route path="/foglalas" element={<ProtectedRoute />}>
-                                    <Route path="/foglalas/:id" element={<Foglalas />} />
-                                </Route>
-                            </Route>                           
+                            <Route path="/musor">
+                                <Route index element={<Musor />} />
+                                <Route path="film/:id" element={<FilmAdatok />} />                               
+                            </Route>        
+                            <Route path="foglalas" element={<ProtectedRoute />}>
+                                <Route path=":id" element={<Foglalas />} />
+                                <Route path="success" element={<FoglalasSuccess />} />
+                                <Route index element={<Navigate to="/musor" replace />} />
+                                <Route path="*" element={<Navigate to="/musor" replace />} />
+                            </Route>
                             <Route path="/jegyarak" element={<Jegyarak />} />
                             <Route path="/kapcsolat" element={<Kapcsolat />} />
                             <Route path="/adatvedelem" element={<AdatvedelmiTajekoztato />} />
@@ -71,21 +75,21 @@ const App = () => {
                         </Route>
 
                         <Route path="/admin" element={<AdminCheck />}>
-                            <Route path="/admin/" element={<AdminIndex />} />
-                            <Route path="/admin/users" element={<UserListAdmin />} />
-                            <Route path="/admin/user/:id/status" element={<AdminUserStatusPage />} />
-                            <Route path="/admin/user/:id/force-password-change" element={<AdminForcePasswordChangePage />} />
-                            <Route path="/admin/filmek" element={<FilmListAdmin />} />
-                            <Route path="/admin/filmek/add" element={<FilmEditAdmin />} />
-                            <Route path="/admin/filmek/edit/:id" element={<FilmEditAdmin />} />
-                            <Route path="/admin/termek" element={<TeremListAdmin />} />
-                            <Route path="/admin/termek/add" element={<TeremEditAdmin />} />
-                            <Route path="/admin/termek/edit/:id" element={<TeremEditAdmin />} />
-                            <Route path="/admin/vetitesek" element={<VetitesListAdmin />} />
-                            <Route path="/admin/vetitesek/add" element={<VetitesEditAdmin />} />
-                            <Route path="/admin/vetitesek/edit/:id" element={<VetitesEditAdmin />} />
-                            <Route path="/admin/foglalas" element={<FoglalasListAdmin />} />
-                            <Route path="/admin/kepek" element={<ImageLibrary />}/>
+                            <Route index element={<AdminIndex />} />
+                            <Route path="users" element={<UserListAdmin />} />
+                            <Route path="user/:id/status" element={<AdminUserStatusPage />} />
+                            <Route path="user/:id/force-password-change" element={<AdminForcePasswordChangePage />} />
+                            <Route path="filmek" element={<FilmListAdmin />} />
+                            <Route path="filmek/add" element={<FilmEditAdmin />} />
+                            <Route path="filmek/edit/:id" element={<FilmEditAdmin />} />
+                            <Route path="termek" element={<TeremListAdmin />} />
+                            <Route path="termek/add" element={<TeremEditAdmin />} />
+                            <Route path="termek/edit/:id" element={<TeremEditAdmin />} />
+                            <Route path="vetitesek" element={<VetitesListAdmin />} />
+                            <Route path="vetitesek/add" element={<VetitesEditAdmin />} />
+                            <Route path="vetitesek/edit/:id" element={<VetitesEditAdmin />} />
+                            <Route path="foglalas" element={<FoglalasListAdmin />} />
+                            <Route path="kepek" element={<ImageLibrary />}/>
                         </Route>
                         
                         <Route path="*" element={<PageNotFound />} />

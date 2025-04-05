@@ -22,54 +22,47 @@ namespace ReactApp1.Server.Services.Foglalas
         public async Task<List<GetFoglalasResponse>?> GetFoglalas()
         {
             var foglalasok = await context.FoglalasAdatok
-                .Include(x => x.User)
-                .Include(x => x.FoglaltSzekek)
-                    .ThenInclude(x => x.VetitesSzekek)
-                        .ThenInclude(x => x.Vetites)
-                            .ThenInclude(x => x.Film)
-                .Include(x => x.FoglaltSzekek)
-                    .ThenInclude(x => x.VetitesSzekek)
-                        .ThenInclude(x => x.Vetites)
-                            .ThenInclude(x => x.Terem)
-                .Include(x => x.FoglaltSzekek)
-                    .ThenInclude(x => x.JegyTipus)
-                .ToListAsync();
+        .AsNoTracking() 
+        .Include(x => x.User)
+        .Include(x => x.FoglaltSzekek)
+            .ThenInclude(x => x.VetitesSzekek)
+                .ThenInclude(x => x.Vetites)
+                    .ThenInclude(x => x.Film)
+        .Include(x => x.FoglaltSzekek)
+            .ThenInclude(x => x.VetitesSzekek)
+                .ThenInclude(x => x.Vetites)
+                    .ThenInclude(x => x.Terem)
+        .Include(x => x.FoglaltSzekek)
+            .ThenInclude(x => x.JegyTipus)
+        .Select(f => new GetFoglalasResponse(f)) 
+        .ToListAsync();
 
-            var resp = new List<GetFoglalasResponse>();
-            foreach (var foglalas in foglalasok)
-            {
-                resp.Add(new GetFoglalasResponse(foglalas));
-            }
-            return resp;
+            return foglalasok;
         }
 
         public async Task<List<GetFoglalasResponse>?> GetFoglalasByVetites(int vid)
         {
             var foglalasok = await context.FoglalasAdatok
-                .Include(x => x.User)
-                .Include(x => x.FoglaltSzekek)
-                    .ThenInclude(x => x.VetitesSzekek)
-                        .ThenInclude(x => x.Vetites)
-                            .ThenInclude(x => x.Film)
-                .Include(x => x.FoglaltSzekek)
-                    .ThenInclude(x => x.VetitesSzekek)
-                        .ThenInclude(x => x.Vetites)
-                            .ThenInclude(x => x.Terem)
-                .Include(x => x.FoglaltSzekek)
-                    .ThenInclude(x => x.JegyTipus)
-                .Where(x => x.FoglaltSzekek.Any(fs => fs.Vetitesid == vid))
-                .ToListAsync();
+        .AsNoTracking() 
+        .Include(x => x.User)
+        .Include(x => x.FoglaltSzekek)
+            .ThenInclude(x => x.VetitesSzekek)
+                .ThenInclude(x => x.Vetites)
+                    .ThenInclude(x => x.Film)
+        .Include(x => x.FoglaltSzekek)
+            .ThenInclude(x => x.VetitesSzekek)
+                .ThenInclude(x => x.Vetites)
+                    .ThenInclude(x => x.Terem)
+        .Include(x => x.FoglaltSzekek)
+            .ThenInclude(x => x.JegyTipus)
+        .Select(f => new GetFoglalasResponse(f))
+        .ToListAsync();
 
             if (foglalasok.Count == 0)
             {
                 return null;
             }
-            var resp = new List<GetFoglalasResponse>();
-            foreach (var foglalas in foglalasok)
-            {
-                resp.Add(new GetFoglalasResponse(foglalas));
-            }
-            return resp;
+            return foglalasok;
         }
 
         public async Task<List<GetFoglalasResponse>?> GetFoglalasByUser(int uid)

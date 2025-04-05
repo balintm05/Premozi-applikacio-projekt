@@ -34,14 +34,22 @@ const Musor = () => {
     const getFilmsWithScreeningsInNextWeek = () => {
         const now = new Date();
         const nextWeek = new Date();
-        nextWeek.setDate(now.getDate() + 7);
+        nextWeek.setDate(now.getDate() + 30);
 
-        return films.filter(film => {
+        // First filter films with screenings in the next 30 days
+        const filteredFilms = films.filter(film => {
             if (!film.vetitesek || film.vetitesek.length === 0) return false;
             return film.vetitesek.some(screening => {
                 const screeningDate = new Date(screening.idopont);
                 return screeningDate >= now && screeningDate <= nextWeek;
             });
+        });
+
+        // Then sort by number of screenings in descending order
+        return filteredFilms.sort((a, b) => {
+            const aCount = a.vetitesek ? a.vetitesek.length : 0;
+            const bCount = b.vetitesek ? b.vetitesek.length : 0;
+            return bCount - aCount;
         });
     };
 
@@ -68,7 +76,7 @@ const Musor = () => {
     if (filmsToShow.length === 0) return (
         <ThemeWrapper className="nincs-musor">
             <div className="alert alert-info">
-                Nincsenek vetítések a következő 7 napban.
+                Nincsenek vetítések a következő 30 napban.
             </div>
         </ThemeWrapper>
     );
@@ -76,7 +84,7 @@ const Musor = () => {
     return (
         <ThemeWrapper>
             <div className="container musor-container">
-                <h1 className="text-center mb-4">Műsorunk a következő héten</h1>
+                <h1 className="text-center mb-4">Jelenlegi műsoraink</h1>
                 <br></br>
                 <div className="row">
                     {filmsToShow.map(film => {
@@ -112,7 +120,7 @@ const Musor = () => {
                                                             />
                                                         )}
                                                     </div>
-                                                    <div className="film-genre">{film.mufaj} | { film.jatekido} perc</div>
+                                                    <div className="film-genre">{film.mufaj} | {film.jatekido} perc</div>
                                                 </div>
                                             </div>
                                         </div>

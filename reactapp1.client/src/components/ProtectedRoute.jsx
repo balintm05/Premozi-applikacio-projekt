@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import Foglalas from './foglalas/Foglalas';
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = () => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
@@ -32,7 +33,7 @@ const ProtectedRoute = ({ children }) => {
         return () => clearTimeout(timer);
     }, [user, navigate, location]);
 
-    return isReady ? children : null;
+    return isReady ? <Outlet /> : null;
 };
 
 export default ProtectedRoute;
