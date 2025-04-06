@@ -13,7 +13,7 @@ const TwoFactorAuth = () => {
     const [countdown, setCountdown] = useState(30);
     const navigate = useNavigate();
     const { verify2FA, resend2FACode } = useContext(AuthContext);
-
+    document.title = "Kétlépéses bejelentkezés - Premozi";
     useEffect(() => {
         const userId = sessionStorage.getItem('2fa_userId');
         if (!userId) {

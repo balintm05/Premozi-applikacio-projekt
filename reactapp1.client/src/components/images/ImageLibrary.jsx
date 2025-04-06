@@ -17,7 +17,7 @@ function ImageLibrary() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const navigate = useNavigate();
-
+    document.title = "Képkönyvtár - Premozi";
     useEffect(() => {
         const loadImages = async () => {
             try {

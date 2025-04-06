@@ -36,6 +36,7 @@ using ReactApp1.Server.Models.Terem;
 using ReactApp1.Server.Entities.Terem;
 using ReactApp1.Server.Entities.Vetites;
 using ReactApp1.Server.Services.Email;
+using ReactApp1.Server.Entities.Foglalas;
 
 namespace ReactApp1.Server.Services.Vetites
 {
@@ -116,6 +117,10 @@ namespace ReactApp1.Server.Services.Vetites
             {
                 return new ErrorModel("Nem található ilyen id-jű vetítés az adatbázisban");
             }
+            if (vetites.Idopont < DateTime.Now)
+            {
+                return new ErrorModel("A már megtörtént vetítés nem módosítható!");
+            }
             var patchDoc = new JsonPatchDocument<Entities.Vetites.Vetites>();
             var fidb = int.TryParse(request.Filmid, out int fid);
             var tidb = int.TryParse(request.Teremid, out int tid);
@@ -178,12 +183,18 @@ namespace ReactApp1.Server.Services.Vetites
             {
                 var vetites = await context.Vetites
                     .Include(v => v.VetitesSzekek)
-                    .Include(v => v.Terem)
-                    .Include(v => v.Film)
+                    .ThenInclude(vsz=>vsz.FoglaltSzekek)
+                    .ThenInclude(fsz=>fsz.FoglalasAdatok).IgnoreAutoIncludes()
+                    .Include(v => v.Terem).IgnoreAutoIncludes()
+                    .Include(v => v.Film).IgnoreAutoIncludes()
                     .FirstOrDefaultAsync(v => v.id == id);
                 if (vetites == null)
                 {
                     return new ErrorModel("Nem található ilyen id-jű vetítés az adatbázisban");
+                }
+                if (vetites.Idopont < DateTime.Now)
+                {
+                    return new ErrorModel("A már megtörtént vetítés nem törölhető!");
                 }
                 var affectedUsers = new Dictionary<int, List<(VetitesSzekek seat, Entities.Vetites.Vetites vetites)>>();
                 foreach (var seat in vetites.VetitesSzekek.Where(s => s.FoglalasAllapot == 2))

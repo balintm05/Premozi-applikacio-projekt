@@ -298,13 +298,22 @@ namespace ReactApp1.Server.Services.Auth
         {
             try
             {
-                context.Users.Remove(await context.Users.FindAsync(id));
-                await context.SaveChangesAsync();              
+                var user = await context.Users.FindAsync(id);
+                if (user == null)
+                {
+                    return new ErrorModel("Nincs ilyen id-jű felhasználó");
+                }
+
+                context.Users.Remove(user);
+                await context.SaveChangesAsync();
+                await emailService.SendEmailAsync(
+                    user.email,
+                    "Fiók törölve",
+                    $"<h3>Az Ön fiókja törölve lett</h3>" +
+                    $"<p>A fiók törlése megtörtént: {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm")}</p>" +
+                    $"<p>Ha Ön nem kezdeményezte a fiók törlését, azonnal lépjen kapcsolatba az ügyfélszolgálattal.</p>");
+
                 return new ErrorModel("Sikeres törlés");
-            }
-            catch (IndexOutOfRangeException ex)
-            {
-                return new ErrorModel("Nincs ilyen id-jű felhasználó");
             }
             catch (Exception ex)
             {

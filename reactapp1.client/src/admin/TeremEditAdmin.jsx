@@ -23,7 +23,7 @@ function TeremEditAdmin() {
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-
+    document.title = "Terem módosítása - Premozi";
     useEffect(() => {
         const loadTeremData = async () => {
             try {

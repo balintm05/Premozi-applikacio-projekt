@@ -4,6 +4,7 @@ import { Box, TextField, Button, Typography, Alert } from '@mui/material';
 import {api} from '../api/axiosConfig';
 
 export default function PasswordResetPage() {
+    document.title = "Jelszó visszaállítása - Premozi";
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [password, setPassword] = useState('');
@@ -12,7 +13,7 @@ export default function PasswordResetPage() {
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
     const [validToken, setValidToken] = useState(false);
-
+    
     const userId = searchParams.get('userId');
     const token = searchParams.get('token');
 

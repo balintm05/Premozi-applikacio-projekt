@@ -19,7 +19,7 @@ function UserListAdmin() {
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
-
+    document.title = "Felhasználók listája - Premozi";
     useEffect(() => {
         const controller = new AbortController();
 

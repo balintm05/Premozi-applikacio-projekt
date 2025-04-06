@@ -9,7 +9,7 @@ const FoglalasSuccess = () => {
     const [countdown, setCountdown] = useState(10);
     const { state } = useLocation();
     const { darkMode } = useContext(ThemeContext);
-
+    document.title = "Sikeres foglalás - Premozi";
     useEffect(() => {
         if (!state?.fromFoglalas) {
             navigate('/musor');

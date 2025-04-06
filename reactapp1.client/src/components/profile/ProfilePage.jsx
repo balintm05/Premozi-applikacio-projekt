@@ -11,7 +11,7 @@ function ProfilePage() {
     const [profileData, setProfileData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isAdminView, setIsAdminView] = useState(false);
+    const [isAdminView, setIsAdminView] = useState(false);    
 
     const fetchProfileData = async () => {
         setLoading(true);
@@ -54,7 +54,6 @@ function ProfilePage() {
             }
         }
     };
-
     if (loading) return (
         <ThemeWrapper className="betoltes">
             <div className="profile-loading">
@@ -72,10 +71,10 @@ function ProfilePage() {
             </div>
         </ThemeWrapper>
     );
-
+    
     const isViewingOwnProfile = !id || id === user?.userID.toString();
     const showAdminData = hasRole("Admin") && profileData?.role;
-
+    document.title = "Profil - " + profileData.email + " - Premozi";
     return (
         <ThemeWrapper noBg>
             <div className="profile-container">

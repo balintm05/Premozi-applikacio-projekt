@@ -26,36 +26,57 @@ namespace ReactApp1.Server.Data
             {
                 entity.HasKey(s => new { s.Teremid, s.X, s.Y });
             });
+
             modelBuilder.Entity<VetitesSzekek>(entity =>
             {
                 entity.HasKey(vs => new { vs.Vetitesid, vs.X, vs.Y });
                 entity.HasOne(vs => vs.Vetites)
                       .WithMany(v => v.VetitesSzekek)
-                      .HasForeignKey(vs => vs.Vetitesid);
+                      .HasForeignKey(vs => vs.Vetitesid)
+                      .OnDelete(DeleteBehavior.Cascade); 
+
                 entity.HasOne(vs => vs.FoglaltSzekek)
                       .WithOne(fs => fs.VetitesSzekek)
                       .HasForeignKey<FoglaltSzekek>(fs => new { fs.Vetitesid, fs.X, fs.Y });
             });
+
             modelBuilder.Entity<FoglaltSzekek>(entity =>
             {
                 entity.HasKey(fs => new { fs.FoglalasAdatokid, fs.Vetitesid, fs.X, fs.Y });
                 entity.HasOne(fs => fs.FoglalasAdatok)
                       .WithMany(fa => fa.FoglaltSzekek)
-                      .HasForeignKey(fs => fs.FoglalasAdatokid);
+                      .HasForeignKey(fs => fs.FoglalasAdatokid)
+                      .OnDelete(DeleteBehavior.Cascade); 
                 entity.HasOne(fs => fs.VetitesSzekek)
                       .WithOne(vs => vs.FoglaltSzekek)
                       .HasForeignKey<FoglaltSzekek>(fs => new { fs.Vetitesid, fs.X, fs.Y });
+
+                entity.HasOne(fs => fs.JegyTipus)
+                      .WithMany()
+                      .HasForeignKey(fs => fs.JegyTipusId)
+                      .IsRequired();
             });
+
+            modelBuilder.Entity<Vetites>(entity =>
+            {
+                entity.HasOne(v => v.Film)
+                      .WithMany(f => f.Vetitesek)
+                      .HasForeignKey(v => v.Filmid)
+                      .OnDelete(DeleteBehavior.Cascade); 
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(u => u.email).IsUnique();
                 entity.HasIndex(u => u.refreshToken).IsUnique();
             });
+
             modelBuilder.Entity<HttpLog>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.LogTime).HasDefaultValueSql("UTC_TIMESTAMP");
             });
+
             modelBuilder.Entity<JegyTipus>(entity =>
             {
                 entity.HasKey(jt => jt.id);
@@ -65,26 +86,9 @@ namespace ReactApp1.Server.Data
                     new JegyTipus { id = 1, Nev = "Normál", Ar = 2000 },
                     new JegyTipus { id = 2, Nev = "Diák", Ar = 1500 },
                     new JegyTipus { id = 3, Nev = "Nyugdíjas", Ar = 1500 }
-        );
+                );
             });
-            modelBuilder.Entity<FoglaltSzekek>(entity =>
-            {
-                entity.HasKey(fs => new { fs.FoglalasAdatokid, fs.Vetitesid, fs.X, fs.Y });
 
-                entity.HasOne(fs => fs.FoglalasAdatok)
-                      .WithMany(fa => fa.FoglaltSzekek)
-                      .HasForeignKey(fs => fs.FoglalasAdatokid);
-
-                entity.HasOne(fs => fs.VetitesSzekek)
-                      .WithOne(vs => vs.FoglaltSzekek)
-                      .HasForeignKey<FoglaltSzekek>(fs => new { fs.Vetitesid, fs.X, fs.Y });
-
-                entity.HasOne(fs => fs.JegyTipus)
-                      .WithMany() 
-                      .HasForeignKey(fs => fs.JegyTipusId)
-                      .IsRequired();
-            });
-            
             base.OnModelCreating(modelBuilder);
         }
     }

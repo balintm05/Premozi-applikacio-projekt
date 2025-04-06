@@ -12,7 +12,7 @@ function ChangePasswordPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { api } = useContext(AuthContext);
     const navigate = useNavigate();
-
+    document.title = "Jelszó megváltoztatása - Premozi";
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);

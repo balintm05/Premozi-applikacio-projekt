@@ -21,7 +21,7 @@ function FoglalasListAdmin() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expandedRows, setExpandedRows] = useState({});
-
+    document.title = "Foglalások listája - Premozi";
     const toggleRow = (id) => {
         setExpandedRows(prev => ({
             ...prev,
@@ -205,6 +205,7 @@ function FoglalasListAdmin() {
                                                                                     handleDelete(foglalas.id);
                                                                                 }}
                                                                                 style={{ padding: '0.5rem 1rem' }}
+                                                                                disabled={new Date(vetitesData.idopont) < new Date()}
                                                                             >
                                                                                 Törlés
                                                                             </button>

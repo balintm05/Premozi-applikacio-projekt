@@ -36,7 +36,14 @@ namespace ReactApp1.Server.Services.Foglalas
             .ThenInclude(x => x.JegyTipus).IgnoreAutoIncludes()
         .Select(f => new GetFoglalasResponse(f)) 
         .ToListAsync();
-
+            foreach(var f in foglalasok)
+            {
+                if (f.foglalasAdatok.FoglaltSzekek.Count()==0||f.foglalasAdatok.User==null)
+                {
+                    context.Remove(f.foglalasAdatok);
+                }
+            }
+            await context.SaveChangesAsync();
             return foglalasok;
         }
 
@@ -62,6 +69,14 @@ namespace ReactApp1.Server.Services.Foglalas
             {
                 return null;
             }
+            foreach (var f in foglalasok)
+            {
+                if (f.foglalasAdatok.FoglaltSzekek.Count() == 0 || f.foglalasAdatok.User == null)
+                {
+                    context.Remove(f.foglalasAdatok);
+                }
+            }
+            await context.SaveChangesAsync();
             return foglalasok;
         }
 
@@ -88,6 +103,14 @@ namespace ReactApp1.Server.Services.Foglalas
             {
                 return null;
             }
+            foreach (var f in foglalasok)
+            {
+                if (f.foglalasAdatok.FoglaltSzekek.Count() == 0 || f.foglalasAdatok.User == null)
+                {
+                    context.Remove(f.foglalasAdatok);
+                }
+            }
+            await context.SaveChangesAsync();
             return foglalasok;
         }
 
@@ -362,27 +385,31 @@ namespace ReactApp1.Server.Services.Foglalas
         public async Task<Models.ErrorModel?> deleteFoglalas(int id)
         {
             var foglalas = await context.FoglalasAdatok
-                .Include(f => f.User)
+                .Include(f => f.User).IgnoreAutoIncludes()
                 .Include(f => f.FoglaltSzekek)
                     .ThenInclude(fs => fs.VetitesSzekek)
                         .ThenInclude(vs => vs.Vetites)
                             .ThenInclude(v => v.Film)
                 .Include(f => f.FoglaltSzekek)
-                    .ThenInclude(fs => fs.JegyTipus)
+                    .ThenInclude(fs => fs.JegyTipus).IgnoreAutoIncludes()
                 .FirstOrDefaultAsync(f => f.id == id);
 
             if (foglalas == null)
             {
                 return new ErrorModel("Nem található az adatbázisban foglalás a megadott id-vel");
-            }
-
+            }          
             var vetitesszekek = await context.VetitesSzekek
                 .Include(x => x.FoglaltSzekek)
+                .Include(x=>x.Vetites)
                 .Where(x => x.FoglaltSzekek != null && x.FoglaltSzekek.FoglalasAdatokid == id)
-                .ToListAsync();
-
+                .ToListAsync();       
+            var vetitesek = await context.Vetites.ToListAsync();
             foreach (var h in vetitesszekek)
             {
+                if (vetitesek.Where(x=>x.id == h.Vetitesid&&x.Idopont<DateTime.Now).Count()!=0)
+                {
+                    return new ErrorModel("Nem lehet törölni olyan foglalást, aminek a vetítése már lezárult");
+                }
                 h.FoglalasAllapot = 1;
             }
 

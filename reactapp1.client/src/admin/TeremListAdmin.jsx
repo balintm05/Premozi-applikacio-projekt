@@ -16,7 +16,7 @@ function TeremListAdmin() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
+    document.title = "Termek listája - Premozi";
     const filteredTermek = useMemo(() => {
         return allTermek.filter(terem => {
             const teremId = terem?.id?.toString() || '';
@@ -162,6 +162,7 @@ function TeremListAdmin() {
                                                     className={`btn btn-sm btn-danger`}
                                                     onClick={() => handleDelete(terem.id)}
                                                     style={{ padding: '0.5rem 1rem' }}
+                                                    disabled={terem.vetites?.length>0}
                                                 >
                                                     Törlés
                                                 </button>

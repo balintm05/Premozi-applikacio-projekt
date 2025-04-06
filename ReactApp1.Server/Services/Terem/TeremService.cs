@@ -32,6 +32,7 @@ using ReactApp1.Server.Models.Terem;
 using ReactApp1.Server.Entities.Terem;
 using ReactApp1.Server.Entities.Vetites;
 using ReactApp1.Server.Services.Email;
+using ReactApp1.Server.Models;
 
 
 namespace ReactApp1.Server.Services.Terem
@@ -40,7 +41,7 @@ namespace ReactApp1.Server.Services.Terem
     {
         public async Task<List<GetTeremResponse>?> getTerem()
         {
-            var termek = await context.Terem.Include(x => x.Szekek).ToListAsync();
+            var termek = await context.Terem.Include(x => x.Szekek).Include(x=>x.Vetites).ToListAsync();
             var szekek = await context.Szekek.ToListAsync();
             var response = new List<GetTeremResponse>();
             foreach (var terem in termek)
@@ -142,24 +143,27 @@ namespace ReactApp1.Server.Services.Terem
                         }
                         foreach (var vetites in terem.Vetites)
                         {
-                            var vetitesSeat = vetites.VetitesSzekek.FirstOrDefault(vs => vs.X == x && vs.Y == y);
-                            if (vetitesSeat != null)
+                            if (vetites.Idopont > DateTime.Now)
                             {
-                                if (vetitesSeat.FoglalasAllapot == 2 && op.value != 2)
+                                var vetitesSeat = vetites.VetitesSzekek.FirstOrDefault(vs => vs.X == x && vs.Y == y);
+                                if (vetitesSeat != null)
                                 {
-                                    await TrackAffectedUser(vetitesSeat, vetites, affectedUsers);
+                                    if (vetitesSeat.FoglalasAllapot == 2 && op.value != 2)
+                                    {
+                                        await TrackAffectedUser(vetitesSeat, vetites, affectedUsers);
+                                    }
+                                    vetitesSeat.FoglalasAllapot = op.value;
                                 }
-                                vetitesSeat.FoglalasAllapot = op.value; 
-                            }
-                            else
-                            {
-                                vetites.VetitesSzekek.Add(new VetitesSzekek
+                                else
                                 {
-                                    X = x,
-                                    Y = y,
-                                    FoglalasAllapot = op.value
-                                });
-                            }
+                                    vetites.VetitesSzekek.Add(new VetitesSzekek
+                                    {
+                                        X = x,
+                                        Y = y,
+                                        FoglalasAllapot = op.value
+                                    });
+                                }
+                            }                           
                         }
                     }
                 }
@@ -252,13 +256,20 @@ namespace ReactApp1.Server.Services.Terem
                 {
                     return new Models.ErrorModel("Nem található ilyen id-jű terem az adatbázisban");
                 }
+                if (terem.Vetites.Count() != 0)
+                {
+                    return new ErrorModel("Nem lehet olyan termet törölni, ahol volt/lesz vetítés");
+                }
                 var affectedUsers = new Dictionary<int, List<(VetitesSzekek seat, Entities.Vetites.Vetites vetites)>>();
                 foreach (var vetites in terem.Vetites)
                 {
-                    foreach (var seat in vetites.VetitesSzekek.Where(s => s.FoglalasAllapot == 2))
+                    if (vetites.Idopont < DateTime.Now)
                     {
-                        await TrackAffectedUser(seat, vetites, affectedUsers);
-                    }
+                        foreach (var seat in vetites.VetitesSzekek.Where(s => s.FoglalasAllapot == 2))
+                        {
+                            await TrackAffectedUser(seat, vetites, affectedUsers);
+                        }
+                    }                   
                 }
                 context.Terem.Remove(terem);
                 await context.SaveChangesAsync();

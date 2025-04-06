@@ -10,7 +10,7 @@ function AdminUserStatusPage() {
     const { api } = useContext(AuthContext);
     const [status, setStatus] = useState(1);
     const [error, setError] = useState(null);
-
+    document.title = "Felhasználó státuszának módosítása - Premozi";
     useEffect(() => {
         const fetchUser = async () => {
             try {

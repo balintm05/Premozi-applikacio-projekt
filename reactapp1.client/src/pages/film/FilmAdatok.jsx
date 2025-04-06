@@ -108,7 +108,7 @@ const FilmAdatok = () => {
     const imageUrl = film.images?.relativePath
         ? `https://localhost:7153${film.images.relativePath}`
         : '/placeholder-image.jpg';
-
+    document.title = film.cim + " - Premozi";
     return (
         <ThemeWrapper>
             <div className="film-container">
@@ -194,7 +194,7 @@ const FilmAdatok = () => {
                                 </div>
                                 <div className="info-item">
                                     <span className="info-label">IMDB:</span>
-                                    <span className="info-value">{film.imdb || 'Nincs információ'}</span>
+                                    <span className="info-value">{film.imdb + "/10" || 'Nincs információ'}</span>
                                 </div>
                             </div>
                         </ThemeWrapper>

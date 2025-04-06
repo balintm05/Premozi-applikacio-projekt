@@ -11,7 +11,7 @@ const Register = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const title = "Regisztráció";
-    document.title = title;
+    document.title = title + " - Premozi";
 
     useEffect(() => {
         if (user) {
@@ -101,7 +101,7 @@ const Register = () => {
 
                     <div className="auth-footer">
                         <p>Már van fiókja?</p>
-                        <a href="/account/login">Jelentkezzen be</a>
+                        <a style={{ cursor: 'pointer' }} onClick={e => { e.preventDefault(); navigate("/account/login") }}>Jelentkezzen be</a>
                     </div>
                 </div>
             </div>

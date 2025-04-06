@@ -1,6 +1,7 @@
 import ThemeWrapper from "../layout/ThemeWrapper";
 
 function PageNotFound() {
+    document.title = "Nem található oldal - Premozi";
     return (
         <ThemeWrapper className="container text-center" as="div">
             <div className="row">

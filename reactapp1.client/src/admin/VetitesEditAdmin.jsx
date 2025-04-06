@@ -25,7 +25,7 @@ function VetitesEditAdmin() {
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-
+    document.title = "Vetítés módosítása - Premozi";
     useEffect(() => {
         const loadVetitesData = async () => {
             try {
@@ -282,6 +282,7 @@ function VetitesEditAdmin() {
                                 name="filmid"
                                 value={vetites.filmid}
                                 onChange={handleChange}
+                                disabled={new Date(vetites.idopont) < new Date()}
                                 required
                             >
                                 <option value="">Válassz filmet</option>
@@ -299,6 +300,7 @@ function VetitesEditAdmin() {
                                 name="teremid"
                                 value={vetites.teremid}
                                 onChange={handleChange}
+                                disabled={new Date(vetites.idopont) < new Date()}
                                 required
                             >
                                 <option value="">Válassz termet</option>
@@ -317,6 +319,7 @@ function VetitesEditAdmin() {
                                 name="idopont"
                                 value={vetites.idopont}
                                 onChange={handleChange}
+                                disabled={new Date(vetites.idopont)<new Date()}
                                 required
                             />
                         </div>
@@ -328,7 +331,7 @@ function VetitesEditAdmin() {
                                 id="megjegyzes"
                                 name="megjegyzes"
                                 value={vetites.megjegyzes}
-                                onChange={handleChange}
+                                onChange={handleChange}                               
                                 rows="3"
                             />
                         </div>
@@ -344,7 +347,7 @@ function VetitesEditAdmin() {
                         <button
                             type="submit"
                             className={`btn ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
-                            disabled={isSaving}
+                            disabled={isSaving || new Date(vetites.idopont) < new Date()}
                             style={{ padding: '0.5rem 1rem', flex: '1 1 auto' }}
                         >
                             {isSaving ? 'Mentés...' : (id && id !== 'add' ? 'Mentés' : 'Hozzáadás')}

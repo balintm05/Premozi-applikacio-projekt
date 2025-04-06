@@ -26,7 +26,7 @@ function FilmListAdmin() {
     const [expandedRows, setExpandedRows] = useState({});
     const [selectedImage, setSelectedImage] = useState(null);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-
+    document.title = "Filmek listája - Premozi";
     const toggleRow = (id) => {
         setExpandedRows(prev => ({
             ...prev,
@@ -303,9 +303,10 @@ function FilmListAdmin() {
                                                                             </button>
                                                                             <button
                                                                                 className={`btn btn-sm btn-danger`}
+                                                                                disabled={film.vetitesek?.length > 0}
                                                                                 onClick={(e) => {
                                                                                     e.stopPropagation();
-                                                                                    handleDelete(film.id);
+                                                                                    handleDelete(film.id);                                                                                   
                                                                                 }}
                                                                             >
                                                                                 Törlés

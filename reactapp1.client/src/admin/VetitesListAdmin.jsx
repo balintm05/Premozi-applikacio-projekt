@@ -17,7 +17,7 @@ function VetitesListAdmin() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
+    document.title = "Vetítések listája - Premozi";
     useEffect(() => {
         const controller = new AbortController();
 
@@ -197,12 +197,13 @@ function VetitesListAdmin() {
                                                 onClick={() => navigate(`/admin/vetitesek/edit/${vetites.id}`)}
                                                 style={{ padding: '0.5rem 1rem' }}
                                             >
-                                                Módosítás
+                                                Adatok
                                             </button>
                                             <button
                                                 className={`btn btn-sm btn-danger`}
                                                 onClick={() => handleDelete(vetites.id)}
                                                 style={{ padding: '0.5rem 1rem' }}
+                                                disabled={new Date(vetites.idopont) < new Date()}
                                             >
                                                 Törlés
                                             </button>

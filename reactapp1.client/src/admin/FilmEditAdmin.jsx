@@ -44,7 +44,7 @@ function FilmEditAdmin() {
     const [libraryImages, setLibraryImages] = useState([]);
     const [libraryLoading, setLibraryLoading] = useState(false);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-
+    document.title = "Film módosítása - Premozi";
     useEffect(() => {
         const loadFilmData = async () => {
             try {

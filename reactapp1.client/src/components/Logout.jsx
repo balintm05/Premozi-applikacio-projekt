@@ -6,6 +6,7 @@ import ThemeWrapper from '../layout/ThemeWrapper';
 function Logout() {
     const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
+    document.title = "Kijelentkezés - Premozi";
     useEffect(() => {
         const performLogout = async () => {
             await logout();

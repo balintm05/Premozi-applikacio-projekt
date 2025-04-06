@@ -6,7 +6,7 @@ function Jegyarak() {
     const [jegyTipusok, setJegyTipusok] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    document.title = "Jegyárak - Premozi";
     useEffect(() => {
         const fetchJegyTipusok = async () => {
             try {

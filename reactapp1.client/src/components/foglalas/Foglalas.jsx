@@ -25,7 +25,7 @@ const Foglalas = () => {
     const [seatTicketTypes, setSeatTicketTypes] = useState({});
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [columns, setColumns] = useState(0);
-
+    document.title = "Foglalás - Premozi";
     useEffect(() => {
         componentMounted.current = true;
         const abortController = new AbortController();

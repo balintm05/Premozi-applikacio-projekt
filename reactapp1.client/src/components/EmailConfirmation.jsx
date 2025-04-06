@@ -9,7 +9,7 @@ const EmailConfirmation = () => {
     const { api } = useContext(AuthContext);
     const [status, setStatus] = useState('loading');
     const [errorMessage, setErrorMessage] = useState('');
-
+    document.title = "Email cím megerősítése - Premozi";
     useEffect(() => {
         const confirmEmail = async () => {
             const userId = searchParams.get('userId');

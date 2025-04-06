@@ -275,12 +275,19 @@ namespace ReactApp1.Server.Services.Film
                     return new Models.ErrorModel("Nem található ilyen id-jű film az adatbázisban");
                 }
                 var affectedUsers = new Dictionary<int, List<(VetitesSzekek seat, Entities.Vetites.Vetites vetites)>>();
+                if(film.Vetitesek.Count > 0)
+                {
+                    return new ErrorModel("Nem lehet törölni olyan filmet, aminek volt/lesz vetítése");
+                }
                 foreach (var vetites in film.Vetitesek)
                 {
-                    foreach (var seat in vetites.VetitesSzekek.Where(s => s.FoglalasAllapot == 2))
+                    if (vetites.Idopont > DateTime.Now)
                     {
-                        await TrackAffectedUser(seat, vetites, affectedUsers);
-                    }
+                        foreach (var seat in vetites.VetitesSzekek.Where(s => s.FoglalasAllapot == 2))
+                        {
+                            await TrackAffectedUser(seat, vetites, affectedUsers);
+                        }
+                    }                       
                 }
                 context.Film.Remove(film);
                 await context.SaveChangesAsync();

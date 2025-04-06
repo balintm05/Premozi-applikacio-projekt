@@ -10,7 +10,7 @@ function AdminForcePasswordChangePage() {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-
+    document.title = "Jelszó megváltoztatásának kényszerítése - Premozi";
     const handleRequestReset = async () => {
         setIsLoading(true);
         setError(null);

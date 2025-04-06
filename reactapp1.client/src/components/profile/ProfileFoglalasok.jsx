@@ -11,7 +11,7 @@ function ProfileFoglalasok() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-
+    document.title = "Profil - Foglalásaim - Premozi";
     useEffect(() => {
         const fetchReservations = async () => {
             if (!user?.userID) return;
@@ -21,15 +21,27 @@ function ProfileFoglalasok() {
 
             try {
                 const response = await api.get(`/Foglalas/getByUser/${user.userID}`);
-                if (response.data) {
+
+                if (Array.isArray(response.data) && response.data.length === 0) {
+                    setReservations([]);
+                    return;
+                }
+
+                if (response.data && Array.isArray(response.data)) {
                     const validReservations = response.data.filter(reservation =>
                         reservation.foglalasAdatok?.foglaltSzekek?.length > 0 &&
                         reservation.foglalasAdatok.foglaltSzekek[0]?.vetitesSzekek?.vetites
                     );
+
+                    if (validReservations.length === 0) {
+                        setReservations([]);
+                        return;
+                    }
+
                     const sortedReservations = validReservations.sort((a, b) => {
                         const dateA = new Date(a.foglalasAdatok.foglalasIdopontja);
                         const dateB = new Date(b.foglalasAdatok.foglalasIdopontja);
-                        return dateB - dateA; 
+                        return dateB - dateA;
                     });
 
                     setReservations(sortedReservations);
@@ -37,8 +49,15 @@ function ProfileFoglalasok() {
                     setError("Nem sikerült betölteni a foglalásokat");
                 }
             } catch (err) {
+                if (err.response?.status === 400 &&
+                    err.response?.data == "Nem található foglalás ezzel a felhasználó id-vel") {
+                    setReservations([]);
+                    return;
+                }
+
                 console.error("Error fetching reservations:", err);
-                setError(err.response?.data?.errorMessage || "Hiba történt a foglalások betöltésekor");
+                setError(err.response?.data?.errorMessage ||
+                    "Hiba történt a foglalások betöltésekor");
             } finally {
                 setLoading(false);
             }
@@ -74,21 +93,24 @@ function ProfileFoglalasok() {
             minute: '2-digit'
         });
     };
-    if (loading) return (
-        <ThemeWrapper className="betoltes">
-            <div className="profile-loading">
-                <div className="spinner"></div>
-            </div>
-        </ThemeWrapper>
-    );
+    if (loading) {
+        return (
+            <ThemeWrapper className="betoltes">
+                <div className="profile-loading">
+                    <div className="spinner"></div>
+                </div>
+            </ThemeWrapper>
+        );
+    }
 
+    
     if (error) {
         return (
             <ThemeWrapper>
                 <div className="profile-error">
                     <h2>Hiba történt</h2>
                     <p>{error}</p>
-                    <button className="btn btn-secondary" onClick={() =>navigate("/account/profile/foglalasok")}>
+                    <button className="btn btn-secondary" onClick={() => window.location.reload()}>
                         Újrapróbálkozás
                     </button>
                 </div>
@@ -104,7 +126,7 @@ function ProfileFoglalasok() {
                     <p>Még nem történt foglalás a fiókodhoz, vagy nincsenek érvényes foglalások.</p>
                     <button
                         className="btn btn-primary"
-                        onClick={() => navigate('/mozi')}
+                        onClick={() => navigate('/musor')}
                     >
                         Moziprogram megtekintése
                     </button>
@@ -125,6 +147,12 @@ function ProfileFoglalasok() {
                         {reservations.map(reservation => {
                             const screening = reservation.foglalasAdatok.foglaltSzekek[0]?.vetitesSzekek?.vetites;
                             const seats = reservation.foglalasAdatok.foglaltSzekek;
+                            const screeningTime = screening?.idopont;
+                            const screeningDate = screeningTime ? new Date(screeningTime) : null;
+                            const now = new Date();
+                            const isPastScreening = screeningDate
+                                ? screeningDate <= now
+                                : true;
                             return (
                                 <div key={reservation.foglalasAdatok.id} className="detail-row">
                                     <div style={{ flex: 1 }}>
@@ -140,7 +168,7 @@ function ProfileFoglalasok() {
                                             <span className="detail-value">
                                                 {screening?.terem?.nev || 'Ismeretlen terem'},&nbsp;
                                                 {screening?.idopont ?
-                                                    new Date(screening.idopont).toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' }) :
+                                                    new Date(screening.idopont).toLocaleTimeString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) :
                                                     'Ismeretlen időpont'}
                                             </span>
                                         </div>
@@ -158,11 +186,22 @@ function ProfileFoglalasok() {
                                     </div>
                                     <button
                                         className="btn btn-danger"
-                                        onClick={() => handleDeleteReservation(reservation.foglalasAdatok.id)}
-                                        style={{ marginLeft: '16px', alignSelf: 'center' }}
-                                        disabled={new Date(screening?.idopont) <= new Date()}
+                                        onClick={() => {
+                                            if (!isPastScreening) {
+                                                handleDeleteReservation(reservation.foglalasAdatok.id);
+                                            }
+                                        }}
+                                        style={{
+                                            marginLeft: '16px',
+                                            alignSelf: 'center',
+                                            opacity: isPastScreening ? 0.6 : 1,
+                                            cursor: isPastScreening ? 'not-allowed' : 'pointer'
+                                        }}
+                                        disabled={isPastScreening}
+                                        title={isPastScreening ? "A vetítés már elmúlt, nem törölhető" : ""}
                                     >
                                         Törlés
+                                        {isPastScreening && <span className="visually-hidden"> (letiltva)</span>}
                                     </button>
                                 </div>
                             );

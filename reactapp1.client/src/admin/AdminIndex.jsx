@@ -4,7 +4,7 @@ import { ThemeContext } from '../layout/Layout';
 
 function AdminIndex() {
     const navigate = useNavigate();
-
+    document.title = "Admin index - Premozi";
     useEffect(() => {
         navigate('/admin/filmek');
     }, [navigate]);

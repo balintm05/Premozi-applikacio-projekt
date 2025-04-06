@@ -78,7 +78,7 @@ const Musor = () => {
             </div>
         </ThemeWrapper>
     );
-
+    document.title = "Műsor - Premozi";
     return (
         <ThemeWrapper>
             <div className="container musor-container">
