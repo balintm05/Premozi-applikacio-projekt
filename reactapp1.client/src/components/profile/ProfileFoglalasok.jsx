@@ -88,7 +88,7 @@ function ProfileFoglalasok() {
                 <div className="profile-error">
                     <h2>Hiba történt</h2>
                     <p>{error}</p>
-                    <button className="btn btn-secondary" onClick={() => window.location.reload()}>
+                    <button className="btn btn-secondary" onClick={() =>navigate("/account/profile/foglalasok")}>
                         Újrapróbálkozás
                     </button>
                 </div>
@@ -125,7 +125,6 @@ function ProfileFoglalasok() {
                         {reservations.map(reservation => {
                             const screening = reservation.foglalasAdatok.foglaltSzekek[0]?.vetitesSzekek?.vetites;
                             const seats = reservation.foglalasAdatok.foglaltSzekek;
-
                             return (
                                 <div key={reservation.foglalasAdatok.id} className="detail-row">
                                     <div style={{ flex: 1 }}>
@@ -161,6 +160,7 @@ function ProfileFoglalasok() {
                                         className="btn btn-danger"
                                         onClick={() => handleDeleteReservation(reservation.foglalasAdatok.id)}
                                         style={{ marginLeft: '16px', alignSelf: 'center' }}
+                                        disabled={new Date(screening?.idopont) <= new Date()}
                                     >
                                         Törlés
                                     </button>

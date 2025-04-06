@@ -260,13 +260,11 @@ export default function Layout() {
                             style={{ color: 'inherit', textDecoration: 'none', background: 'none', border: 'none' }}
                         >
                             Adatvédelmi tájékoztató
-                        </button> -
+                        </button>-
                         <button
                             onClick={() => navigate("/impresszum")}
                             style={{ color: 'inherit', textDecoration: 'none', background: 'none', border: 'none' }}
-                        >
-                            Impresszum
-                        </button>
+                        >Impresszum</button>
                     </div>
                 </footer>
             </div>
