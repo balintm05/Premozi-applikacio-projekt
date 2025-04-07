@@ -1,16 +1,24 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import ThemeWrapper from "../layout/ThemeWrapper";
 import { Button, Alert, Box, Typography, CircularProgress } from "@mui/material";
 
 function Enable2FA() {
-    const { api, user } = useContext(AuthContext);
+    const { api, user, checkAuthStatus } = useContext(AuthContext);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [currentPassword, setCurrentPassword] = useState("");
+    const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
     const navigate = useNavigate();
+
+    // Initialize 2FA state from user data
+    useEffect(() => {
+        if (user) {
+            setTwoFactorEnabled(user.TwoFactorEnabled || false);
+        }
+    }, [user]);
 
     document.title = "Kétlépcsős azonosítás - Premozi";
 
@@ -23,10 +31,16 @@ function Enable2FA() {
             const response = await api.post("/auth/enable-email-2fa");
             if (response.data?.success) {
                 setSuccess("Kétlépcsős azonosítás engedélyezve. Bejelentkezéskor emailben kapott kódot kell megadnia.");
+                // Force refresh user data from backend
+                const refreshed = await checkAuthStatus();
+                if (refreshed) {
+                    setTwoFactorEnabled(true);
+                }
             } else {
                 setError(response.data?.message || "Hiba történt a kétlépcsős azonosítás engedélyezése közben");
             }
         } catch (err) {
+            console.error("2FA enable error:", err);
             setError(err.response?.data?.message || "Hiba történt a kétlépcsős azonosítás engedélyezése közben");
         } finally {
             setIsLoading(false);
@@ -40,22 +54,49 @@ function Enable2FA() {
 
         try {
             const response = await api.post("/auth/disable-email-2fa", {
-                userId: user.userID,
+                userId: user?.userID,
                 password: currentPassword
             });
 
             if (response.data?.success) {
                 setSuccess("Kétlépcsős azonosítás letiltva. Következő bejelentkezéskor nem lesz szükség kódra.");
                 setCurrentPassword("");
+                // Force refresh user data from backend
+                const refreshed = await checkAuthStatus();
+                if (refreshed) {
+                    setTwoFactorEnabled(false);
+                }
             } else {
                 setError(response.data?.message || "Hiba történt a kétlépcsős azonosítás letiltása közben");
             }
         } catch (err) {
+            console.error("2FA disable error:", err);
             setError(err.response?.data?.message || "Hiba történt a kétlépcsős azonosítás letiltása közben");
         } finally {
             setIsLoading(false);
         }
     };
+
+    if (!user) {
+        return (
+            <ThemeWrapper noBg>
+                <Box sx={{
+                    maxWidth: 500,
+                    mx: 'auto',
+                    my: 4,
+                    p: 3,
+                    backgroundColor: 'var(--auth-card-bg)',
+                    borderRadius: 2,
+                    boxShadow: 'var(--auth-shadow)',
+                    border: '1px solid var(--auth-border)'
+                }}>
+                    <Typography variant="h6" sx={{ color: 'var(--auth-text)' }}>
+                        Kérjük jelentkezzen be a kétlépcsős azonosítás beállításához.
+                    </Typography>
+                </Box>
+            </ThemeWrapper>
+        );
+    }
 
     return (
         <ThemeWrapper noBg>
@@ -74,9 +115,9 @@ function Enable2FA() {
                 </Typography>
 
                 <Typography variant="body1" sx={{ mb: 3, color: 'var(--auth-text)' }}>
-                    {user?.TwoFactorEnabled 
-                        ? "Jelenleg kétlépcsős azonosítás aktív a fiókjában."
-                        : "Jelenleg kétlépcsős azonosítás nincs engedélyezve."}
+                    {twoFactorEnabled
+                        ? "Jelenleg kétlépcsős azonosítás aktív a fiókjában. Bejelentkezéskor emailben kapott kódot kell megadnia."
+                        : "Jelenleg kétlépcsős azonosítás nincs engedélyezve. Engedélyezés után bejelentkezéskor emailben kapott kódot kell megadnia."}
                 </Typography>
 
                 {error && (
@@ -91,7 +132,7 @@ function Enable2FA() {
                     </Alert>
                 )}
 
-                {user?.TwoFactorEnabled ? (
+                {twoFactorEnabled ? (
                     <>
                         <Typography variant="body1" sx={{ mb: 2, color: 'var(--auth-text)' }}>
                             A kétlépcsős azonosítás letiltásához erősítse meg jelszavát:

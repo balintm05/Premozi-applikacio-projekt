@@ -120,7 +120,8 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (email, password) => {
         try {
-            const response = await api.post('/auth/register', { email, password }, {
+            const frontendHost = window.location.origin; 
+            const response = await api.post(`/auth/register?frontendHost=${encodeURIComponent(frontendHost)}`, { email, password }, {
                 withCredentials: true
             });
             return { success: true, data: response.data };

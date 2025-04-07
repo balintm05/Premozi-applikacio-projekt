@@ -75,10 +75,9 @@ namespace ReactApp1.Server.Controllers
             return Ok();
         }
 
-
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<Models.ErrorModel?>> Register(AuthUserDto request)
+        public async Task<ActionResult<Models.ErrorModel?>> Register(AuthUserDto request, [FromQuery] string frontendHost)
         {
             if (User.Identity.IsAuthenticated)
                 return BadRequest(new ErrorModel("Már be vagy jelentkezve"));
@@ -93,7 +92,8 @@ namespace ReactApp1.Server.Controllers
 
             var confirmationToken = await authService.GenerateEmailConfirmationTokenAsync(user);
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(confirmationToken));
-            var confirmationLink = $"{Request.Scheme}://{Request.Host}/api/auth/confirm-email?userId={user.userID}&token={encodedToken}";
+            var host = !string.IsNullOrEmpty(frontendHost) ? frontendHost : $"{Request.Scheme}://{Request.Host}";
+            var confirmationLink = $"{host}/auth/confirm-email?userId={user.userID}&token={encodedToken}";
 
             await emailService.SendEmailAsync(
                 user.email,

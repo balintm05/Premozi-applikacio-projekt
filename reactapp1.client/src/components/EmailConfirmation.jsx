@@ -25,7 +25,7 @@ const EmailConfirmation = () => {
             try {
                 await api.get(`/auth/confirm-email?userId=${userId}&token=${token}`);
                 setStatus('success');
-                setTimeout(() => navigate("/change-password"), 3000);
+                setTimeout(() => navigate("/"), 3000);
             } catch (error) {
                 setStatus('error');
                 setErrorMessage(error.response?.data?.message ||
@@ -44,7 +44,12 @@ const EmailConfirmation = () => {
                     <div className="space-y-4">
                         <h2 className="text-2xl font-bold text-gray-800">Email cím megerősítése</h2>
                         <p className="text-gray-600">Kérjük várjon, amíg megerősítjük email címét...</p>
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+
+                        <ThemeWrapper noBg className="betoltes">
+                            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                                <div className="spinner"></div>
+                            </div>
+                        </ThemeWrapper>)
                     </div>
                 )}
 
@@ -52,8 +57,13 @@ const EmailConfirmation = () => {
                     <div className="space-y-4">
                         <h2 className="text-2xl font-bold text-gray-800">Sikeres megerősítés!</h2>
                         <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-                            Email címe sikeresen megerősítve. Átirányítás a jelszó módosítására...
+                            Email címe sikeresen megerősítve. Átirányítás a kezdőlapra...
                         </div>
+                        <ThemeWrapper noBg className="betoltes">
+                            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                                <div className="spinner"></div>
+                            </div>
+                        </ThemeWrapper>)
                     </div>
                 )}
 
@@ -65,6 +75,11 @@ const EmailConfirmation = () => {
                             <br />
                             Átirányítás a kezdőlapra...
                         </div>
+                        <ThemeWrapper noBg className="betoltes">
+                            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                                <div className="spinner"></div>
+                            </div>
+                        </ThemeWrapper>)
                     </div>
                 )}
             </div>
