@@ -521,27 +521,23 @@ namespace ReactApp1.Server.Services.Auth
         public async Task<bool> EnableEmail2FAAsync(int userId)
         {
             var user = await context.Users.FindAsync(userId);
-            if (user == null) return false;
+            if (user == null||user.TwoFactorEnabled==true) return false;
 
             user.TwoFactorEnabled = true;
             await context.SaveChangesAsync();
-
-            var code = new Random().Next(100000, 999999).ToString();
-            await StoreEmail2FACodeAsync(userId, code, 5);
 
             await emailService.SendEmailAsync(
                 user.email,
                 "Kétlépcsős azonosítás engedélyezve",
                 $"<h3>Kétlépcsős azonosítás engedélyezve</h3>" +
-                $"<p>Az Ön fiókjában mostantól kétlépcsős azonosítás van érvényben.</p>" +
-                $"<p>Bejelentkezéskor a következő kódot fogja megkapni: <strong>{code}</strong></p>");
+                $"<p>Az Ön fiókjában mostantól kétlépcsős azonosítás van érvényben.</p>");
 
             return true;
         }
         public async Task<bool> DisableEmail2FAAsync(int userId, string? password = null)
         {
             var user = await context.Users.FindAsync(userId);
-            if (user == null) return false;
+            if (user == null||user.TwoFactorEnabled==false) return false;
             if (password != null)
             {
                 var result = new PasswordHasher<User>().VerifyHashedPassword(user, user.passwordHash, password);

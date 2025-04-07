@@ -134,20 +134,28 @@ function ProfilePage() {
                 )}
 
                 {isViewingOwnProfile ? (
-                    <div className="profile-actions">
-                        <button className="btn btn-primary" onClick={() => navigate("/account/profile/foglalasok")}>
-                            Foglalásaim megtekintése
-                        </button>
-                        <button className="btn btn-primary" onClick={() => navigate("/account/change-email")}>
-                            Email módosítása
-                        </button>
-                        <button className="btn btn-secondary" onClick={() => navigate("/account/change-password")}>
-                            Jelszó módosítása
-                        </button>
-                        <button className="btn btn-danger" onClick={handleDeleteAccount}>
-                            Fiók törlése
-                        </button>
+                    <div>
+                        <div className="profile-actions mb-0">
+                            <button className="btn btn-primary" onClick={() => navigate("/account/profile/foglalasok")}>
+                                Foglalásaim megtekintése
+                            </button>
+                            <button className="btn btn-secondary" onClick={() => navigate("/account/change-email")}>
+                                Email módosítása
+                            </button>
+                            <button className="btn btn-secondary" onClick={() => navigate("/account/change-password")}>
+                                Jelszó módosítása
+                            </button>
+                            <button className="btn btn-secondary" onClick={() => navigate("/account/enable-2fa")}>
+                                Kétlépéses bejelentkezés
+                            </button>
+                        </div>
+                        <div className="profile-actions mt-0" style={{ borderTop: 'none' } } >
+                            <button className="btn btn-danger" onClick={handleDeleteAccount}>
+                                Fiók törlése
+                            </button>
+                        </div>
                     </div>
+                    
                 ) : isAdminView ? (
                     <div className="profile-actions">
                         <button className="btn btn-primary" onClick={() => navigate(`/admin/user/${profileData.userID}/status`)}>

@@ -164,8 +164,8 @@ namespace ReactApp1.Server.Controllers
 
             await emailService.SendEmailAsync(
                 user.email,
-                "Your New 2FA Code",
-                $"<h3>New verification code: <strong>{code}</strong></h3>");
+                "Új 2fa kód",
+                $"<h3>Új 2fa kód: <strong>{code}</strong></h3>");
 
             return Ok();
         }
@@ -419,7 +419,7 @@ namespace ReactApp1.Server.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPost("request-password-reset/{userId}")]
-        public async Task<ActionResult> RequestPasswordReset(int userId)
+        public async Task<ActionResult> RequestPasswordReset(int userId, [FromQuery] string host)
         {
             var targetUser = await authService.GetUserAsync(userId);
             if (targetUser == null) return BadRequest(new ErrorModel("Felhasználó nem található"));
@@ -428,7 +428,7 @@ namespace ReactApp1.Server.Controllers
             var token = await authService.GeneratePasswordResetTokenAsync(userId);
             if (token == null) return BadRequest(new ErrorModel("Hiba történt a token generálása közben"));
 
-            var resetLink = $"{Request.Scheme}://{Request.Host}/reset-password?userId={userId}&token={WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token))}";
+            var resetLink = $"{Request.Scheme}://${host}/reset-password?userId={userId}&token={WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token))}";
 
             await emailService.SendEmailAsync(
                 targetUser.email,

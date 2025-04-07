@@ -39,6 +39,7 @@ import Foglalas from './components/foglalas/Foglalas';
 import ProtectedRoute from './components/ProtectedRoute';
 import FoglalasSuccess from './components/foglalas/FoglalasSuccess';
 import ProfileFoglalasok from './components/profile/ProfileFoglalasok';
+import Enable2FA from './components/Enable2FA';
 
 const App = () => {
     return (
@@ -74,6 +75,7 @@ const App = () => {
                             <Route path="/auth/confirm-email" element={<EmailConfirmation />} />
                             <Route path="/auth/2fa" element={<TwoFactorAuth />} />
                             <Route path="/auth/reset-password" element={<PasswordResetPage />} />
+                            <Route path="/account/enable-2fa" element={<Enable2FA />} />
                         </Route>
 
                         <Route path="/admin" element={<AdminCheck />}>
