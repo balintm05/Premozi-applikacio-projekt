@@ -265,7 +265,17 @@ const Foglalas = () => {
             </button>
         </ThemeWrapper>
     );
-
+    if (new Date(vetites.idopont) < new Date()) {
+        return (
+            <ThemeWrapper className="hiba">
+                <div className="alert alert-danger mb-4">
+                    Erre a vetítésre a foglalás már lezárult
+                </div>
+                <button className="btn btn-primary" onClick={() => navigate('/')}>
+                    Vissza a főoldalra
+                </button>
+            </ThemeWrapper>);       
+    }
     return (
         <ThemeWrapper>
             <div className="foglalas-container">
@@ -275,7 +285,7 @@ const Foglalas = () => {
                     <div className="vetites-info">
                         <p><strong>Időpont:</strong> {formatDate(vetites.idopont)} {formatTime(vetites.idopont)}</p>
                         <p><strong>Terem:</strong> {vetites?.terem?.nev || 'Ismeretlen terem'}</p>
-                        {seatLayout && <p><strong>Ülőhelyek:</strong> {seatLayout.length} sor, {seatLayout[0]?.length || 0} oszlop, {seatLayout.length * seatLayout[0]?.length} összesen</p>}
+                        {seatLayout && <p><strong>Ülőhelyek:</strong> {seatLayout.length} sor, {seatLayout[0]?.length || 0} oszlop, {seatLayout.length * (seatLayout[0]?.length||0)} összesen</p>}
                     </div>
                 </div>
 
