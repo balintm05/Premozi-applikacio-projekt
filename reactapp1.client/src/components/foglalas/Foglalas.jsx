@@ -31,7 +31,6 @@ const Foglalas = () => {
         const abortController = new AbortController();
         const fetchData = async () => {
             if (!vetitesId || typeof vetitesId !== 'string') {
-                console.error('Invalid vetitesId:', vetitesId);
                 setError("Érvénytelen vetítés azonosító");
                 setLoading(false);
                 return;
@@ -109,8 +108,7 @@ const Foglalas = () => {
                 }
             } catch (err) {
                 if (err.name === 'CanceledError' || !componentMounted.current) return;
-                console.error("Hiba az adatok betöltésekor:", err);
-                setError(err.message || "Hiba történt az adatok betöltése közben");
+                setError(err.response?.data?.error?.errorMessage || "Hiba történt az adatok betöltése közben");
             } finally {
                 if (componentMounted.current) {
                     setLoading(false);

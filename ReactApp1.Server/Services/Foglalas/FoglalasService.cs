@@ -20,9 +20,8 @@ namespace ReactApp1.Server.Services.Foglalas
             return await context.JegyTipus.ToListAsync();
         }
         public async Task<List<GetFoglalasResponse>?> GetFoglalas()
-        {
+        {           
             var foglalasok = await context.FoglalasAdatok
-        .AsNoTracking() 
         .Include(x => x.User).IgnoreAutoIncludes()
         .Include(x => x.FoglaltSzekek)
             .ThenInclude(x => x.VetitesSzekek)
@@ -36,6 +35,7 @@ namespace ReactApp1.Server.Services.Foglalas
             .ThenInclude(x => x.JegyTipus).IgnoreAutoIncludes()
         .Select(f => new GetFoglalasResponse(f)) 
         .ToListAsync();
+
             foreach(var f in foglalasok)
             {
                 if (f.foglalasAdatok.FoglaltSzekek.Count()==0||f.foglalasAdatok.User==null)
@@ -49,8 +49,9 @@ namespace ReactApp1.Server.Services.Foglalas
 
         public async Task<List<GetFoglalasResponse>?> GetFoglalasByVetites(int vid)
         {
-            var foglalasok = await context.FoglalasAdatok
-        .AsNoTracking() 
+            try
+            {
+                var foglalasok = await context.FoglalasAdatok
         .Include(x => x.User).IgnoreAutoIncludes()
         .Include(x => x.FoglaltSzekek)
             .ThenInclude(x => x.VetitesSzekek)
@@ -65,24 +66,32 @@ namespace ReactApp1.Server.Services.Foglalas
         .Select(f => new GetFoglalasResponse(f))
         .ToListAsync();
 
-            if (foglalasok.Count == 0)
+                if (foglalasok == null || foglalasok.Count == 0)
+                {
+                    return null;
+                }
+                foreach (var f in foglalasok)
+                {
+                    if (f.foglalasAdatok.FoglaltSzekek.Count() == 0 || f.foglalasAdatok.User == null)
+                    {
+                        context.Remove(f.foglalasAdatok);
+                    }
+                }
+                await context.SaveChangesAsync();
+                return foglalasok;
+            }
+            catch (Exception ex)
             {
                 return null;
             }
-            foreach (var f in foglalasok)
-            {
-                if (f.foglalasAdatok.FoglaltSzekek.Count() == 0 || f.foglalasAdatok.User == null)
-                {
-                    context.Remove(f.foglalasAdatok);
-                }
-            }
-            await context.SaveChangesAsync();
-            return foglalasok;
+            
         }
 
         public async Task<List<GetFoglalasResponse>?> GetFoglalasByUser(int uid)
         {
-            var foglalasok = await context.FoglalasAdatok
+            try
+            {
+                var foglalasok = await context.FoglalasAdatok
                 .AsNoTracking()
                 .Include(x => x.User).IgnoreAutoIncludes()
                 .Include(x => x.FoglaltSzekek)
@@ -99,19 +108,25 @@ namespace ReactApp1.Server.Services.Foglalas
                 .Select(f => new GetFoglalasResponse(f))
                 .ToListAsync();
 
-            if (foglalasok.Count == 0)
+                if (foglalasok.Count == 0)
+                {
+                    return null;
+                }
+                foreach (var f in foglalasok)
+                {
+                    if (f.foglalasAdatok.FoglaltSzekek.Count() == 0 || f.foglalasAdatok.User == null)
+                    {
+                        context.Remove(f.foglalasAdatok);
+                    }
+                }
+                await context.SaveChangesAsync();
+                return foglalasok;
+            }
+            catch (Exception ex)
             {
                 return null;
             }
-            foreach (var f in foglalasok)
-            {
-                if (f.foglalasAdatok.FoglaltSzekek.Count() == 0 || f.foglalasAdatok.User == null)
-                {
-                    context.Remove(f.foglalasAdatok);
-                }
-            }
-            await context.SaveChangesAsync();
-            return foglalasok;
+            
         }
 
         public async Task<Models.ErrorModel?> addFoglalas(ManageFoglalasDto request)

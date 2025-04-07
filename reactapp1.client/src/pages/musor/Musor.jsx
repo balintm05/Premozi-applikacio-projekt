@@ -91,7 +91,7 @@ const Musor = () => {
     return (
         <ThemeWrapper>
             <div className="container musor-container">
-                <h1 className="text-center mb-4">Jelenlegi műsoraink</h1>
+                <h1 className="text-center mb-4">Műsorajánlat</h1>
                 <br></br>
                 <div className="row">
                     {filmsToShow.map(film => {

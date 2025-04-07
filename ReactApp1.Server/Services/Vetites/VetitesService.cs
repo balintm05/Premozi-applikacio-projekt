@@ -55,7 +55,7 @@ namespace ReactApp1.Server.Services.Vetites
         public async Task<GetVetitesResponse?> getVetites(int id)
         {
             var vetites = await context.Vetites.IgnoreAutoIncludes().Include(x => x.VetitesSzekek).Include(x => x.Terem).IgnoreAutoIncludes().Include(x => x.Film).ThenInclude(x => x.Images).IgnoreAutoIncludes().ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == id)).ToListAsync();
-            if (vetites == null)
+            if (vetites == null || vetites.Count()==0)
             {
                 return new GetVetitesResponse("Nincs ilyen id-jű vetítés az adatbázisban");
             }
