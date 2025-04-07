@@ -23,7 +23,7 @@ function TeremEditAdmin() {
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-    document.title = "Terem módosítása - Premozi";
+    document.title = "Terem szerkesztése - Premozi";
     useEffect(() => {
         const loadTeremData = async () => {
             try {
@@ -243,7 +243,7 @@ function TeremEditAdmin() {
             )}
 
             <form onSubmit={handleSubmit}>
-                <div className="row">
+                <div className="row align-items-center">
                     <div className="col-12 col-md-6">
                         <div className={`mb-3 ${darkMode ? 'text-light' : ''}`}>
                             <label htmlFor="nev" className="form-label">Név</label>
@@ -300,7 +300,14 @@ function TeremEditAdmin() {
                     </div>
 
                     <div className="col-12 col-md-6">
-                        {renderSeatGrid()}
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%'
+                        }}>
+                            {renderSeatGrid()}
+                        </div>
                     </div>
                 </div>
 
@@ -309,7 +316,6 @@ function TeremEditAdmin() {
                         type="submit"
                         className={`btn ${darkMode ? 'btn-primary' : 'btn-outline-primary'}`}
                         disabled={isSaving}
-                        style={{ padding: '0.5rem 1rem', flex: '1 1 auto' }}
                     >
                         {isSaving ? 'Mentés...' : (id && id !== 'add' ? 'Mentés' : 'Hozzáadás')}
                     </button>
@@ -318,7 +324,7 @@ function TeremEditAdmin() {
                         className={`btn ${darkMode ? 'btn-secondary' : 'btn-outline-secondary'}`}
                         onClick={() => navigate('/admin/termek')}
                         disabled={isSaving}
-                        style={{ padding: '0.5rem 1rem', flex: '1 1 auto' }}
+
                     >
                         Mégse
                     </button>

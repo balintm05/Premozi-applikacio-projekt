@@ -275,7 +275,7 @@ const Foglalas = () => {
                     <div className="vetites-info">
                         <p><strong>Időpont:</strong> {formatDate(vetites.idopont)} {formatTime(vetites.idopont)}</p>
                         <p><strong>Terem:</strong> {vetites?.terem?.nev || 'Ismeretlen terem'}</p>
-                        {seatLayout && <p><strong>Ülőhelyek:</strong> {seatLayout.length} sor, {seatLayout[0]?.length || 0} oszlop</p>}
+                        {seatLayout && <p><strong>Ülőhelyek:</strong> {seatLayout.length} sor, {seatLayout[0]?.length || 0} oszlop, {seatLayout.length * seatLayout[0]?.length} összesen</p>}
                     </div>
                 </div>
 

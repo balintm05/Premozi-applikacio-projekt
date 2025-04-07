@@ -25,7 +25,7 @@ function VetitesEditAdmin() {
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-    document.title = "Vetítés módosítása - Premozi";
+    document.title = "Vetítés adatai - Premozi";
     useEffect(() => {
         const loadVetitesData = async () => {
             try {
@@ -338,7 +338,14 @@ function VetitesEditAdmin() {
                     </div>
 
                     <div className="col-12 col-md-6">
-                        {renderSeatGrid()}
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: '100%'
+                        }}>
+                            {renderSeatGrid()}
+                        </div>
                     </div>
                 </div>
 
