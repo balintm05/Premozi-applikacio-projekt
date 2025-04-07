@@ -172,9 +172,9 @@ namespace ReactApp1.Server.Services.Auth
             var statusMessage = newStatus == 1 ? "aktiválva" : "felfüggesztve";
             await emailService.SendEmailAsync(
                 user.email,
-                "Fiók státusz változás",
-                $"<h3>Fioók státusza megváltozott</h3>" +
-                $"<p>Az Ön fiókját {statusMessage} lett.</p>");
+                "Fiók állapot változás",
+                $"<h3>Fiókjának állapota megváltozott</h3>" +
+                $"<p>Az Ön fiókja {statusMessage} lett.</p>");
 
             return true;
         }

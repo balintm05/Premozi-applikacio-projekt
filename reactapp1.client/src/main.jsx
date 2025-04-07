@@ -46,49 +46,64 @@ const App = () => {
         <AuthProvider>
             <Router>
                 <Routes>
-                    <Route element={<Layout />}>
-                        <Route>
-                            <Route index element={<Index />} />  
-                            <Route path="/film/:id" element={<FilmAdatok />} />  
-                            <Route path="foglalas" element={<ProtectedRoute />}>
-                                <Route path=":id" element={<Foglalas />} />
-                                <Route path="success" element={<FoglalasSuccess />} />
-                                <Route index element={<Navigate to="/musor" replace />} />
-                                <Route path="*" element={<Navigate to="/musor" replace />} />
+                    <Route path="" element={<Layout />}>     
+                    
+                        <Route index element={<Index />} />  
+                        <Route path="jegyarak" element={<Jegyarak />} />
+                        <Route path="kapcsolat" element={<Kapcsolat />} />
+                        <Route path="adatvedelem" element={<AdatvedelmiTajekoztato />} />
+                        <Route path="impresszum" element={<Impresszum />} />
+
+                        <Route path="film/:id" element={<FilmAdatok />} />  
+
+                        <Route path="foglalas" element={<ProtectedRoute />}>
+                            <Route path=":id" element={<Foglalas />} />
+                            <Route path="success" element={<FoglalasSuccess />} />
+                            <Route index element={<Navigate to="/" replace />} />
+                            <Route path="*" element={<Navigate to="/" replace />} />
+                        </Route>    
+                        
+                        <Route path="account">
+                            <Route path="login" element={<Login />} />
+                            <Route path="register" element={<Register />} />
+                            <Route path="logout" element={<Logout />} />
+                            <Route element={<ProtectedRoute />}>
+                                <Route path="profile/:id?" element={<ProfilePage />} />
+                                <Route path="profile/foglalasok" element={<ProfileFoglalasok />} />
+                                <Route path="change-email" element={<ChangeEmailPage />} />
+                                <Route path="change-password" element={<ChangePasswordPage />} />
+                                <Route path="enable-2fa" element={<Enable2FA />} />
                             </Route>
-                            <Route path="/jegyarak" element={<Jegyarak />} />
-                            <Route path="/kapcsolat" element={<Kapcsolat />} />
-                            <Route path="/adatvedelem" element={<AdatvedelmiTajekoztato />} />
-                            <Route path="/impresszum" element={<Impresszum />} />
-                        </Route>
-                        <Route>
-                            <Route path="/account/login" element={<Login />} />
-                            <Route path="/account/register" element={<Register />} />
-                            <Route path="/account/logout" element={<Logout />} />
-                            <Route path="/account/profile/details/:id?" element={<ProfilePage />} />
-                            <Route path="/account/profile/foglalasok" element={<ProfileFoglalasok />} />
-                            <Route path="/account/change-email" element={<ChangeEmailPage />} />
-                            <Route path="/account/change-password" element={<ChangePasswordPage />} />
-                            <Route path="/auth/confirm-email" element={<EmailConfirmation />} />
-                            <Route path="/auth/2fa" element={<TwoFactorAuth />} />
-                            <Route path="/auth/reset-password" element={<PasswordResetPage />} />
-                            <Route path="/account/enable-2fa" element={<Enable2FA />} />
                         </Route>
 
-                        <Route path="/admin" element={<AdminCheck />}>
+                        <Route path="auth">
+                            <Route path="confirm-email" element={<EmailConfirmation />} />
+                            <Route path="reset-password" element={<PasswordResetPage />} />
+                            <Route path="2fa" element={<TwoFactorAuth />} />
+                        </Route>     
+                        
+                        <Route path="admin" element={<AdminCheck />}>
                             <Route index element={<AdminIndex />} />
-                            <Route path="users" element={<UserListAdmin />} />
-                            <Route path="user/:id/status" element={<AdminUserStatusPage />} />
-                            <Route path="user/:id/force-password-change" element={<AdminForcePasswordChangePage />} />
-                            <Route path="filmek" element={<FilmListAdmin />} />
-                            <Route path="filmek/add" element={<FilmEditAdmin />} />
-                            <Route path="filmek/edit/:id" element={<FilmEditAdmin />} />
-                            <Route path="termek" element={<TeremListAdmin />} />
-                            <Route path="termek/add" element={<TeremEditAdmin />} />
-                            <Route path="termek/edit/:id" element={<TeremEditAdmin />} />
-                            <Route path="vetitesek" element={<VetitesListAdmin />} />
-                            <Route path="vetitesek/add" element={<VetitesEditAdmin />} />
-                            <Route path="vetitesek/edit/:id" element={<VetitesEditAdmin />} />
+                            <Route path="users">
+                                <Route index element={<UserListAdmin />} />
+                                <Route path=":id/status" element={<AdminUserStatusPage />} />
+                                <Route path=":id/force-password-change" element={<AdminForcePasswordChangePage />} />
+                            </Route>
+                            <Route path="filmek">
+                                <Route index element={<FilmListAdmin />} />
+                                <Route path="add" element={<FilmEditAdmin />} />
+                                <Route path="edit/:id" element={<FilmEditAdmin />} />
+                            </Route>
+                            <Route path="termek">
+                                <Route index element={<TeremListAdmin />} />
+                                <Route path="add" element={<TeremEditAdmin />} />
+                                <Route path="edit/:id" element={<TeremEditAdmin />} />
+                            </Route>
+                            <Route path="vetitesek">
+                                <Route index element={<VetitesListAdmin />} />
+                                <Route path="add" element={<VetitesEditAdmin />} />
+                                <Route path="edit/:id" element={<VetitesEditAdmin />} />
+                            </Route>
                             <Route path="foglalas" element={<FoglalasListAdmin />} />
                             <Route path="kepek" element={<ImageLibrary />}/>
                         </Route>

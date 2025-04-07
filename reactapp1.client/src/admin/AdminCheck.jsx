@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import PageNotFound from "../errors/PageNotFound.jsx";
 import { AuthContext } from "../context/AuthContext.jsx";
-import { api } from "../api/axiosConfig.js"
 
 function AdminChecker() {
     const [isAdmin, setIsAdmin] = useState(null);

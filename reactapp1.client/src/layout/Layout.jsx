@@ -73,7 +73,7 @@ function UserDropdown({ setNavbarCollapsed }) {
                 <li>
                     <button
                         className="dropdown-item"
-                        onClick={() => handleNavigation("/account/profile/details")}
+                        onClick={() => handleNavigation("/account/profile")}
                         style={{ color: 'var(--dropdown-text)' }}
                     >
                         Profil

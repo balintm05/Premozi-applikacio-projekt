@@ -156,7 +156,7 @@ function UserListAdmin() {
                                     <div className="gap-2">
                                         <button
                                             className={`btn btn-sm btn-primary`}
-                                            onClick={() => navigate(`/account/profile/details/${row.userID}`)}
+                                            onClick={() => navigate(`/account/profile/${row.userID}`)}
                                             style={{
                                                 padding: '0.5rem 1rem',
                                                 borderRight: `1px solid ${darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)'}`

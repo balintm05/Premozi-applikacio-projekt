@@ -158,10 +158,10 @@ function ProfilePage() {
                     
                 ) : isAdminView ? (
                     <div className="profile-actions">
-                        <button className="btn btn-primary" onClick={() => navigate(`/admin/user/${profileData.userID}/status`)}>
+                        <button className="btn btn-primary" onClick={() => navigate(`/admin/users/${profileData.userID}/status`)}>
                             Státusz módosítása
                         </button>
-                        <button className="btn btn-secondary" onClick={() => navigate(`/admin/user/${profileData.userID}/force-password-change`)}>
+                        <button className="btn btn-secondary" onClick={() => navigate(`/admin/users/${profileData.userID}/force-password-change`)}>
                             Jelszóváltoztatás kényszerítése
                         </button>
                     </div>

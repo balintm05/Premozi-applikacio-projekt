@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { Box, Button, Typography, Alert } from "@mui/material";
+import ThemeWrapper from '../layout/ThemeWrapper';
 
 function AdminForcePasswordChangePage() {
     const { id } = useParams();
@@ -15,7 +16,7 @@ function AdminForcePasswordChangePage() {
         setIsLoading(true);
         setError(null);
         try {
-            await api.post(`/auth/request-password-reset/${id}`);
+            await api.post(`/auth/request-password-reset/${id}?frontendHost=${encodeURIComponent(window.location.origin)}`);
             setSuccess(true);
             setTimeout(() => navigate(-1), 2000);
         } catch (err) {
