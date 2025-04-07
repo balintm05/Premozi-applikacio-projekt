@@ -145,14 +145,16 @@ namespace ReactApp1.Server.Services.Auth
             var confirmationToken = await GenerateEmailConfirmationTokenAsync(user);
             var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(confirmationToken));
 
-            await emailService.SendEmailAsync(
-                request.email,
-                "Erősítse meg új email címét",
-                $"<h1>Email cím változás</h1>" +
-                $"<p>Kattintson <a href='{baseUrl}/auth/confirm-email?userId={user.userID}&token={encodedToken}'>ide</a> az új email cím megerősítéséhez.</p>");
-
-            user.email = request.email;
-            user.EmailConfirmed = false;
+            if (user.email != request.email)
+            {
+                user.email = request.email;
+                user.EmailConfirmed = false;
+                await emailService.SendEmailAsync(
+                    request.email,
+                    "Erősítse meg új email címét",
+                    $"<h1>Email cím változás</h1>" +
+                    $"<p>Kattintson <a href='{baseUrl}/auth/confirm-email?userId={user.userID}&token={encodedToken}'>ide</a> az új email cím megerősítéséhez.</p>");
+            }           
             await context.SaveChangesAsync();
             return true;
         }

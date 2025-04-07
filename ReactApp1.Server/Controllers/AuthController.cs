@@ -265,7 +265,7 @@ namespace ReactApp1.Server.Controllers
 
         [Authorize]
         [HttpPatch("editUser")]
-        public async Task<ActionResult<Models.ErrorModel>> EditUser(EditUserDto request)
+        public async Task<ActionResult<Models.ErrorModel>> EditUser(EditUserDto request, [FromQuery] string? frontendHost)
         {
             int? id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             if (id == null)
@@ -273,7 +273,7 @@ namespace ReactApp1.Server.Controllers
                 return BadRequest(new Models.ErrorModel("Hiba történt"));
             }
             var baseUrl = $"{Request.Scheme}://{Request.Host}";
-            var isSuccessful = await authService.EditUserAsync(request, (int)id, baseUrl);
+            var isSuccessful = await authService.EditUserAsync(request, (int)id, frontendHost);
             return isSuccessful == true
                 ? Ok(new Models.ErrorModel("Sikeres frissítés. Kérjük erősítse meg az új email címét."))
                 : BadRequest(new Models.ErrorModel("Az email cím nem megfelelő vagy a jelszó hibás, nem történt változás"));

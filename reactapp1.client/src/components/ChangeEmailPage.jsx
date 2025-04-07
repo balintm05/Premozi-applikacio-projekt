@@ -18,7 +18,7 @@ function ChangeEmailPage() {
         setError(null);
 
         try {
-            const response = await api.patch("/auth/editUser", {
+            const response = await api.patch(`/auth/editUser?frontendHost=${encodeURIComponent(window.location.origin)}`, {
                 email: newEmail,
                 currentPassword
             });
