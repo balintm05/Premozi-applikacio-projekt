@@ -293,7 +293,7 @@ namespace ReactApp1.Server.Controllers
 
 
         [Authorize]
-        [HttpPatch("editPassword")]
+        [HttpPatch("editPassword")] 
         public async Task<ActionResult<Models.ErrorModel?>> EditPassword(EditPasswordDto request)
         {
             int? id = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));

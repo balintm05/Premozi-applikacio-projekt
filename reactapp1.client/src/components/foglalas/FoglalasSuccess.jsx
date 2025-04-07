@@ -52,7 +52,7 @@ const FoglalasSuccess = () => {
                     <div className="text-center mt-4">
                         <button
                             className="btn btn-success-foglalas"
-                            onClick={() => navigate('/musor')}
+                            onClick={() => navigate('/')}
                         >
                             Vissza a főoldalra most
                         </button>

@@ -200,17 +200,6 @@ export default function Layout() {
                                         <button
                                             className="nav-link"
                                             onClick={() => {
-                                                navigate("/musor");
-                                                setNavbarCollapsed(true);
-                                            }}
-                                        >
-                                            Műsor
-                                        </button>
-                                    </li>
-                                    <li className="nav-item">
-                                        <button
-                                            className="nav-link"
-                                            onClick={() => {
                                                 navigate("/jegyarak");
                                                 setNavbarCollapsed(true);
                                             }}

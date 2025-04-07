@@ -1,24 +1,39 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
 import ThemeWrapper from "../layout/ThemeWrapper";
 import { Button, Alert, Box, Typography, CircularProgress } from "@mui/material";
+import { api } from "../api/axiosConfig";
 
 function Enable2FA() {
-    const { api, user, checkAuthStatus } = useContext(AuthContext);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [currentPassword, setCurrentPassword] = useState("");
     const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+    const [userid, setUserid] = useState(null);
     const navigate = useNavigate();
 
-    // Initialize 2FA state from user data
-    useEffect(() => {
-        if (user) {
-            setTwoFactorEnabled(user.TwoFactorEnabled || false);
+    const fetch2FAStatus = async () => {
+        setIsCheckingAuth(true);
+        try {
+            const response = await api.post("/auth/checkIfLoggedIn");
+            if (response.data?.isLoggedIn && response.data?.user) {
+                setTwoFactorEnabled(response.data.user.twoFactorEnabled);
+                setUserid(response.data.user.userID);
+            } else {
+                setTwoFactorEnabled(false);
+            }
+        } catch (err) {
+            console.error("Failed to fetch auth status:", err);
+            setTwoFactorEnabled(false);
         }
-    }, [user]);
+        setIsCheckingAuth(false);
+    };
+
+    useEffect(() => {
+        fetch2FAStatus();
+    }, []);
 
     document.title = "Kétlépcsős azonosítás - Premozi";
 
@@ -29,13 +44,12 @@ function Enable2FA() {
 
         try {
             const response = await api.post("/auth/enable-email-2fa");
+            console.log("Enable 2FA response:", response.data); 
+
             if (response.data?.success) {
                 setSuccess("Kétlépcsős azonosítás engedélyezve. Bejelentkezéskor emailben kapott kódot kell megadnia.");
-                // Force refresh user data from backend
-                const refreshed = await checkAuthStatus();
-                if (refreshed) {
-                    setTwoFactorEnabled(true);
-                }
+                setTwoFactorEnabled(true);
+                await fetch2FAStatus(); 
             } else {
                 setError(response.data?.message || "Hiba történt a kétlépcsős azonosítás engedélyezése közben");
             }
@@ -54,18 +68,16 @@ function Enable2FA() {
 
         try {
             const response = await api.post("/auth/disable-email-2fa", {
-                userId: user?.userID,
-                password: currentPassword
+                password: currentPassword,
+                userId: userid
             });
+            console.log("Disable 2FA response:", response.data); 
 
             if (response.data?.success) {
                 setSuccess("Kétlépcsős azonosítás letiltva. Következő bejelentkezéskor nem lesz szükség kódra.");
                 setCurrentPassword("");
-                // Force refresh user data from backend
-                const refreshed = await checkAuthStatus();
-                if (refreshed) {
-                    setTwoFactorEnabled(false);
-                }
+                setTwoFactorEnabled(false);
+                await fetch2FAStatus(); 
             } else {
                 setError(response.data?.message || "Hiba történt a kétlépcsős azonosítás letiltása közben");
             }
@@ -77,7 +89,7 @@ function Enable2FA() {
         }
     };
 
-    if (!user) {
+    if (isCheckingAuth) {
         return (
             <ThemeWrapper noBg>
                 <Box sx={{
@@ -88,11 +100,10 @@ function Enable2FA() {
                     backgroundColor: 'var(--auth-card-bg)',
                     borderRadius: 2,
                     boxShadow: 'var(--auth-shadow)',
-                    border: '1px solid var(--auth-border)'
+                    border: '1px solid var(--auth-border)',
+                    textAlign: 'center'
                 }}>
-                    <Typography variant="h6" sx={{ color: 'var(--auth-text)' }}>
-                        Kérjük jelentkezzen be a kétlépcsős azonosítás beállításához.
-                    </Typography>
+                    <CircularProgress />
                 </Box>
             </ThemeWrapper>
         );

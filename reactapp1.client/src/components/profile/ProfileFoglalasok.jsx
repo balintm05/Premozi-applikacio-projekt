@@ -123,10 +123,10 @@ function ProfileFoglalasok() {
             <ThemeWrapper>
                 <div className="profile-empty">
                     <h2>Nincsenek foglalások</h2>
-                    <p>Még nem történt foglalás a fiókodhoz, vagy nincsenek érvényes foglalások.</p>
+                    <p>Még nem tartozik foglalás a fiókjához</p>
                     <button
                         className="btn btn-primary"
-                        onClick={() => navigate('/musor')}
+                        onClick={() => navigate('/')}
                     >
                         Moziprogram megtekintése
                     </button>
@@ -158,7 +158,7 @@ function ProfileFoglalasok() {
                                     <div style={{ flex: 1 }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                             <span className="detail-label">
-                                                {screening?.film?.cim || 'Ismeretlen film'}
+                                                <a style={{ cursor: 'pointer' }} onClick={e => { e.preventDefault(); navigate(`/film/${screening?.film?.id}`) }}>{screening?.film?.cim || 'Ismeretlen film'}</a>
                                             </span>
                                             <span className="detail-value">
                                                 {formatDateTime(reservation.foglalasAdatok.foglalasIdopontja)}

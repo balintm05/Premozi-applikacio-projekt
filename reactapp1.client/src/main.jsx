@@ -48,11 +48,8 @@ const App = () => {
                 <Routes>
                     <Route element={<Layout />}>
                         <Route>
-                            <Route index element={<Index />} />
-                            <Route path="/musor">
-                                <Route index element={<Musor />} />
-                                <Route path="film/:id" element={<FilmAdatok />} />                               
-                            </Route>        
+                            <Route index element={<Index />} />  
+                            <Route path="/film/:id" element={<FilmAdatok />} />  
                             <Route path="foglalas" element={<ProtectedRoute />}>
                                 <Route path=":id" element={<Foglalas />} />
                                 <Route path="success" element={<FoglalasSuccess />} />

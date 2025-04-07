@@ -287,7 +287,7 @@ function FilmListAdmin() {
                                                                                 className={`btn btn-sm btn-success`}
                                                                                 onClick={(e) => {
                                                                                     e.stopPropagation();
-                                                                                    navigate(`/musor/film/${film.id}`);
+                                                                                    navigate(`/film/${film.id}`);
                                                                                 }}
                                                                             >
                                                                                 Oldal

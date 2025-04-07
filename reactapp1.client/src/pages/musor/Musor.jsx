@@ -35,6 +35,7 @@ const Musor = () => {
         const now = new Date();
         const nextWeek = new Date();
         nextWeek.setDate(now.getDate() + 30);
+
         const filteredFilms = films.filter(film => {
             if (!film.vetitesek || film.vetitesek.length === 0) return false;
             return film.vetitesek.some(screening => {
@@ -43,14 +44,22 @@ const Musor = () => {
             });
         });
         return filteredFilms.sort((a, b) => {
-            const aCount = a.vetitesek ? a.vetitesek.length : 0;
-            const bCount = b.vetitesek ? b.vetitesek.length : 0;
+            const aCount = a.vetitesek ? a.vetitesek.filter(screening => {
+                const screeningDate = new Date(screening.idopont);
+                return screeningDate >= now && screeningDate <= nextWeek;
+            }).length : 0;
+
+            const bCount = b.vetitesek ? b.vetitesek.filter(screening => {
+                const screeningDate = new Date(screening.idopont);
+                return screeningDate >= now && screeningDate <= nextWeek;
+            }).length : 0;
+
             return bCount - aCount;
         });
     };
 
     const handleFilmClick = (filmId) => {
-        navigate(`/musor/film/${filmId}`);
+        navigate(`/film/${filmId}`);
     };
 
     if (loading) return (

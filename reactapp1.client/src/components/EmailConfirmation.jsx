@@ -10,6 +10,7 @@ const EmailConfirmation = () => {
     const [status, setStatus] = useState('loading');
     const [errorMessage, setErrorMessage] = useState('');
     document.title = "Email cím megerősítése - Premozi";
+
     useEffect(() => {
         const confirmEmail = async () => {
             const userId = searchParams.get('userId');
@@ -39,49 +40,50 @@ const EmailConfirmation = () => {
 
     return (
         <ThemeWrapper>
-            <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md text-center">
-                {status === 'loading' && (
-                    <div className="space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-800">Email cím megerősítése</h2>
-                        <p className="text-gray-600">Kérjük várjon, amíg megerősítjük email címét...</p>
-
-                        <ThemeWrapper noBg className="betoltes">
-                            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+            <div className="auth-container">
+                <div className="auth-card">
+                    {status === 'loading' && (
+                        <div className="space-y-4">
+                            <div className="auth-card-header">
+                                <h1>Email cím megerősítése</h1>
+                                <p>Kérjük várjon, amíg megerősítjük email címét...</p>
+                            </div>
+                            <div style={{ textAlign: "center", padding: "2rem", margin: "0 auto" }}>
                                 <div className="spinner"></div>
                             </div>
-                        </ThemeWrapper>)
-                    </div>
-                )}
-
-                {status === 'success' && (
-                    <div className="space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-800">Sikeres megerősítés!</h2>
-                        <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded">
-                            Email címe sikeresen megerősítve. Átirányítás a kezdőlapra...
                         </div>
-                        <ThemeWrapper noBg className="betoltes">
-                            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
-                                <div className="spinner"></div>
-                            </div>
-                        </ThemeWrapper>)
-                    </div>
-                )}
+                    )}
 
-                {status === 'error' && (
-                    <div className="space-y-4">
-                        <h2 className="text-2xl font-bold text-gray-800">Hiba történt</h2>
-                        <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                            {errorMessage}
-                            <br />
-                            Átirányítás a kezdőlapra...
-                        </div>
-                        <ThemeWrapper noBg className="betoltes">
-                            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                    {status === 'success' && (
+                        <div className="space-y-4">
+                            <div className="auth-card-header">
+                                <h1>Sikeres megerősítés!</h1>
+                            </div>
+                            <div className="auth-success">
+                                Email címe sikeresen megerősítve. Átirányítás a kezdőlapra...
+                            </div>
+                            <div style={{ textAlign: "center", padding: "2rem", margin: "0 auto" }}>
                                 <div className="spinner"></div>
                             </div>
-                        </ThemeWrapper>)
-                    </div>
-                )}
+                        </div>
+                    )}
+
+                    {status === 'error' && (
+                        <div className="space-y-4">
+                            <div className="auth-card-header">
+                                <h1>Hiba történt</h1>
+                            </div>
+                            <div className="auth-error">
+                                {errorMessage}
+                                <br />
+                                Átirányítás a kezdőlapra...
+                            </div>
+                            <div style={{ textAlign: "center", padding: "2rem", margin: "0 auto" }}>
+                                <div className="spinner"></div>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
         </ThemeWrapper>
     );
