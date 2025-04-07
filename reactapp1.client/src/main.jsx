@@ -59,8 +59,6 @@ const App = () => {
                         <Route path="foglalas" element={<ProtectedRoute />}>
                             <Route path=":id" element={<Foglalas />} />
                             <Route path="success" element={<FoglalasSuccess />} />
-                            <Route index element={<Navigate to="/" replace />} />
-                            <Route path="*" element={<Navigate to="/" replace />} />
                         </Route>    
                         
                         <Route path="account">
@@ -68,8 +66,10 @@ const App = () => {
                             <Route path="register" element={<Register />} />
                             <Route path="logout" element={<Logout />} />
                             <Route element={<ProtectedRoute />}>
-                                <Route path="profile/:id?" element={<ProfilePage />} />
-                                <Route path="profile/foglalasok" element={<ProfileFoglalasok />} />
+                                <Route path="profile">
+                                    <Route path=":id?" element={<ProfilePage />} />
+                                    <Route path="foglalasok" element={<ProfileFoglalasok />} />
+                                </Route>
                                 <Route path="change-email" element={<ChangeEmailPage />} />
                                 <Route path="change-password" element={<ChangePasswordPage />} />
                                 <Route path="enable-2fa" element={<Enable2FA />} />
@@ -86,8 +86,10 @@ const App = () => {
                             <Route index element={<AdminIndex />} />
                             <Route path="users">
                                 <Route index element={<UserListAdmin />} />
-                                <Route path=":id/status" element={<AdminUserStatusPage />} />
-                                <Route path=":id/force-password-change" element={<AdminForcePasswordChangePage />} />
+                                <Route path=":id">
+                                    <Route path="status" element={<AdminUserStatusPage />} />
+                                    <Route path="force-password-change" element={<AdminForcePasswordChangePage />} />
+                                </Route>                               
                             </Route>
                             <Route path="filmek">
                                 <Route index element={<FilmListAdmin />} />
