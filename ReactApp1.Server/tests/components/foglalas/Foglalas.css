@@ -1,0 +1,269 @@
+.foglalas-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.foglalas-header {
+    margin-bottom: 30px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: var(--content-bg);
+}
+
+.foglalas-content {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.seat-selection {
+    flex: 1;
+    min-width: 300px;
+    background-color: var(--content-bg);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.ticket-selection {
+    flex: 0 0 350px;
+    background-color: var(--content-bg);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.screen-indicator {
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: rgb(70, 70, 70);
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1.2em;
+    letter-spacing: 2px;
+    color: white;
+}
+
+.screen-and-grid-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.seat-map-container {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.seat-map {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.seat-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.row-number {
+    width: 30px;
+    text-align: center;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.seat {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    background-color: #ccc;
+    color: white;
+    transition: all 0.2s ease;
+}
+
+    .seat:hover {
+        transform: scale(1.1);
+    }
+
+    .seat.available {
+        background-color: #4CAF50;
+    }
+
+    .seat.selected {
+        background-color: #2196F3;
+    }
+
+    .seat.reserved {
+        background-color: #f44336;
+        cursor: not-allowed;
+    }
+
+    .seat.unavailable {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+.legend-color.available {
+    background-color: #4CAF50;
+}
+
+.legend-color.selected {
+    background-color: #2196F3;
+}
+
+.legend-color.reserved {
+    background-color: #f44336;
+}
+
+.legend-color.unavailable {
+    background-color: #ccc;
+}
+
+.ticket-type {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+    .ticket-type label {
+        min-width: 80px;
+    }
+
+    .ticket-type input {
+        width: 60px;
+        padding: 5px;
+        border-radius: 4px;
+        border: 1px solid var(--border-color);
+        background-color: var(--dropdown-bg);
+        color: var(--text-color);
+    }
+
+.ticket-price {
+    font-weight: bold;
+}
+
+.total-price {
+    margin: 25px 0;
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .total-price span {
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+
+.selected-seats-info {
+    margin-bottom: 20px;
+}
+
+    .selected-seats-info ul {
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 10px;
+    }
+
+.reserve-button {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--auth-btn-bg);
+    color: var(--auth-btn-text);
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .reserve-button:hover {
+        background-color: var(--auth-link-hover);
+    }
+
+    .reserve-button:disabled {
+        background-color: var(--border-color);
+        cursor: not-allowed;
+    }
+
+@media (max-width: 768px) {
+    .foglalas-content {
+        flex-direction: column;
+    }
+
+    .ticket-selection {
+        flex: 1;
+    }
+}
+
+.selected-seats-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.selected-seat-item {
+    padding: 10px;
+    margin-bottom: 5px;
+    background-color: var(--dropdown-bg);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .selected-seat-item:hover {
+        background-color: var(--dropdown-hover-bg);
+    }
+
+    .selected-seat-item.active {
+        background-color: var(--dropdown-active-bg);
+    }
+
+.seat-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ticket-type-badge {
+    background-color: var(--auth-btn-bg);
+    color: var(--auth-btn-text);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.85em;
+}
+
+.ticket-type-dropdown {
+    margin-top: 5px;
+    background-color: var(--content-bg);
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+.dropdown-item {
+    padding: 8px 10px;
+    transition: background-color 0.2s ease;
+}
+
+    .dropdown-item:hover {
+        background-color: var(--dropdown-hover-bg);
+    }
+
+    .dropdown-item.active {
+        background-color: var(--dropdown-active-bg);
+        color: var(--auth-btn-text);
+    }
