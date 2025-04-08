@@ -211,11 +211,11 @@ export default function Layout() {
                                         <button
                                             className="nav-link"
                                             onClick={() => {
-                                                navigate("/kapcsolat");
+                                                navigate("/rolunk");
                                                 setNavbarCollapsed(true);
                                             }}
                                         >
-                                            Kapcsolat
+                                            Rólunk
                                         </button>
                                     </li>
                                 </ul>

@@ -1,8 +1,8 @@
-function Kapcsolat() {
+function Rolunk() {
     document.title = "Kapcsolat - Premozi";
   return (
     <p>Kapcsolat ide</p>
   );
 }
 
-export default Kapcsolat;
+export default Rolunk;

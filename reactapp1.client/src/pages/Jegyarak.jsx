@@ -12,7 +12,7 @@ function Jegyarak() {
             try {
                 const response = await api.get('/foglalas/getJegyTipus');
                 setJegyTipusok(response.data);
-            } catch (err) {
+            } catch  {
                 setError('Hiba a jegyár adatok betöltésekor');
             } finally {
                 setIsLoading(false);

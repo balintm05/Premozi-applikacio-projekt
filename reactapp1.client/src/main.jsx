@@ -26,7 +26,7 @@ import ChangePasswordPage from './components/ChangePasswordPage';
 import PasswordResetPage from './components/PasswordResetPage';
 import AdminUserStatusPage from './admin/AdminUserStatusPage';
 import AdminForcePasswordChangePage from './admin/AdminForcePasswordChange';
-import Kapcsolat from './pages/kapcsolat';
+import Rolunk from './pages/Rolunk';
 import Jegyarak from './pages/Jegyarak';
 import ImageLibrary from './components/images/ImageLibrary';
 import AdatvedelmiTajekoztato from './pages/AdatvedelmiTajekoztato';
@@ -47,7 +47,7 @@ const App = () => {
                     
                         <Route index element={<Index />} />  
                         <Route path="jegyarak" element={<Jegyarak />} />
-                        <Route path="kapcsolat" element={<Kapcsolat />} />
+                        <Route path="rolunk" element={<Rolunk />} />
                         <Route path="adatvedelem" element={<AdatvedelmiTajekoztato />} />
                         <Route path="impresszum" element={<Impresszum />} />
 

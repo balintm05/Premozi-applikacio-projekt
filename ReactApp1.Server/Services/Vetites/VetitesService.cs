@@ -90,6 +90,10 @@ namespace ReactApp1.Server.Services.Vetites
             {
                 return new ErrorModel("A már megtörtént vetítés nem módosítható!");
             }
+            if (!( true))
+            {
+                return new ErrorModel("A vetítésnek nyitvatartási időn belül kell lennie");
+            }
             var patchDoc = new JsonPatchDocument<Entities.Vetites.Vetites>();
             var fidb = int.TryParse(request.Filmid, out int fid);
             var tidb = int.TryParse(request.Teremid, out int tid);
