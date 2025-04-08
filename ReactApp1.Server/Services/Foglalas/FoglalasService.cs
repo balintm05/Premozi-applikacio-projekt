@@ -381,6 +381,7 @@ namespace ReactApp1.Server.Services.Foglalas
         <h2>Tisztelt {user.email}!</h2>
         <p>Sikeresen módosította a foglalását:</p>
         <p><strong>Film:</strong> {film?.Cim ?? "Ismeretlen film"}</p>
+        <p><strong>Terem:</strong> {vetites.Terem.Nev ?? "Ismeretlen terem"}</p>
         <p><strong>Vetítés ideje:</strong> {vetites.Idopont.ToString("yyyy.MM.dd HH:mm")}</p>
         <p><strong>Foglalt helyek:</strong> {seatsList}</p>
         <p><strong>Összesen:</strong> {totalPrice} Ft</p>
@@ -436,6 +437,7 @@ namespace ReactApp1.Server.Services.Foglalas
             {
                 var user = foglalas.User;
                 var vetites = foglalas.FoglaltSzekek.FirstOrDefault()?.VetitesSzekek?.Vetites;
+                var terem = await context.Terem.FindAsync(foglalas.FoglaltSzekek.FirstOrDefault()?.VetitesSzekek?.Vetites.Teremid);
                 var film = vetites?.Film;
                 var jegyTipusok = foglalas.FoglaltSzekek.Select(fs => fs.JegyTipus).ToList();
 
@@ -449,6 +451,7 @@ namespace ReactApp1.Server.Services.Foglalas
             <h2>Tisztelt {user.email}!</h2>
             <p>A következő foglalása törölve lett:</p>
             <p><strong>Film:</strong> {film?.Cim ?? "Ismeretlen film"}</p>
+            <p><strong>Terem:</strong> {terem.Nev ?? "Ismeretlen terem"}</p>
             <p><strong>Vetítés ideje:</strong> {vetites?.Idopont.ToString("yyyy.MM.dd HH:mm") ?? "Ismeretlen időpont"}</p>
             <p><strong>Foglalt helyek:</strong> {seatsList}</p>
             <p><strong>Összesen:</strong> {totalPrice} Ft</p>
