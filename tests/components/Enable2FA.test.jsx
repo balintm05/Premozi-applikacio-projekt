@@ -3,6 +3,7 @@ using Moq;
 using Microsoft.AspNetCore.Mvc;
 using ReactApp1.Server.Controllers;
 using ReactApp1.Server.Services;
+using NUnit.Framework;
 
 public class Enable2FATests
 {
