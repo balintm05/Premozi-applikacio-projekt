@@ -165,7 +165,7 @@ function VetitesIdopontLista() {
         <ThemeWrapper className="main-content p-4">
             <div className="vetites-container">
                 <h2 className="mb-4">Vetítések időpontjai</h2>
-                <div className="d-flex mb-4" style={{  }}>
+                <div className="d-flex mb-4">
                     <ul className="nav nav-tabs" style={{ flexWrap: 'nowrap' }}>
                         {dates.map((date, index) => (
                             <li key={index} className="nav-item">
@@ -186,11 +186,11 @@ function VetitesIdopontLista() {
                     </ul>
                 </div>
                 <div className="d-block d-md-none">
-                    {filteredVetitesek.length > 0 ? (
-                        filteredVetitesek.map((vetites, index) => (
+                    {Object.keys(filteredGroupedVetitesek).length > 0 ? (
+                        Object.values(filteredGroupedVetitesek).map((film, filmIndex) => (
                             <div
-                                key={index}
-                                className="card mb-3"
+                                key={filmIndex}
+                                className="card mb-4"
                                 style={{
                                     backgroundColor: darkMode ? 'var(--dropdown-bg)' : 'var(--content-bg)',
                                     borderColor: darkMode ? 'var(--border-color)' : 'var(--border-color)'
@@ -202,57 +202,67 @@ function VetitesIdopontLista() {
                                             className="btn btn-link card-title mb-0"
                                             onClick={(e) => {
                                                 e.preventDefault();
-                                                navigate(`/film/${vetites.filmId}`);
+                                                navigate(`/film/${film.screenings[0].filmId}`);
                                             }}
                                             style={{
-                                                color: darkMode ? 'var(--link-color)' : 'var(--link-color)'
+                                                color: darkMode ? 'var(--link-color)' : 'var(--link-color)',
+                                                textDecoration: 'none'
                                             }}
                                         >
-                                            {vetites.filmCim}
+                                            {film.filmCim}
                                         </a>
-                                        {vetites.ageImage && (
+                                        {film.ageImage && (
                                             <img
-                                                src={vetites.ageImage}
-                                                alt={`Korhatár ${vetites.korhatar}`}
+                                                src={film.ageImage}
+                                                alt={`Korhatár ${film.korhatar}`}
                                                 style={{ height: '24px' }}
                                             />
                                         )}
                                     </div>
-                                    <div className="d-flex align-items-center mt-2">
-                                        <span className="me-2 ml-3" style={{
+                                    <div className="d-flex align-items-center mt-2" style={{marginLeft:'10px'} }>
+                                        <span className="me-2" style={{
                                             color: darkMode ? 'var(--text-color)' : 'var(--text-color)',
-                                        }}>{vetites.nyelv}, </span>
+                                        }}>{film.nyelv}, </span>
                                         <span className="me-2" style={{
                                             color: darkMode ? 'var(--text-color)' : 'var(--text-color)'
-                                        }} >{vetites.idotartam} perc, </span>
-                                        <span className="me-2" style={{
-                                            color: darkMode ? 'var(--text-color)' : 'var(--text-color)'
-                                        }}>{vetites.terem}</span>
+                                        }}>{film.idotartam} perc</span>
                                     </div>
-                                    <div className="d-flex justify-content-between align-items-center mt-3">
-                                        <div className="start-times">
-                                            <button
-                                                className="btn btn-outline-primary me-2 mb-2"
-                                                style={{
-                                                    color: darkMode ? 'var(--link-color)' : 'var(--link-color)',
-                                                    borderColor: darkMode ? 'var(--link-color)' : 'var(--link-color)'
-                                                }}
-                                                onClick={() => navigate(`/foglalas/${vetites.id}`)}
-                                            >
-                                                {vetites.kezdes}
-                                            </button>
+
+                                    <div className="mt-3">
+                                        <h6 className="mb-2" style={{
+                                            color: darkMode ? 'var(--text-color)' : 'var(--text-color)',
+                                        }}>Időpontok:</h6>
+                                        <div className="d-flex flex-wrap">
+                                            {film.screenings.map((screening, screeningIndex) => (
+                                                <div key={screeningIndex} className="mb-2 me-2">
+                                                    <button
+                                                        className="btn btn-outline-primary"
+                                                        style={{
+                                                            color: darkMode ? 'var(--link-color)' : 'var(--link-color)',
+                                                            borderColor: darkMode ? 'var(--link-color)' : 'var(--link-color)'
+                                                        }}
+                                                        onClick={() => navigate(`/foglalas/${screening.id}`)}
+                                                    >
+                                                        {screening.kezdes} - {screening.terem}
+                                                    </button>
+                                                </div>
+                                            ))}
                                         </div>
-                                        {vetites.trailerLink && (
-                                            <YouTubeModal youtubeUrl={vetites.trailerLink}>
+                                    </div>
+
+                                    {film.trailerLink && (
+                                        <div className="mt-3">
+                                            <YouTubeModal youtubeUrl={film.trailerLink}>
                                                 <button
                                                     className="btn btn-link p-0"
                                                     style={{ color: darkMode ? 'var(--link-color)' : 'var(--link-color)' }}
                                                 >
-                                                    <i className="bi bi-play-circle-fill" style={{ fontSize: '1.5rem' }}></i>
+                                                    <i className="bi bi-play-circle-fill me-2"></i>
+                                                    <span>Előzetes megtekintése</span>
                                                 </button>
                                             </YouTubeModal>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))
@@ -431,6 +441,22 @@ function VetitesIdopontLista() {
                 .nav-tabs .nav-link.active {
                     border-color: var(--border-color);
                     border-bottom-color: var(--content-bg);
+                }
+                .card {
+                    border-radius: 8px;
+                }
+                
+                .card-body {
+                    padding: 1.25rem;
+                }
+                
+                .btn-outline-primary {
+                    transition: all 0.2s ease;
+                }
+                
+                .btn-outline-primary:hover {
+                    background-color: var(--link-color);
+                    color: white !important;
                 }
                 `}
             </style>
