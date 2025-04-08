@@ -223,7 +223,6 @@ function VetitesIdopontLista() {
                                         <th>Korhatár</th>
                                         <th>Nyelv</th>
                                         <th>Időtartam</th>
-                                        <th>Terem</th>
                                         {getTimeSlots().map((time, index) => (
                                             <th key={index} className="text-center">{time}</th>
                                         ))}
@@ -266,7 +265,6 @@ function VetitesIdopontLista() {
                                             </td>
                                             <td className="text-center">{vetites.nyelv}</td>
                                             <td className="text-center">{vetites.idotartam} perc</td>
-                                            <td className="text-center">{vetites.terem}</td>
                                             {getTimeSlots().map((time, timeIndex) => (
                                                 <td key={timeIndex} className="text-center">
                                                     {isTimeInSlot(vetites.datum, time) ? (
