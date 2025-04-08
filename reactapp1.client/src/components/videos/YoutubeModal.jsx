@@ -5,7 +5,6 @@ import './YouTubeModal.css';
 const YouTubeModal = ({ youtubeUrl, children }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
-
     useEffect(() => {
         const checkIfMobile = () => {
             setIsMobile(window.innerWidth <= 768);
@@ -26,7 +25,6 @@ const YouTubeModal = ({ youtubeUrl, children }) => {
     };
 
     const videoId = extractYouTubeId(youtubeUrl);
-
     if (!videoId) return children;
 
     const handleClick = () => {
