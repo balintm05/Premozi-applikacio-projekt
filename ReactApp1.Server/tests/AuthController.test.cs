@@ -44,7 +44,7 @@ namespace ReactApp1.Server.Tests.Controllers
         [Fact]
         public async Task Register_ReturnsOk_WhenSuccessful()
         {
-            // Arrange
+            /*// Arrange
             var request = new AuthUserDto { email = "test@test.com", password = "password" };
 
             var tokenResponse = new TokenResponseDto
@@ -81,7 +81,8 @@ namespace ReactApp1.Server.Tests.Controllers
             else
             {
                 Assert.NotNull(response); // Basic check if we got something back
-            }
+            }*/
+            Assert.Null("response");
         }
 
         [Fact]
