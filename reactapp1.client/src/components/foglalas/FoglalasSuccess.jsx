@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThemeWrapper from '../../layout/ThemeWrapper';
-import { ThemeContext } from '../../layout/Layout';
 import "./FoglalasSuccess.css";
 
 const FoglalasSuccess = () => {
     const navigate = useNavigate();
     const [countdown, setCountdown] = useState(10);
     const { state } = useLocation();
-    const { darkMode } = useContext(ThemeContext);
     document.title = "Sikeres foglalás - Premozi";
     useEffect(() => {
         if (!state?.fromFoglalas) {

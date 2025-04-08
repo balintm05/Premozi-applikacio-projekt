@@ -137,7 +137,6 @@ function VetitesEditAdmin() {
         }
         const maxX = Math.max(...vetitesSzekek.map(s => s.X || s.x || 0)) + 1;
         const maxY = Math.max(...vetitesSzekek.map(s => s.Y || s.y || 0)) + 1;
-        const gridWidth = maxY * 45;
 
         return (
             <div className="mt-4 d-flex flex-column align-items-center">

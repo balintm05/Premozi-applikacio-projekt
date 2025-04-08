@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
-using ReactApp1.Server.Entities.Terem;
 using ReactApp1.Server.Entities.Foglalas;
 
 namespace ReactApp1.Server.Entities

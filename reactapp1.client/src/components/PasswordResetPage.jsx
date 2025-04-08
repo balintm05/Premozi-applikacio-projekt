@@ -22,7 +22,7 @@ export default function PasswordResetPage() {
             try {
                 const response = await api.get(`/auth/verify-password-reset?userId=${userId}&token=${token}`);
                 setValidToken(response.data.valid);
-            } catch (err) {
+            } catch {
                 setError("Érvénytelen vagy lejárt visszaállítási link");
             }
         };

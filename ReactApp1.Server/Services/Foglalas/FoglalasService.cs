@@ -1,14 +1,11 @@
 ﻿using ReactApp1.Server.Data;
 using ReactApp1.Server.Entities.Foglalas;
-using ReactApp1.Server.Services.Vetites;
 using Microsoft.EntityFrameworkCore;
 using ReactApp1.Server.Models.Rendeles;
 using ReactApp1.Server.Models.Foglalas;
 using ReactApp1.Server.Entities.Vetites;
 using ReactApp1.Server.Models;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
-using ReactApp1.Server.Entities;
 using ReactApp1.Server.Services.Email;
 
 namespace ReactApp1.Server.Services.Foglalas
@@ -244,7 +241,7 @@ namespace ReactApp1.Server.Services.Foglalas
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending confirmation email: {ex.Message}");
+                Console.WriteLine($"Hiba történt az email küldése során: {ex.Message}");
             }
 
             return new Models.ErrorModel("Sikeres hozzáadás");
@@ -392,7 +389,7 @@ namespace ReactApp1.Server.Services.Foglalas
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error sending confirmation email: {ex.Message}");
+                Console.WriteLine($"Hiba történt az email küldése során: {ex.Message}");
             }
             return new Models.ErrorModel("Sikeres módosítás");
         }

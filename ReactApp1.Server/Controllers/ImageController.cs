@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReactApp1.Server.Data;
 using ReactApp1.Server.Entities;
 using ReactApp1.Server.Models;
-using ReactApp1.Server.Services.Film;
 using ReactApp1.Server.Services.Image;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace ReactApp1.Server.Controllers
 {

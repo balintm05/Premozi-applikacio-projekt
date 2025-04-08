@@ -1,5 +1,4 @@
 ﻿using ReactApp1.Server.Models;
-using ReactApp1.Server.Models.Terem;
 using ReactApp1.Server.Models.Vetites;
 
 namespace ReactApp1.Server.Services.Vetites

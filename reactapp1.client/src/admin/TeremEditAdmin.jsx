@@ -143,7 +143,6 @@ function TeremEditAdmin() {
 
         const rows = parseInt(terem.sorok) || 0;
         const cols = parseInt(terem.oszlopok) || 0;
-        const gridWidth = cols * 45;
 
         return (
             <div className="mt-4 d-flex flex-column align-items-center">

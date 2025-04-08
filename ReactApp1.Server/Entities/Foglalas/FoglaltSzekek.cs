@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ReactApp1.Server.Entities.Vetites;
+﻿using ReactApp1.Server.Entities.Vetites;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ReactApp1.Server.Entities.Foglalas

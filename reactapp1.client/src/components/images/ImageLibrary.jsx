@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../../context/AuthContext";
 import AdminLayout from '../../admin/AdminLayout';
 import { FaTrash, FaUpload } from 'react-icons/fa';
@@ -16,7 +15,6 @@ function ImageLibrary() {
     const [error, setError] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
-    const navigate = useNavigate();
     document.title = "Képkönyvtár - Premozi";
     useEffect(() => {
         const loadImages = async () => {

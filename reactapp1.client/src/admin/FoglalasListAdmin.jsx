@@ -3,13 +3,11 @@ import { AuthContext } from "../context/AuthContext";
 import { ThemeContext } from '../layout/Layout';
 import AdminLayout from './AdminLayout';
 import ThemeWrapper from '../layout/ThemeWrapper';
-import { useNavigate } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 function FoglalasListAdmin() {
     const { api } = useContext(AuthContext);
     const { darkMode } = useContext(ThemeContext);
-    const navigate = useNavigate();
 
     const [filter, setFilter] = useState({
         id: "",

@@ -1,5 +1,4 @@
-﻿using ReactApp1.Server.Entities;
-using ReactApp1.Server.Models.Film;
+﻿using ReactApp1.Server.Models.Film;
 using ReactApp1.Server.Models.Film.ManageFilm;
 
 namespace ReactApp1.Server.Services.Film

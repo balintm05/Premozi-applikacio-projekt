@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import Foglalas from './foglalas/Foglalas';
 
 const ProtectedRoute = () => {
     const { user } = useContext(AuthContext);

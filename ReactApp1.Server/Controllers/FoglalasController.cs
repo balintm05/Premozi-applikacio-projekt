@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReactApp1.Server.Entities.Foglalas;
 using ReactApp1.Server.Models.Foglalas;
 using ReactApp1.Server.Models.Rendeles;
 using ReactApp1.Server.Services.Foglalas;
-using ReactApp1.Server.Services.Vetites;
 
 namespace ReactApp1.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class FoglalasController(IFoglalasService foglalasService) : ControllerBase
     {
         [AllowAnonymous]
@@ -27,7 +24,7 @@ namespace ReactApp1.Server.Controllers
             var foglalasok = await foglalasService.GetFoglalas();
             return Ok(foglalasok);
         }
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet("getByVetites/{vid}")]
         public async Task<ActionResult<List<GetFoglalasResponse>>?> GetFoglalasByVetites(int vid)
         {
@@ -38,7 +35,7 @@ namespace ReactApp1.Server.Controllers
             }
             return Ok(foglalasok);
         }
-        [AllowAnonymous]
+        [Authorize]
         [HttpGet("getByUser/{uid}")]
         public async Task<ActionResult<List<GetFoglalasResponse>>?> GetFoglalasByUser(int uid)
         {

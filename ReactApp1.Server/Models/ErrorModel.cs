@@ -1,6 +1,4 @@
-﻿using Microsoft.OpenApi.MicrosoftExtensions;
-
-namespace ReactApp1.Server.Models
+﻿namespace ReactApp1.Server.Models
 {
     public class ErrorModel
     {

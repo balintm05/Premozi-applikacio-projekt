@@ -1,6 +1,5 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ThemeContext } from '../layout/Layout';
 
 function AdminIndex() {
     const navigate = useNavigate();

@@ -13,7 +13,7 @@ function Logout() {
             navigate("/");
         };
         performLogout();
-    }, [logout]);
+    }, [logout, navigate]);
 
     return (
         <ThemeWrapper>

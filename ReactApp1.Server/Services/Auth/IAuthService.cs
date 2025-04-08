@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using ReactApp1.Server.Entities;
+﻿using ReactApp1.Server.Entities;
 using ReactApp1.Server.Models;
 using ReactApp1.Server.Models.JWT;
 using ReactApp1.Server.Models.User;

@@ -1,5 +1,4 @@
-﻿
-namespace ReactApp1.Server.Models.User.Response
+﻿namespace ReactApp1.Server.Models.User.Response
 {
     public class GetUserQueryFilter
     {

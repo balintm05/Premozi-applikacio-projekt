@@ -1,43 +1,6 @@
 ﻿using ReactApp1.Server.Data;
 using ReactApp1.Server.Entities;
-using ReactApp1.Server.Data;
-using ReactApp1.Server.Models;
-using ReactApp1.Server.Models.Terem;
-using ReactApp1.Server.Models.Vetites;
-using ReactApp1.Server.Data;
-using ReactApp1.Server.Data;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using ReactApp1.Server.Data;
-using System.ComponentModel.DataAnnotations;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.SignalR;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
-using ReactApp1.Server.Models.JWT;
-using ReactApp1.Server.Models.User;
-using ReactApp1.Server.Models.User.EditUser;
-using NuGet.Common;
-using System.Net.Http;
-using System.Net.Http.Formatting;
-using System.Net.Http.Headers;
-using ReactApp1.Server.Models.User.Response;
-using Microsoft.EntityFrameworkCore;
-using ReactApp1.Server.Models.Film.ManageFilm;
-using Humanizer;
-using Org.BouncyCastle.Ocsp;
-using ReactApp1.Server.Models.Film;
-using ReactApp1.Server.Models.Terem;
-using ReactApp1.Server.Entities.Terem;
-using ReactApp1.Server.Entities.Vetites;
-using ReactApp1.Server.Services.Email;
 
 
 namespace ReactApp1.Server.Services.Image
@@ -92,7 +55,7 @@ namespace ReactApp1.Server.Services.Image
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error syncing image folder with database: {ex.Message}");
+                Console.WriteLine($"Hiba történt a kép mappa szinkronizálása közben: {ex.Message}");
             }
         }
     }

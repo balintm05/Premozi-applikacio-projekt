@@ -1,7 +1,4 @@
-﻿using ReactApp1.Server.Entities.Vetites;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace ReactApp1.Server.Entities.Foglalas
 {

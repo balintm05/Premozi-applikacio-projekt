@@ -1,5 +1,5 @@
-﻿using ReactApp1.Server.Models;
-using ReactApp1.Server.Models.Terem;
+﻿using ReactApp1.Server.Models.Terem;
+
 namespace ReactApp1.Server.Services
 {
     public interface ITeremService

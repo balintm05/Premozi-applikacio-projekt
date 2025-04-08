@@ -1,12 +1,4 @@
-﻿using ReactApp1.Server.Entities.Terem;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace ReactApp1.Server.Models.Terem
+﻿namespace ReactApp1.Server.Models.Terem
 {
     public class ManageTeremDto
     {
