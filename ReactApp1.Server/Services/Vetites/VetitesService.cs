@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.AspNetCore.JsonPatch;
 using ReactApp1.Server.Entities.Vetites;
 using ReactApp1.Server.Services.Email;
+using ReactApp1.Server.Entities;
 
 namespace ReactApp1.Server.Services.Vetites
 {
@@ -144,9 +145,9 @@ namespace ReactApp1.Server.Services.Vetites
                 {
                     return new ErrorModel("Már szerepel ebben az időközben vetítés ebben a teremben az adatbázisban");
                 }
-                if (!(vetites.Idopont.TimeOfDay >=TimeSpan.FromHours(12) && (vetites.Idopont.TimeOfDay + TimeSpan.FromMinutes(vetites.Film.Jatekido)) <= TimeSpan.FromHours(23)))
+                if (!(ido.TimeOfDay >= TimeSpan.FromHours(12) && (ido.TimeOfDay + TimeSpan.FromMinutes(vetites.Film.Jatekido)) <= TimeSpan.FromHours(23)))
                 {
-                    return new ErrorModel("A vetítésnek nyitvatartási időn belül kell lennie (12:00 - 23:00");
+                    return new ErrorModel("A vetítésnek nyitvatartási időn belül kell lennie (12:00 - 23:00)");
                 }
                 patchDoc.Replace(vetites => vetites.Idopont , ido);
             }           

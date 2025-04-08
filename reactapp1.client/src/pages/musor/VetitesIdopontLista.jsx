@@ -8,6 +8,7 @@ import YouTubeModal from '../../components/videos/YoutubeModal';
 function VetitesIdopontLista() {
     const { darkMode } = useContext(ThemeContext);
     const [vetitesek, setVetitesek] = useState([]);
+    const [groupedVetitesek, setGroupedVetitesek] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState(null);
@@ -18,51 +19,90 @@ function VetitesIdopontLista() {
         const fetchVetitesek = async () => {
             try {
                 const response = await api.get('/Vetites/get');
-                if (response.data) {
+                const responseData = response.data;
+
+                if (!Array.isArray(responseData)) {
+                    throw new Error('Invalid data format from server');
+                }
+
+                if (responseData.length > 0) {
                     const now = new Date();
                     const thirtyDaysFromNow = new Date();
                     thirtyDaysFromNow.setDate(now.getDate() + 30);
 
-                    const formattedData = response.data
-                        .filter(v => {
+                    const formattedData = responseData
+                        .filter(v => v.vetites && v.vetites.idopont)
+                        .map(v => {
                             const screeningDate = new Date(v.vetites.idopont);
-                            return screeningDate >= now && screeningDate <= thirtyDaysFromNow;
+                            return {
+                                id: v.vetites.id,
+                                filmCim: v.vetites.film?.cim || 'Ismeretlen film',
+                                filmId: v.vetites.film?.id,
+                                kezdes: screeningDate.toLocaleTimeString('hu-HU', {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: false
+                                }),
+                                datum: v.vetites.idopont,
+                                nyelv: v.vetites.film?.szinkron || v.vetites.film?.eredetiNyelv || 'Ismeretlen',
+                                idotartam: v.vetites.film?.jatekido || 0,
+                                korhatar: v.vetites.film?.korhatar || 0,
+                                terem: v.vetites.terem?.nev || 'Ismeretlen terem',
+                                trailerLink: v.vetites.film?.trailerLink,
+                                ageImage: v.vetites.film?.images ?
+                                    `https://localhost:7153/images/${v.vetites.film.korhatar}.png` : null,
+                                rawTime: screeningDate.getHours()
+                            };
                         })
-                        .map(v => ({
-                            id: v.vetites.id,
-                            filmCim: v.vetites.film.cim,
-                            filmId: v.vetites.film.id,
-                            kezdes: new Date(v.vetites.idopont).toLocaleTimeString('hu-HU', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                                hour12: false
-                            }),
-                            datum: v.vetites.idopont,
-                            nyelv: v.vetites.film.szinkron || v.vetites.film.eredetiNyelv,
-                            idotartam: v.vetites.film.jatekido,
-                            korhatar: v.vetites.film.korhatar,
-                            terem: v.vetites.terem.nev,
-                            trailerLink: v.vetites.film.trailerLink,
-                            ageImage: v.vetites.film.images ?
-                                `https://localhost:7153/images/${v.vetites.film.korhatar}.png` : null
-                        }));
+                        .filter(v => {
+                            const screeningDate = new Date(v.datum);
+                            return screeningDate >= now && screeningDate <= thirtyDaysFromNow;
+                        });
+                    const grouped = formattedData.reduce((acc, screening) => {
+                        if (!acc[screening.filmId]) {
+                            acc[screening.filmId] = {
+                                filmCim: screening.filmCim,
+                                nyelv: screening.nyelv,
+                                idotartam: screening.idotartam,
+                                korhatar: screening.korhatar,
+                                ageImage: screening.ageImage,
+                                trailerLink: screening.trailerLink,
+                                screenings: []
+                            };
+                        }
+                        acc[screening.filmId].screenings.push(screening);
+                        return acc;
+                    }, {});
+
+                    setGroupedVetitesek(grouped);
+                    const uniqueDateTimes = [...new Set(
+                        formattedData.map(v => {
+                            const date = new Date(v.datum);
+                            return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+                        })
+                    )];
+
+                    const uniqueDateObjects = uniqueDateTimes
+                        .sort((a, b) => a - b)
+                        .map(time => {
+                            const date = new Date(time);
+                            return date.toLocaleDateString('hu-HU', {
+                                month: '2-digit',
+                                day: '2-digit'
+                            });
+                        });
+
+                    setDates(uniqueDateObjects);
+                    if (uniqueDateObjects.length > 0) {
+                        setSelectedDate(uniqueDateObjects[0]);
+                    }
 
                     setVetitesek(formattedData);
-                    const uniqueDates = [...new Set(
-                        formattedData.map(v => new Date(v.datum).toLocaleDateString('hu-HU', {
-                            month: '2-digit',
-                            day: '2-digit'
-                        })))
-                    ];
-
-                    setDates(uniqueDates);
-                    if (uniqueDates.length > 0) {
-                        setSelectedDate(uniqueDates[0]);
-                    }
                 }
                 setLoading(false);
             } catch (err) {
-                setError(err.message);
+                console.error('Error fetching screenings:', err);
+                setError(err.message || 'Hiba történt az adatok betöltése közben');
                 setLoading(false);
             }
         };
@@ -78,18 +118,31 @@ function VetitesIdopontLista() {
         return vetitesDate === selectedDate;
     });
 
+    const filteredGroupedVetitesek = Object.keys(groupedVetitesek).reduce((acc, filmId) => {
+        const film = groupedVetitesek[filmId];
+        const filteredScreenings = film.screenings.filter(v => {
+            const vetitesDate = new Date(v.datum).toLocaleDateString('hu-HU', {
+                month: '2-digit',
+                day: '2-digit'
+            });
+            return vetitesDate === selectedDate;
+        });
+
+        if (filteredScreenings.length > 0) {
+            acc[filmId] = {
+                ...film,
+                screenings: filteredScreenings
+            };
+        }
+        return acc;
+    }, {});
+
     const getTimeSlots = () => {
         const slots = [];
         for (let hour = 12; hour <= 22; hour++) {
             slots.push(`${hour}:00`);
         }
         return slots;
-    };
-
-    const isTimeInSlot = (screeningTime, slotTime) => {
-        const [slotHour] = slotTime.split(':').map(Number);
-        const screeningHour = new Date(screeningTime).getHours();
-        return screeningHour === slotHour;
     };
 
     if (loading) {
@@ -112,23 +165,26 @@ function VetitesIdopontLista() {
         <ThemeWrapper className="main-content p-4">
             <div className="vetites-container">
                 <h2 className="mb-4">Vetítések időpontjai</h2>
-                <ul className="nav nav-tabs mb-4">
-                    {dates.map((date, index) => (
-                        <li key={index} className="nav-item">
-                            <button
-                                className={`nav-link ${selectedDate === date ? 'active' : ''}`}
-                                onClick={() => setSelectedDate(date)}
-                                style={{
-                                    backgroundColor: selectedDate === date ?
-                                        (darkMode ? 'var(--active-link)' : 'rgba(10, 88, 202, 0.1)') : 'transparent',
-                                    color: darkMode ? 'var(--text-color)' : 'var(--text-color)'
-                                }}
-                            >
-                                {date}
-                            </button>
-                        </li>
-                    ))}
-                </ul>
+                <div className="d-flex mb-4" style={{  }}>
+                    <ul className="nav nav-tabs" style={{ flexWrap: 'nowrap' }}>
+                        {dates.map((date, index) => (
+                            <li key={index} className="nav-item">
+                                <button
+                                    className={`nav-link ${selectedDate === date ? 'active' : ''}`}
+                                    onClick={() => setSelectedDate(date)}
+                                    style={{
+                                        backgroundColor: selectedDate === date ?
+                                            (darkMode ? 'var(--active-link)' : 'rgba(10, 88, 202, 0.1)') : 'transparent',
+                                        color: darkMode ? 'var(--text-color)' : 'var(--text-color)',
+                                        whiteSpace: 'nowrap'
+                                    }}
+                                >
+                                    {date}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
                 <div className="d-block d-md-none">
                     {filteredVetitesek.length > 0 ? (
                         filteredVetitesek.map((vetites, index) => (
@@ -205,7 +261,7 @@ function VetitesIdopontLista() {
                     )}
                 </div>
                 <div className="d-none d-md-block">
-                    {filteredVetitesek.length > 0 ? (
+                    {Object.keys(filteredGroupedVetitesek).length > 0 ? (
                         <div className="table-responsive">
                             <table className={`table table-hover ${darkMode ? 'table-dark' : ''}`}
                                 style={{
@@ -230,7 +286,7 @@ function VetitesIdopontLista() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredVetitesek.map((vetites, index) => (
+                                    {Object.values(filteredGroupedVetitesek).map((film, index) => (
                                         <tr
                                             key={index}
                                             style={{
@@ -243,7 +299,7 @@ function VetitesIdopontLista() {
                                                 <a
                                                     onClick={(e) => {
                                                         e.preventDefault();
-                                                        navigate(`/film/${vetites.filmId}`);
+                                                        navigate(`/film/${film.screenings[0].filmId}`);
                                                     }}
                                                     className="btn btn-link p-0"
                                                     style={{
@@ -251,46 +307,46 @@ function VetitesIdopontLista() {
                                                         textDecoration: 'none'
                                                     }}
                                                 >
-                                                    {vetites.filmCim}
+                                                    {film.filmCim}
                                                 </a>
                                             </td>
                                             <td>
-                                                {vetites.ageImage && (
+                                                {film.ageImage && (
                                                     <img
-                                                        src={vetites.ageImage}
-                                                        alt={`Korhatár ${vetites.korhatar}`}
+                                                        src={film.ageImage}
+                                                        alt={`Korhatár ${film.korhatar}`}
                                                         style={{ height: '24px' }}
                                                     />
                                                 )}
                                             </td>
-                                            <td className="text-center">{vetites.nyelv}</td>
-                                            <td className="text-center">{vetites.idotartam} perc</td>
-                                            {getTimeSlots().map((time, timeIndex) => (
-                                                <td key={timeIndex} className="text-center">
-                                                    {isTimeInSlot(vetites.datum, time) ? (
-                                                        <a
-                                                            className="btn btn-link p-0"
-                                                            style={{
-                                                                color: darkMode ? 'var(--link-color)' : 'var(--link-color)',
-                                                                textDecoration: 'none'
-                                                            }}
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                navigate(`/foglalas/${vetites.id}`);
-                                                            }}
-                                                        >
-                                                            {new Date(vetites.datum).toLocaleTimeString('hu-HU', {
-                                                                hour: '2-digit',
-                                                                minute: '2-digit',
-                                                                hour12: false
-                                                            })}
-                                                        </a>
-                                                    ) : null}
-                                                </td>
-                                            ))}
+                                            <td className="text-center">{film.nyelv}</td>
+                                            <td className="text-center">{film.idotartam} perc</td>
+                                            {getTimeSlots().map((time, timeIndex) => {
+                                                const [hour] = time.split(':').map(Number);
+                                                const screening = film.screenings.find(s => s.rawTime === hour);
+                                                return (
+                                                    <td key={timeIndex} className="text-center">
+                                                        {screening ? (
+                                                            <a
+                                                                className="btn btn-link p-0"
+                                                                style={{
+                                                                    color: darkMode ? 'var(--link-color)' : 'var(--link-color)',
+                                                                    textDecoration: 'none'
+                                                                }}
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    navigate(`/foglalas/${screening.id}`);
+                                                                }}
+                                                            >
+                                                                {screening.kezdes}
+                                                            </a>
+                                                        ) : null}
+                                                    </td>
+                                                );
+                                            })}
                                             <td className="text-center">
-                                                {vetites.trailerLink && (
-                                                    <YouTubeModal youtubeUrl={vetites.trailerLink}>
+                                                {film.trailerLink && (
+                                                    <YouTubeModal youtubeUrl={film.trailerLink}>
                                                         <button
                                                             className="btn btn-link p-0"
                                                             style={{
@@ -369,6 +425,7 @@ function VetitesIdopontLista() {
                     border: 1px solid transparent;
                     border-bottom: none;
                     margin-bottom: -1px;
+                    margin-top: 3px;
                 }
                 
                 .nav-tabs .nav-link.active {

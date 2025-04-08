@@ -5,6 +5,5 @@
         public string? email { get; set; }
         public string? password { get; set; }
         public ErrorModel? Error { get; set; }
-        public string userID { get; internal set; }
     }
 }

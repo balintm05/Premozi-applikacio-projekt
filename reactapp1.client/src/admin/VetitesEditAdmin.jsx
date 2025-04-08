@@ -25,7 +25,16 @@ function VetitesEditAdmin() {
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
+
     document.title = "Vetítés adatai - Premozi";
+    const formatDateForInput = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const offset = date.getTimezoneOffset() * 60000;
+        const localDate = new Date(date.getTime() - offset);
+        return localDate.toISOString().slice(0, 16);
+    };
+
     useEffect(() => {
         const loadVetitesData = async () => {
             try {
@@ -47,11 +56,7 @@ function VetitesEditAdmin() {
                             id: vetitesData.id,
                             filmid: vetitesData.Filmid?.toString() || vetitesData.filmid?.toString() || '',
                             teremid: vetitesData.Teremid?.toString() || vetitesData.teremid?.toString() || '',
-                            idopont: vetitesData.Idopont
-                                ? new Date(vetitesData.Idopont).toISOString().slice(0, 16)
-                                : vetitesData.idopont
-                                    ? new Date(vetitesData.idopont).toISOString().slice(0, 16)
-                                    : '',
+                            idopont: formatDateForInput(vetitesData.Idopont || vetitesData.idopont),
                             megjegyzes: vetitesData.Megjegyzes || vetitesData.megjegyzes || ''
                         });
                         setVetitesSzekek(vetitesData.VetitesSzekek || vetitesData.vetitesSzekek || []);
@@ -161,12 +166,12 @@ function VetitesEditAdmin() {
 
                         let seatColor, seatOpacity, seatTitle;
                         switch (seatStatus) {
-                            case 0: 
+                            case 0:
                                 seatColor = '#6c757d';
                                 seatOpacity = 0.5;
                                 seatTitle = 'Nem elérhető';
                                 break;
-                            case 1: 
+                            case 1:
                                 seatColor = '#28a745';
                                 seatOpacity = 1;
                                 seatTitle = 'Szabad';
@@ -318,7 +323,7 @@ function VetitesEditAdmin() {
                                 name="idopont"
                                 value={vetites.idopont}
                                 onChange={handleChange}
-                                disabled={new Date(vetites.idopont)<new Date()}
+                                disabled={new Date(vetites.idopont) < new Date()}
                                 required
                             />
                         </div>
@@ -330,7 +335,7 @@ function VetitesEditAdmin() {
                                 id="megjegyzes"
                                 name="megjegyzes"
                                 value={vetites.megjegyzes}
-                                onChange={handleChange}                               
+                                onChange={handleChange}
                                 rows="3"
                             />
                         </div>
