@@ -69,6 +69,10 @@ namespace ReactApp1.Server.Services.Vetites
             {
                 return new ErrorModel("Már szerepel ebben az időközben vetítés ebben a teremben az adatbázisban");
             }
+            if (!(ido.TimeOfDay >= TimeSpan.FromHours(12) && (ido.TimeOfDay + TimeSpan.FromMinutes(film.First().Jatekido)) <= TimeSpan.FromHours(23)))
+            {
+                return new ErrorModel("A vetítésnek nyitvatartási időn belül kell lennie (12:00 - 23:00)");
+            }
             if (request.Megjegyzes != null)
             {
                 vetites.Megjegyzes = request.Megjegyzes;
@@ -90,10 +94,7 @@ namespace ReactApp1.Server.Services.Vetites
             {
                 return new ErrorModel("A már megtörtént vetítés nem módosítható!");
             }
-            if (!( true))
-            {
-                return new ErrorModel("A vetítésnek nyitvatartási időn belül kell lennie");
-            }
+            
             var patchDoc = new JsonPatchDocument<Entities.Vetites.Vetites>();
             var fidb = int.TryParse(request.Filmid, out int fid);
             var tidb = int.TryParse(request.Teremid, out int tid);
@@ -142,6 +143,10 @@ namespace ReactApp1.Server.Services.Vetites
                 .AnyAsync())
                 {
                     return new ErrorModel("Már szerepel ebben az időközben vetítés ebben a teremben az adatbázisban");
+                }
+                if (!(vetites.Idopont.TimeOfDay >=TimeSpan.FromHours(12) && (vetites.Idopont.TimeOfDay + TimeSpan.FromMinutes(vetites.Film.Jatekido)) <= TimeSpan.FromHours(23)))
+                {
+                    return new ErrorModel("A vetítésnek nyitvatartási időn belül kell lennie (12:00 - 23:00");
                 }
                 patchDoc.Replace(vetites => vetites.Idopont , ido);
             }           

@@ -150,7 +150,8 @@ namespace ReactApp1.Server.Services.Foglalas
             }
 
             var user = await context.Users.FindAsync(uid);
-            var vetites = await context.Vetites.FindAsync(vid);
+            var vetitestemp = await context.Vetites.Include(x=>x.Terem).ToListAsync();
+            var vetites = vetitestemp.Where(x => x.id == vid).ToList().First();
             var film = vetites != null ? await context.Film.FindAsync(vetites.Filmid) : null;
 
             if (user == null)
@@ -230,6 +231,7 @@ namespace ReactApp1.Server.Services.Foglalas
                     <h2>Tisztelt {user.email}!</h2>
                     <p>Sikeresen lefoglalta a következő helyeket:</p>
                     <p><strong>Film:</strong> {film?.Cim ?? "Ismeretlen film"}</p>
+                    <p><strong>Terem:</strong> {vetites.Terem.Nev ?? "Ismeretlen terem"}</p>
                     <p><strong>Vetítés ideje:</strong> {vetites.Idopont.ToString("yyyy.MM.dd HH:mm")}</p>
                     <p><strong>Foglalt helyek:</strong> {seatsList}</p>
                     <p><strong>Összesen:</strong> {totalPrice} Ft</p>
@@ -291,7 +293,8 @@ namespace ReactApp1.Server.Services.Foglalas
             }
 
             var user = await context.Users.FindAsync(uid);
-            var vetites = await context.Vetites.FindAsync(vid);
+            var vetitestemp = await context.Vetites.Include(x => x.Terem).ToListAsync();
+            var vetites = vetitestemp.Where(x => x.id == vid).ToList().First();
 
             if (user == null)
             {

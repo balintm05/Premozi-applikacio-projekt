@@ -87,11 +87,10 @@ const Musor = () => {
             </div>
         </ThemeWrapper>
     );
-    document.title = "Műsor - Premozi";
     return (
         <ThemeWrapper>
             <div className="container musor-container">
-                <h1 className="text-center mb-4">Műsorajánlat</h1>
+                <h1 className="text-center mb-4">Műsorajánló</h1>
                 <br></br>
                 <div className="row">
                     {filmsToShow.map(film => {

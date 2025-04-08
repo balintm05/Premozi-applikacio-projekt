@@ -6,7 +6,7 @@ export default function Index() {
     document.title = "Főoldal - Premozi";
     return (
         <div>
-            <p>A retek állna ebbe a projektbe</p>
+            
             <Musor />
             <VetitesIdopontLista />
         </div>        
