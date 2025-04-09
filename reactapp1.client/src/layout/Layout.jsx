@@ -248,7 +248,7 @@ export default function Layout() {
                             onClick={() => navigate("/adatvedelem")}
                             style={{ color: 'inherit', textDecoration: 'none', background: 'none', border: 'none' }}
                         >
-                            Adatvédelmi tájékoztató
+                            Adatkezelési tájékoztató
                         </button>-
                         <button
                             onClick={() => navigate("/impresszum")}
