@@ -112,6 +112,7 @@ function Jegyarak() {
                     </tbody>
                 </table>
                 <p className="mt-3">Jelenleg csak a helyszínen való fizetés lehetséges, megértésüket köszönjük!</p>
+                <p className="mt-3">A diák jegyhez diákigazolvány, a nyugdíjas jegyhez pedig személyi igazolvány bemutatása szükséges a pénztárnál.</p>
             </div>
         </ThemeWrapper>
     );

@@ -252,7 +252,7 @@ const FilmAdatok = () => {
                                                 onClick={() => handleNavigation(`/foglalas/${screening.id}`)}
                                                 className="booking-button"
                                             >
-                                                Jegyfoglalás
+                                                Helyfoglalás
                                             </button>
                                         </ThemeWrapper>
                                     ))}
