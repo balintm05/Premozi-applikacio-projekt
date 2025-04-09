@@ -5,7 +5,7 @@ function AdatvedelmiTajekoztato() {
     return (
         <div className="privacy-policy-container">
             <div className="sidebar">
-                <h2 style={{color:'black'} }>Tartalom</h2>
+                <h2 style={{color:'black'}}>Tartalom</h2>
                 <ul className="toc">
                     <li><a href="#az-adatkezelési-tájékoztató-célja">1. Az adatkezelési tájékoztató célja</a></li>
                     <li><a href="#az-adatkezelő-adatai">2. Az adatkezelő adatai</a>
@@ -61,13 +61,13 @@ function AdatvedelmiTajekoztato() {
                 <section id="az-adatkezelési-tájékoztató-célja">
                     <h2>1. Az adatkezelési tájékoztató célja</h2>
                     <p>
-                        A Minta Kft. (cím, a továbbiakban, szolgáltató, adatkezelő) mint adatkezelő, magára nézve kötelezőnek ismeri el jelen jogi közlemény tartalmát. Kötelezettséget vállal arra, hogy tevékenységével kapcsolatos minden adatkezelés megfelel a jelen szabályzatban és a hatályos nemzeti jogszabályokban, valamint az Európai Unió jogi aktusaiban meghatározott elvárásoknak.
+                        A Premozi Kft. (cím, a továbbiakban, szolgáltató, adatkezelő) mint adatkezelő, magára nézve kötelezőnek ismeri el jelen jogi közlemény tartalmát. Kötelezettséget vállal arra, hogy tevékenységével kapcsolatos minden adatkezelés megfelel a jelen szabályzatban és a hatályos nemzeti jogszabályokban, valamint az Európai Unió jogi aktusaiban meghatározott elvárásoknak.
                     </p>
                     <p>
-                        A Minta Kft. adatkezeléseivel kapcsolatosan felmerülő adatvédelmi irányelvek folyamatosan elérhetők a <a href="http://www.mintakft.hu/adatvedelem">www.mintakft.hu/adatvedelem</a> címen.
+                        A Premozi Kft. adatkezeléseivel kapcsolatosan felmerülő adatvédelmi irányelvek folyamatosan elérhetők a <a href={`${window.location.origin}/adatvedelem`}>{`${window.location.origin}`}/adatvedelem</a> címen.
                     </p>
                     <p>
-                        A Minta Kft. fenntartja magának a jogot jelen tájékoztató bármikori megváltoztatására. Természetesen az esetleges változásokról kellő időben értesíti közönségét.
+                        A Premozi Kft. fenntartja magának a jogot jelen tájékoztató bármikori megváltoztatására. Természetesen az esetleges változásokról kellő időben értesíti közönségét.
                     </p>
                 </section>
 
@@ -77,7 +77,7 @@ function AdatvedelmiTajekoztato() {
                         Amennyiben megkeresné Társaságunkat, az alábbi elérhetőségeken léphet kapcsolatba az adatkezelővel:
                     </p>
                     <ul>
-                        <li>Név: Minta Kft.</li>
+                        <li>Név: Premozi Kft.</li>
                         <li>Székhely: [Cég székhelye]</li>
                         <li>Cégjegyzékszám: [Cégjegyzékszám]</li>
                         <li>A bejegyző bíróság megnevezése: [Bíróság neve]</li>
@@ -102,7 +102,7 @@ function AdatvedelmiTajekoztato() {
 
                     <h3 id="technikai-adatok">3.2. Technikai adatok</h3>
                     <p>
-                        A Minta Kft. a személyes adatok kezeléséhez a szolgáltatás nyújtása során alkalmazott informatikai eszközöket úgy választja meg és üzemelteti, hogy a kezelt adat:
+                        A Premozi Kft. a személyes adatok kezeléséhez a szolgáltatás nyújtása során alkalmazott informatikai eszközöket úgy választja meg és üzemelteti, hogy a kezelt adat:
                     </p>
                     <ul>
                         <li>az arra feljogosítottak számára hozzáférhető (rendelkezésre állás);</li>
@@ -145,7 +145,7 @@ function AdatvedelmiTajekoztato() {
                     <h2>4. A kezelt adatok tervezett felhasználása és megőrzési ideje</h2>
                     <table>
                         <thead>
-                            <tr>
+                            <tr style={{ color: 'black' }}>
                                 <th>Adatkezelés neve</th>
                                 <th>Felhasználása</th>
                                 <th>Jogalap</th>
@@ -199,7 +199,7 @@ function AdatvedelmiTajekoztato() {
 
                     <h3 id="törléshez-való-jog">8.4. Törléshez való jog</h3>
                     <p>
-                        Az érintett jogosult arra, hogy kérésére a Minta Kft. indokolatlan késedelem nélkül törölje a rá vonatkozó személyes adatokat.
+                        Az érintett jogosult arra, hogy kérésére a Premozi Kft. indokolatlan késedelem nélkül törölje a rá vonatkozó személyes adatokat.
                     </p>
 
                     <h3 id="az-adatkezelés-korlátozásához-való-jog">8.5. Az adatkezelés korlátozásához való jog</h3>
