@@ -1,11 +1,11 @@
 import React from 'react';
-
+// minta forrás: https://minner.hu/wp-content/uploads/2019/02/Adatkezel%C3%A9si-t%C3%A1j%C3%A9koztat%C3%B3-converted.docx
 function AdatvedelmiTajekoztato() {
     document.title = "Adatvédelmi tájékoztató - Premozi";
     return (
         <div className="privacy-policy-container">
             <div className="sidebar">
-                <h2 style={{color:'black'}}>Tartalom</h2>
+                <h3 style={{color:'black'}}>Tartalom</h3>
                 <ul className="toc">
                     <li><a href="#az-adatkezelési-tájékoztató-célja">1. Az adatkezelési tájékoztató célja</a></li>
                     <li><a href="#az-adatkezelő-adatai">2. Az adatkezelő adatai</a>
@@ -59,7 +59,7 @@ function AdatvedelmiTajekoztato() {
                 <h1>Adatkezelési tájékoztató</h1>
 
                 <section id="az-adatkezelési-tájékoztató-célja">
-                    <h2>1. Az adatkezelési tájékoztató célja</h2>
+                    <h3>1. Az adatkezelési tájékoztató célja</h3>
                     <p>
                         A Premozi Kft. (cím, a továbbiakban, szolgáltató, adatkezelő) mint adatkezelő, magára nézve kötelezőnek ismeri el jelen jogi közlemény tartalmát. Kötelezettséget vállal arra, hogy tevékenységével kapcsolatos minden adatkezelés megfelel a jelen szabályzatban és a hatályos nemzeti jogszabályokban, valamint az Európai Unió jogi aktusaiban meghatározott elvárásoknak.
                     </p>
@@ -72,7 +72,7 @@ function AdatvedelmiTajekoztato() {
                 </section>
 
                 <section id="az-adatkezelő-adatai">
-                    <h2>2. Az adatkezelő adatai</h2>
+                    <h3>2. Az adatkezelő adatai</h3>
                     <p>
                         Amennyiben megkeresné Társaságunkat, az alábbi elérhetőségeken léphet kapcsolatba az adatkezelővel:
                     </p>
@@ -95,7 +95,7 @@ function AdatvedelmiTajekoztato() {
                 </section>
 
                 <section id="a-kezelt-személyes-adatok-köre">
-                    <h2>3. A kezelt személyes adatok köre</h2>
+                    <h3>3. A kezelt személyes adatok köre</h3>
 
                     <h3 id="regisztrációs-során-megadandó-személyes-adatok">3.1. Regisztrációs során megadandó személyes adatok</h3>
                     <p>[Itt szerepeljenek a regisztrációhoz szükséges adatok]</p>
@@ -142,7 +142,7 @@ function AdatvedelmiTajekoztato() {
                 </section>
 
                 <section id="a-kezelt-adatok-tervezett-felhasználása-és-megőrzési-ideje">
-                    <h2>4. A kezelt adatok tervezett felhasználása és megőrzési ideje</h2>
+                    <h3>4. A kezelt adatok tervezett felhasználása és megőrzési ideje</h3>
                     <table>
                         <thead>
                             <tr style={{ color: 'black' }}>
@@ -164,23 +164,23 @@ function AdatvedelmiTajekoztato() {
                 </section>
 
                 <section id="az-adatkezelés-célja-módja-és-jogalapja">
-                    <h2>5. Az adatkezelés célja, módja és jogalapja</h2>
+                    <h3>5. Az adatkezelés célja, módja és jogalapja</h3>
                     <h3 id="általános-adatkezelési-irányelvek">5.1. Általános adatkezelési irányelvek</h3>
                     <p>[Tartalom az általános adatkezelési irányelvekről]</p>
                 </section>
 
                 <section id="az-adatok-fizikai-tárolási-helyei">
-                    <h2>6. Az adatok fizikai tárolási helyei</h2>
+                    <h3>6. Az adatok fizikai tárolási helyei</h3>
                     <p>[Tartalom az adatok tárolási helyeiről]</p>
                 </section>
 
                 <section id="adattovábbítás-adatfeldogozás-az-adatokat-megismerők-köre">
-                    <h2>7. Adattovábbítás, adatfeldogozás, az adatokat megismerők köre</h2>
+                    <h3>7. Adattovábbítás, adatfeldogozás, az adatokat megismerők köre</h3>
                     <p>[Tartalom az adattovábbításról és feldolgozásról]</p>
                 </section>
 
                 <section id="érintett-jogai-és-jogérvényesítési-lehetőségei">
-                    <h2>8. Érintett jogai és jogérvényesítési lehetőségei</h2>
+                    <h3>8. Érintett jogai és jogérvényesítési lehetőségei</h3>
 
                     <h3 id="tájékoztatáshoz-való-jog">8.1. Tájékoztatáshoz való jog</h3>
                     <p>
@@ -247,7 +247,7 @@ function AdatvedelmiTajekoztato() {
                 </section>
 
                 <section id="egyéb-rendelkezések">
-                    <h2>9. Egyéb rendelkezések</h2>
+                    <h3>9. Egyéb rendelkezések</h3>
                     <p>
                         E tájékoztatóban fel nem sorolt adatkezelésekről az adat felvételekor adunk tájékoztatást.
                     </p>
@@ -274,7 +274,7 @@ function AdatvedelmiTajekoztato() {
                     overflow-y: auto;
                 }
 
-                .sidebar h2 {
+                .sidebar h3 {
                     margin-top: 0;
                     font-size: 1.2rem;
                 }
@@ -320,7 +320,7 @@ function AdatvedelmiTajekoztato() {
                     margin-bottom: 30px;
                 }
 
-                section h2 {
+                section h3 {
                     border-bottom: 1px solid #eee;
                     padding-bottom: 5px;
                 }
