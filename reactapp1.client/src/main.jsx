@@ -37,6 +37,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import FoglalasSuccess from './components/foglalas/FoglalasSuccess';
 import ProfileFoglalasok from './components/profile/ProfileFoglalasok';
 import Enable2FA from './components/Enable2FA';
+import BeeMovie from './pages/BeeMovie';
 
 const App = () => {
     return (
@@ -51,7 +52,8 @@ const App = () => {
                         <Route path="adatvedelem" element={<AdatvedelmiTajekoztato />} />
                         <Route path="impresszum" element={<Impresszum />} />
 
-                        <Route path="film/:id" element={<FilmAdatok />} />  
+                        <Route path="film/:id" element={<FilmAdatok />} />
+                        <Route path="bee-movie" element={<BeeMovie />} />
 
                         <Route path="foglalas" element={<ProtectedRoute />}>
                             <Route path=":id" element={<Foglalas />} />
