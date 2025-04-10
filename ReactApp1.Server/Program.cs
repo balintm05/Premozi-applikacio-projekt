@@ -24,7 +24,7 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables()
     .Build();
-var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING") ??
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
                       builder.Configuration.GetConnectionString("MySqlConnectionString");
 builder.Services.AddDbContext<DataBaseContext>(options =>
     options.UseMySql(connectionString,
@@ -75,7 +75,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["AppSettings:Audience"],
             ValidateLifetime = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                Environment.GetEnvironmentVariable("APP_TOKEN") ??
+                Environment.GetEnvironmentVariable("JWT_TOKEN") ??
                 builder.Configuration["AppSettings:Token"])),
             ValidateIssuerSigningKey = true
         };
