@@ -40,6 +40,15 @@ jobs:
         SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
         CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
     
+    - name: Run Application
+      run: dotnet ReactApp1.Server.dll
+      working-directory: ./publish
+      env:
+        ASPNETCORE_ENVIRONMENT: Production
+        JWT_TOKEN: ${{ env.JWT_TOKEN }}
+        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
+        CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
+    
     - name: Debug Environment Variables
       run: |
         echo "JWT_TOKEN is set: $([ -z "$JWT_TOKEN" ] && echo 'NO' || echo 'YES')"
