@@ -31,10 +31,11 @@ builder.Services.AddDbContext<DataBaseContext>(options =>
     new MySqlServerVersion(new Version(10, 4, 32))));
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_TOKEN") ??
                 builder.Configuration["AppSettings:Token"];
+var apikey = Convert.FromBase64String(builder.Configuration["EmailSettings:SendGridApiKey"]);
 builder.Services.Configure<EmailSettings>(options =>
 {
     options.SendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY") ??
-                           builder.Configuration["EmailSettings:SendGridApiKey"];
+                           System.Text.Encoding.UTF8.GetString(apikey);
     options.FromName = builder.Configuration["EmailSettings:FromName"];
     options.FromEmail = builder.Configuration["EmailSettings:FromEmail"];
 });
