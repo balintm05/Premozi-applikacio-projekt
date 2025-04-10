@@ -48,6 +48,9 @@ function Rolunk() {
                     <p><strong>E-mail:</strong> premoziappdev@gmail.com</p>
                 </div>
             </section>
+            <section>
+                <h2 className="mt-5">Nyitvatartás: minden nap 12:00 - 23:00</h2>
+            </section>
 
             <footer className="about-footer">
                 <p>Várjuk szeretettel minden filmkedvelőt! 🎬</p>

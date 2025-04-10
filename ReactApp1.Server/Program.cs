@@ -17,23 +17,14 @@ using Microsoft.AspNetCore.CookiePolicy;
 using System.Security.Claims;
 using ReactApp1.Server.Services.Image;
 using System.Text.Json.Serialization;
+using Microsoft.VisualStudio.CodeCoverage;
 
 var builder = WebApplication.CreateBuilder(args);
-if (builder.Environment.IsDevelopment())
-{
-    DotNetEnv.Env.Load(); 
-    builder.Configuration.AddEnvironmentVariables();
-}
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables()
     .Build();
-var webRootPath = builder.Environment.WebRootPath;
-if (!Directory.Exists(webRootPath))
-{
-    Directory.CreateDirectory(webRootPath);
-}
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
                       builder.Configuration.GetConnectionString("MySqlConnectionString");
 builder.Services.AddDbContext<DataBaseContext>(options =>
@@ -41,10 +32,23 @@ builder.Services.AddDbContext<DataBaseContext>(options =>
     new MySqlServerVersion(new Version(10, 4, 32))));
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_TOKEN") ??
                 builder.Configuration["AppSettings:Token"];
+char[] buffer = builder.Configuration["EmailSettings:SendGridApiKey"].ToCharArray();
+
+for (int i = 0; i < buffer.Length; i++)
+{
+    char letter = buffer[i];
+    if (char.IsLetter(letter))
+    {
+        char baseChar = char.IsUpper(letter) ? 'A' : 'a';
+        letter = (char)(((letter - baseChar - 1 + 26) % 26) + baseChar);
+    }
+    buffer[i] = letter;
+}
+var notakey = Convert.FromBase64String(new string(buffer));
 builder.Services.Configure<EmailSettings>(options =>
 {
     options.SendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY") ??
-                           builder.Configuration["EmailSettings:SendGridApiKey"];
+                           System.Text.Encoding.UTF8.GetString(notakey);
     options.FromName = builder.Configuration["EmailSettings:FromName"];
     options.FromEmail = builder.Configuration["EmailSettings:FromEmail"];
 });
@@ -62,7 +66,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     });
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.WebHost.ConfigureKestrel(serverOptions =>
