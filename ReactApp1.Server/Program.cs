@@ -44,11 +44,10 @@ for (int i = 0; i < buffer.Length; i++)
     }
     buffer[i] = letter;
 }
-var apikey = Convert.FromBase64String(new string(buffer));
 builder.Services.Configure<EmailSettings>(options =>
 {
     options.SendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY") ??
-                           System.Text.Encoding.UTF8.GetString(apikey);
+                           new string(buffer);
     options.FromName = builder.Configuration["EmailSettings:FromName"];
     options.FromEmail = builder.Configuration["EmailSettings:FromEmail"];
 });
