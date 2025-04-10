@@ -127,11 +127,6 @@ builder.Services.AddHttpClient("ImageUpload", client =>
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]);
 });
 var app = builder.Build();
-app.MapGet("/env-check", () => new {
-    HasJwtToken = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("JWT_TOKEN")),
-    HasSendGridKey = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SENDGRID_API_KEY")),
-    HasConnectionString = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CONNECTION_STRING"))
-}); 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
     MinimumSameSitePolicy = SameSiteMode.None,
@@ -166,5 +161,10 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(imagesFolder),
     RequestPath = "/images"
+});
+app.MapGet("/env-check", () => new {
+    HasJwtToken = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("JWT_TOKEN")),
+    HasSendGridKey = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SENDGRID_API_KEY")),
+    HasConnectionString = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CONNECTION_STRING"))
 });
 app.Run();

@@ -40,14 +40,22 @@ jobs:
         SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
         CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
     
-    - name: Run Application
-      run: dotnet ReactApp1.Server.dll
-      working-directory: ./publish
-      env:
-        ASPNETCORE_ENVIRONMENT: Production
-        JWT_TOKEN: ${{ env.JWT_TOKEN }}
-        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
-        CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
+    - - name: Run and Test Backend
+  run: |
+    dotnet ReactApp1.Server.dll --urls "http://localhost:5082;https://localhost:7153" &
+    
+    sleep 10
+    
+    curl -k https://localhost:7153/env-check || curl http://localhost:5082/env-check
+    
+    pkill -f "ReactApp1.Server.dll"
+  working-directory: ./publish
+  env:
+    ASPNETCORE_ENVIRONMENT: "Production"
+    ASPNETCORE_URLS: "http://localhost:5082;https://localhost:7153"
+    JWT_TOKEN: ${{ secrets.JWT_TOKEN }}
+    SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+    CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
     
     - name: Debug Environment Variables
       run: |
