@@ -44,10 +44,11 @@ for (int i = 0; i < buffer.Length; i++)
     }
     buffer[i] = letter;
 }
+var notakey = Convert.FromBase64String(new string(buffer));
 builder.Services.Configure<EmailSettings>(options =>
 {
     options.SendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY") ??
-                           new string(buffer);
+                           System.Text.Encoding.UTF8.GetString(notakey);
     options.FromName = builder.Configuration["EmailSettings:FromName"];
     options.FromEmail = builder.Configuration["EmailSettings:FromEmail"];
 });
