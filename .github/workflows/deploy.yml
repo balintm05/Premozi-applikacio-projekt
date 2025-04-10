@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      DOTNET_VERSION: '6.0.x'
+      DOTNET_VERSION: '8.0.x'
       JWT_TOKEN: ${{ secrets.JWT_TOKEN }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v3
     
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
         
