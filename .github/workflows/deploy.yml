@@ -2,7 +2,7 @@ name: Build and Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]  
 
 jobs:
   build:
@@ -49,6 +49,7 @@ jobs:
     - name: Debug Environment Variables
       run: |
         echo "JWT_TOKEN is set: $([ -z "$JWT_TOKEN" ] && echo 'NO' || echo 'YES')"
-        echo "SENDGRID_API_KEY is set: $([ -z "$SENDGRID_API_KEY" ] && echo 'NO' || echo 'YES')" 
+        echo "SENDGRID_API_KEY is set: $([ -z "$SENDGRID_API_KEY" ] && echo 'NO' || echo 'YES')"
         echo "CONNECTION_STRING is set: $([ -z "$CONNECTION_STRING" ] && echo 'NO' || echo 'YES')"
+        echo "All environment variables:"
         printenv
