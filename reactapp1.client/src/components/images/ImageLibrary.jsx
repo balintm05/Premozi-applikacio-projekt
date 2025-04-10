@@ -15,12 +15,26 @@ function ImageLibrary() {
     const [error, setError] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
     document.title = "Képkönyvtár - Premozi";
+
     useEffect(() => {
         const loadImages = async () => {
             try {
+                const cachedImages = localStorage.getItem('cachedImages');
+                const cacheTimestamp = localStorage.getItem('imagesCacheTimestamp');
+                const isCacheValid = cacheTimestamp && (Date.now() - parseInt(cacheTimestamp)) < (60 * 60 * 1000); 
+
+                if (cachedImages && isCacheValid) {
+                    setImages(JSON.parse(cachedImages));
+                    setLoading(false);
+                    return;
+                }
+
                 const response = await api.get('/Image/get');
                 setImages(response.data);
+                localStorage.setItem('cachedImages', JSON.stringify(response.data));
+                localStorage.setItem('imagesCacheTimestamp', Date.now().toString());
             } catch (error) {
                 setError("Nem sikerült betölteni a képeket");
                 console.error("Hiba a képek betöltésekor:", error);
@@ -58,11 +72,12 @@ function ImageLibrary() {
                     setUploadProgress(percentCompleted);
                 }
             });
-
-            setImages([...images, response.data]);
+            const newImages = [...images, response.data];
+            setImages(newImages);
             setSelectedFile(null);
             setUploadProgress(0);
-            window.location.reload();
+            localStorage.setItem('cachedImages', JSON.stringify(newImages));
+            localStorage.setItem('imagesCacheTimestamp', Date.now().toString());
         } catch (error) {
             setError(error.response?.data?.error?.message || "Sikertelen feltöltés");
             console.error("Feltöltési hiba:", error);
@@ -75,7 +90,10 @@ function ImageLibrary() {
 
         try {
             await api.delete(`/Image/delete/${id}`);
-            setImages(images.filter(img => img.id !== id));
+            const updatedImages = images.filter(img => img.id !== id);
+            setImages(updatedImages);
+            localStorage.setItem('cachedImages', JSON.stringify(updatedImages));
+            localStorage.setItem('imagesCacheTimestamp', Date.now().toString());
         } catch (error) {
             setError("Nem sikerült törölni a képet");
             console.error("Törlési hiba:", error);
@@ -101,6 +119,7 @@ function ImageLibrary() {
                             src={`https://localhost:7153${selectedImage.relativePath}`}
                             alt={selectedImage.originalFileName}
                             className="modal-image"
+                            loading="lazy"
                         />
                         <div className="image-info">
                             <p>{selectedImage.originalFileName}</p>
@@ -120,7 +139,8 @@ function ImageLibrary() {
         const sizes = ['Bájt', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    };    
+    };
+
     if (loading) {
         return (
             <AdminLayout>
@@ -211,6 +231,7 @@ function ImageLibrary() {
                                                 height: '100%',
                                                 objectFit: 'cover'
                                             }}
+                                            loading="lazy"
                                         />
                                     </div>
                                     <div className="card-body">

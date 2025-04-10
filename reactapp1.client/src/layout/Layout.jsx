@@ -140,8 +140,7 @@ export default function Layout() {
     return (
         <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
             <div className="app-container">
-                <header>
-                    <nav className="navbar navbar-expand-sm navbar-toggleable-sm main-nav">
+                <nav className="navbar navbar-expand-sm navbar-toggleable-sm main-nav fixed-top">
                         <div className="container-fluid">
                             <button
                                 className="navbar-brand d-lg-none me-2"
@@ -233,16 +232,23 @@ export default function Layout() {
                             </div>
                         </div>
                     </nav>
-                </header>
 
-                <div className="main-content">
+                <div
+                    className="main-content"
+                    style={{
+                        marginTop: '56px',
+                        marginBottom: '60px',
+                        width: '90vw',
+                        maxWidth: '1800px'
+                    }}
+                >
                     <main role="main">
                         <Outlet />
                     </main>
                 </div>
 
-                <footer className="site-footer border-top py-3">
-                    <div className="container" style={{ color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit' }}>
+                <footer className="site-footer fixed-bottom py-3">
+                    <div className="container">
                         &copy; 2025 - Premozi -
                         <button
                             onClick={() => navigate("/adatvedelem")}
@@ -253,7 +259,9 @@ export default function Layout() {
                         <button
                             onClick={() => navigate("/impresszum")}
                             style={{ color: 'inherit', textDecoration: 'none', background: 'none', border: 'none' }}
-                        >Impresszum</button>
+                        >
+                            Impresszum
+                        </button>
                     </div>
                 </footer>
             </div>

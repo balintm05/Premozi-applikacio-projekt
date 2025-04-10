@@ -885,6 +885,9 @@ body::before {
 
 body {
     padding-bottom: env(safe-area-inset-bottom);
+    padding-top: 20px; 
+    padding-bottom: 30px; 
+    overflow-x: hidden;
 }
 
 html, body {
@@ -902,3 +905,19 @@ button, .nav-link, .dropdown-item {
     min-height: 35px; 
     touch-action: manipulation;
 }
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--content-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 5px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--btn-bg);
+    }
