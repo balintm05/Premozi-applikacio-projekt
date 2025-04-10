@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import ThemeWrapper from '../../layout/ThemeWrapper';
@@ -10,25 +10,55 @@ const SEAT_STATUS = {
     RESERVED: 2
 };
 
+const SeatButton = React.memo(({ row, col, status, isSelected, onClick }) => {
+    const seatClass = `seat ${status === SEAT_STATUS.AVAILABLE ? 'available' :
+        status === SEAT_STATUS.RESERVED ? 'reserved' : ''} 
+                     ${isSelected ? 'selected' : ''}`;
+
+    return (
+        <button
+            className={seatClass}
+            onClick={() => onClick(row, col)}
+            disabled={status !== SEAT_STATUS.AVAILABLE}
+            aria-label={`${row + 1}. sor ${col + 1}. szék`}
+        >
+            {col + 1}
+        </button>
+    );
+});
+
 const Foglalas = () => {
     const { id: vetitesId } = useParams();
     const { api, user } = useContext(AuthContext);
     const navigate = useNavigate();
     const componentMounted = useRef(true);
+
     const [vetites, setVetites] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [seatLayout, setSeatLayout] = useState(null);
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [ticketTypes, setTicketTypes] = useState([]);
-    const [totalPrice, setTotalPrice] = useState(0);
     const [seatTicketTypes, setSeatTicketTypes] = useState({});
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [columns, setColumns] = useState(0);
-    document.title = "Foglalás - Premozi";
+
+    useEffect(() => {
+        document.title = "Foglalás - Premozi";
+    }, []);
+
+    const totalPrice = useMemo(() => {
+        return selectedSeats.reduce((total, seatKey) => {
+            const typeId = seatTicketTypes[seatKey];
+            const type = ticketTypes.find(t => t.id === typeId);
+            return total + (type?.ar || 0);
+        }, 0);
+    }, [selectedSeats, seatTicketTypes, ticketTypes]);
+
     useEffect(() => {
         componentMounted.current = true;
         const abortController = new AbortController();
+
         const fetchData = async () => {
             if (!vetitesId || typeof vetitesId !== 'string') {
                 setError("Érvénytelen vetítés azonosító");
@@ -37,32 +67,24 @@ const Foglalas = () => {
             }
 
             try {
-                if (!componentMounted.current) return;
                 setLoading(true);
                 setError(null);
 
-                const vetitesResponse = await api.get(`/Vetites/get/${vetitesId}`, {
-                    signal: abortController.signal
-                });
+                const [vetitesResponse, jegyTipusResponse] = await Promise.all([
+                    api.get(`/Vetites/get/${vetitesId}`, { signal: abortController.signal }),
+                    api.get('/Foglalas/getJegyTipus', { signal: abortController.signal })
+                ]);
 
                 if (!componentMounted.current) return;
 
-                if (!vetitesResponse.data) {
-                    throw new Error("Üres válasz a szervertől");
-                }
-
-                if (vetitesResponse.data.error) {
-                    throw new Error(vetitesResponse.data.error.errorMessage || "Ismeretlen hiba");
-                }
-
-                if (!vetitesResponse.data.vetites) {
-                    throw new Error("Vetítés nem található");
+                if (!vetitesResponse.data?.vetites) {
+                    throw new Error(vetitesResponse.data?.error?.errorMessage || "Vetítés nem található");
                 }
 
                 const screeningData = vetitesResponse.data.vetites;
                 setVetites(screeningData);
 
-                if (!screeningData.vetitesSzekek || screeningData.vetitesSzekek.length === 0) {
+                if (!screeningData.vetitesSzekek?.length) {
                     setSeatLayout(null);
                     setError("Ehhez a vetítéshez nincsenek ülőhelyek konfigurálva");
                     return;
@@ -72,7 +94,7 @@ const Foglalas = () => {
                     typeof seat.x === 'number' && typeof seat.y === 'number'
                 );
 
-                if (validSeats.length === 0) {
+                if (!validSeats.length) {
                     setSeatLayout(null);
                     setError("Érvénytelen ülőhely konfiguráció");
                     return;
@@ -88,8 +110,7 @@ const Foglalas = () => {
                 setColumns(maxCol);
 
                 const layout = Array(maxRow).fill().map(() => Array(maxCol).fill(SEAT_STATUS.UNAVAILABLE));
-
-                screeningData.vetitesSzekek.forEach(seat => {
+                validSeats.forEach(seat => {
                     if (seat.x >= 0 && seat.x < maxRow && seat.y >= 0 && seat.y < maxCol) {
                         layout[seat.x][seat.y] = seat.foglalasAllapot === 1 ? SEAT_STATUS.AVAILABLE :
                             seat.foglalasAllapot === 2 ? SEAT_STATUS.RESERVED :
@@ -99,11 +120,7 @@ const Foglalas = () => {
 
                 setSeatLayout(layout);
 
-                const jegyTipusResponse = await api.get('/Foglalas/getJegyTipus', {
-                    signal: abortController.signal
-                });
-
-                if (componentMounted.current && jegyTipusResponse.data) {
+                if (jegyTipusResponse.data) {
                     setTicketTypes(jegyTipusResponse.data);
                 }
             } catch (err) {
@@ -124,24 +141,7 @@ const Foglalas = () => {
         };
     }, [vetitesId, api]);
 
-    useEffect(() => {
-        const calculateTotalPrice = () => {
-            return selectedSeats.reduce((total, seatKey) => {
-                const typeId = seatTicketTypes[seatKey];
-                const type = ticketTypes.find(t => t.id === typeId);
-                return total + (type?.ar || 0);
-            }, 0);
-        };
-        setTotalPrice(calculateTotalPrice());
-    }, [selectedSeats, seatTicketTypes, ticketTypes]);
-
-    useEffect(() => {
-        const handleClickOutside = () => setActiveDropdown(null);
-        document.addEventListener('click', handleClickOutside);
-        return () => document.removeEventListener('click', handleClickOutside);
-    }, []);
-
-    const handleSeatClick = (row, col) => {
+    const handleSeatClick = useCallback((row, col) => {
         if (!seatLayout || row < 0 || row >= seatLayout.length || col < 0 || col >= seatLayout[0]?.length) return;
         if (seatLayout[row][col] !== SEAT_STATUS.AVAILABLE) return;
 
@@ -158,20 +158,20 @@ const Foglalas = () => {
                 [seatKey]: ticketTypes[0].id
             }));
         }
-    };
+    }, [seatLayout, seatTicketTypes, ticketTypes]);
 
-    const handleSeatItemClick = (seatKey, e) => {
+    const handleSeatItemClick = useCallback((seatKey, e) => {
         e.stopPropagation();
         setActiveDropdown(activeDropdown === seatKey ? null : seatKey);
-    };
+    }, [activeDropdown]);
 
-    const handleTicketTypeChange = (seatKey, typeId) => {
+    const handleTicketTypeChange = useCallback((seatKey, typeId) => {
         setSeatTicketTypes(prev => ({
             ...prev,
             [seatKey]: typeId
         }));
         setActiveDropdown(null);
-    };
+    }, []);
 
     const handleReservation = async () => {
         if (!user) {
@@ -191,46 +191,48 @@ const Foglalas = () => {
                 return { x, y };
             });
 
-            const request = {
+            const response = await api.post('/Foglalas/add', {
                 VetitesID: vetitesId,
                 UserID: user?.userID?.toString() || "0",
                 X: seatCoords.map(coord => coord.x.toString()),
                 Y: seatCoords.map(coord => coord.y.toString()),
                 jegytipusId: selectedSeats.map(seatKey => seatTicketTypes[seatKey].toString())
-            };
+            });
 
-            const response = await api.post('/Foglalas/add', request);
             if (response.data?.errorMessage === "Sikeres hozzáadás") {
                 navigate("/foglalas/success", {
-                    replace: true,  
-                    state: {
-                        fromFoglalas: true
-                    }
+                    replace: true,
+                    state: { fromFoglalas: true }
                 });
             } else {
                 setError(response.data?.errorMessage || "Hiba történt a foglalás során");
             }
         } catch (err) {
             setError(err.response?.data?.errorMessage || "Hiba történt a foglalás során");
-            console.error("Foglalási hiba:", err);
         }
     };
 
-    const formatTime = (dateTime) => {
+    const formatTime = useCallback((dateTime) => {
         return new Date(dateTime).toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
-    };
+    }, []);
 
-    const formatDate = (dateString) => {
+    const formatDate = useCallback((dateString) => {
         if (!dateString) return 'Nincs információ';
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString('hu-HU', options);
-    };
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = () => setActiveDropdown(null);
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, []);
 
     if (loading) return (
         <ThemeWrapper className="betoltes">
-                <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
-                    <div className="spinner"></div>
-                </div>
+            <div style={{ textAlign: "center", padding: "2rem", maxWidth: "800px", margin: "0 auto" }}>
+                <div className="spinner"></div>
+            </div>
         </ThemeWrapper>
     );
 
@@ -278,12 +280,11 @@ const Foglalas = () => {
         <ThemeWrapper>
             <div className="foglalas-container">
                 <h1 className="mb-3">Foglalás: {vetites?.film?.cim || 'Ismeretlen film'}</h1>
-
                 <div className="foglalas-header">
                     <div className="vetites-info">
                         <p><strong>Időpont:</strong> {formatDate(vetites.idopont)} {formatTime(vetites.idopont)}</p>
                         <p><strong>Terem:</strong> {vetites?.terem?.nev || 'Ismeretlen terem'}</p>
-                        {seatLayout && <p><strong>Ülőhelyek:</strong> {seatLayout.length} sor, {seatLayout[0]?.length || 0} oszlop, {seatLayout.length * (seatLayout[0]?.length||0)} összesen</p>}
+                        {seatLayout && <p><strong>Ülőhelyek:</strong> {seatLayout.length} sor × {seatLayout[0]?.length || 0} oszlop, {seatLayout.length * (seatLayout[0]?.length||0)} összesen</p>}
                     </div>
                 </div>
 

@@ -12,5 +12,6 @@
         {
             this.error = new Models.ErrorModel(error);
         }
+        public GetFoglalasResponse() { }
     }
 }

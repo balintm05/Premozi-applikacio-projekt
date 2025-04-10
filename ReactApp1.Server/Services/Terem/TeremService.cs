@@ -15,14 +15,12 @@ namespace ReactApp1.Server.Services.Terem
     {
         public async Task<List<GetTeremResponse>?> getTerem()
         {
-            var termek = await context.Terem.AsNoTracking().Include(x => x.Szekek).Include(x=>x.Vetites).ToListAsync();
-            var szekek = await context.Szekek.AsNoTracking().ToListAsync();
-            var response = new List<GetTeremResponse>();
-            foreach (var terem in termek)
-            {
-                response.Add(new GetTeremResponse(terem));
-            }
-            return response;
+            return await context.Terem
+                .AsNoTracking()
+                .Include(x => x.Szekek)
+                .Include(x => x.Vetites)
+                .Select(t => new GetTeremResponse(t))
+                .ToListAsync();
         }
         public async Task<GetTeremResponse?> getTerem(int id)
         {

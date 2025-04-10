@@ -12,7 +12,7 @@ namespace ReactApp1.Server.Services.Image
         public async Task<List<Images>?> getImages()
         {
             await SyncFolderWithDatabase();
-            return await context.Images.AsNoTracking().ToListAsync();
+            return await context.Images.AsNoTracking().AsSplitQuery().ToListAsync();
         }
 
         private async Task SyncFolderWithDatabase()
