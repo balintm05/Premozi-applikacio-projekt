@@ -19,6 +19,23 @@ using ReactApp1.Server.Services.Image;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables()
+    .Build();
+var connectionString = Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING") ??
+                      builder.Configuration.GetConnectionString("MySqlConnectionString");
+builder.Services.AddDbContext<DataBaseContext>(options =>
+    options.UseMySql(connectionString,
+    new MySqlServerVersion(new Version(10, 4, 32))));
+builder.Services.Configure<EmailSettings>(options =>
+{
+    options.SendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY") ??
+                           builder.Configuration["EmailSettings:SendGridApiKey"];
+    options.FromName = builder.Configuration["EmailSettings:FromName"];
+    options.FromEmail = builder.Configuration["EmailSettings:FromEmail"];
+});
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
@@ -57,9 +74,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidAudience = builder.Configuration["AppSettings:Audience"],
             ValidateLifetime = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                Environment.GetEnvironmentVariable("APP_TOKEN") ??
+                builder.Configuration["AppSettings:Token"])),
             ValidateIssuerSigningKey = true
-        };        
+        };
         options.Events = new JwtBearerEvents() 
         { 
             OnMessageReceived = context =>
@@ -88,12 +107,8 @@ builder.Services.AddAuthorization(options =>
             return ctx.User.FindFirstValue(ClaimTypes.Role) == "Admin";
         }));
 });
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailService, SendGridEmailService>();
 builder.Services.AddHttpClient();
-builder.Services.AddDbContext<DataBaseContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("MySqlConnectionString"),
-    new MySqlServerVersion(new Version(10, 4, 32))));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IFilmService, FilmService>();
 builder.Services.AddScoped<ITeremService, TeremService>();
