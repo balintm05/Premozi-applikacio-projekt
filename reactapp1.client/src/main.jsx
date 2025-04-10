@@ -37,8 +37,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import FoglalasSuccess from './components/foglalas/FoglalasSuccess';
 import ProfileFoglalasok from './components/profile/ProfileFoglalasok';
 import Enable2FA from './components/Enable2FA';
-import BeeMovie from './pages/BeeMovie';
-import LiterallyUsFrFr from './pages/LiterallyUsFrFr';
+import BeeMovie from './pages/memes/BeeMovie';
+import LiterallyUsFrFr from './pages/memes/LiterallyUsFrFr';
 
 const App = () => {
     return (

@@ -12,7 +12,7 @@ function Impresszum() {
                     <ul>
                         <li><strong>Cégnév:</strong> Premozi Kft.</li>
                         <li><strong>Székhely:</strong> 1234 Város, Sablon utca 123.</li>
-                        <li><strong>Telefon:</strong> 36 30 123 4567</li>
+                        <li><strong>Telefon:</strong>  +36 20 232-0907</li>
                         <li><strong>E-mail:</strong> premoziappdev@gmail.com</li>
                         <li><strong>Weboldal:</strong> {window.location.origin}</li>
                     </ul>
