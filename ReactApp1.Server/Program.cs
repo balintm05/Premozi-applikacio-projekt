@@ -19,6 +19,11 @@ using ReactApp1.Server.Services.Image;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+if (builder.Environment.IsDevelopment())
+{
+    DotNetEnv.Env.Load(); 
+    builder.Configuration.AddEnvironmentVariables();
+}
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)

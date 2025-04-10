@@ -8,11 +8,13 @@
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:60769</SpaProxyServerUrl>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <UserSecretsId>f4d2862b-e2c9-420a-8599-87060df23805</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Docker.DotNet" Version="3.125.15" />
+    <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="8.0.2" />

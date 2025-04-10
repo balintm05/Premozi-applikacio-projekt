@@ -1,8 +1,8 @@
-name: Build and Deploy
+name: Build and Deploy (Development)
 
 on:
   push:
-    branches: [ master ]  
+    branches: [ master ]
 
 jobs:
   build:
@@ -10,9 +10,7 @@ jobs:
     
     env:
       DOTNET_VERSION: '8.0.x'
-      JWT_TOKEN: ${{ secrets.JWT_TOKEN }}
-      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-      CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+      ASPNETCORE_ENVIRONMENT: "Development"  
     
     steps:
     - uses: actions/checkout@v3
@@ -26,41 +24,30 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --configuration Debug --no-restore 
       env:
-        JWT_TOKEN: ${{ env.JWT_TOKEN }}
-        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
-        CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
-     
-    - name: Publish
-      run: dotnet publish --configuration Release --no-build --output publish
-      env:
-        JWT_TOKEN: ${{ env.JWT_TOKEN }}
-        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
-        CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
+        JWT_TOKEN: ${{ secrets.JWT_TOKEN }} 
+        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+        CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
     
-    - name: Run and Test Backend (Development)
-      run: |
-        dotnet ReactApp1.Server.dll --urls "http://localhost:5082;https://localhost:7153" &
-        
-        sleep 15
-        
-        echo "Testing development endpoints..."
-        curl -k https://localhost:7153/swagger || curl http://localhost:5082/swagger
-        curl -k https://localhost:7153/env-check || curl http://localhost:5082/env-check
-        
-        pkill -f "ReactApp1.Server.dll"
-      working-directory: ./publish
+    - name: Publish Development Build
+      run: dotnet publish --configuration Debug --no-build --output publish-dev
       env:
-        ASPNETCORE_ENVIRONMENT: "Development"  
-        ASPNETCORE_URLS: "http://localhost:5082;https://localhost:7153"
         JWT_TOKEN: ${{ secrets.JWT_TOKEN }}
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
     
-    - name: Debug Environment Variables
+    - name: Deploy with Development Secrets
       run: |
-        echo "ASPNETCORE_ENVIRONMENT: $ASPNETCORE_ENVIRONMENT"
-        echo "JWT_TOKEN is set: $([ -z "$JWT_TOKEN" ] && echo 'NO' || echo 'YES')"
-        echo "SENDGRID_API_KEY is set: $([ -z "$SENDGRID_API_KEY" ] && echo 'NO' || echo 'YES')"
-        echo "CONNECTION_STRING is set: $([ -z "$CONNECTION_STRING" ] && echo 'NO' || echo 'YES')"
+        cat <<EOF > .env
+        ASPNETCORE_ENVIRONMENT=Development
+        JWT_TOKEN=${{ secrets.JWT_TOKEN }}
+        SENDGRID_API_KEY=${{ secrets.SENDGRID_API_KEY }}
+        CONNECTION_STRING=${{ secrets.CONNECTION_STRING }}
+        EOF
+        
+        dotnet publish-dev/ReactApp1.Server.dll --urls "http://0.0.0.0:5082;https://0.0.0.0:7153" &
+        sleep 15
+        
+        curl -k https://localhost:7153/env-check
+      working-directory: ./
