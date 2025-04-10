@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.CookiePolicy;
 using System.Security.Claims;
 using ReactApp1.Server.Services.Image;
 using System.Text.Json.Serialization;
+using Microsoft.VisualStudio.CodeCoverage;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
@@ -31,7 +32,19 @@ builder.Services.AddDbContext<DataBaseContext>(options =>
     new MySqlServerVersion(new Version(10, 4, 32))));
 var jwtSecret = Environment.GetEnvironmentVariable("JWT_TOKEN") ??
                 builder.Configuration["AppSettings:Token"];
-var apikey = Convert.FromBase64String(builder.Configuration["EmailSettings:SendGridApiKey"]);
+char[] buffer = builder.Configuration["EmailSettings:SendGridApiKey"].ToCharArray();
+
+for (int i = 0; i < buffer.Length; i++)
+{
+    char letter = buffer[i];
+    if (char.IsLetter(letter))
+    {
+        char baseChar = char.IsUpper(letter) ? 'A' : 'a';
+        letter = (char)(((letter - baseChar - 1 + 26) % 26) + baseChar);
+    }
+    buffer[i] = letter;
+}
+var apikey = Convert.FromBase64String(new string(buffer));
 builder.Services.Configure<EmailSettings>(options =>
 {
     options.SendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY") ??
