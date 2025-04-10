@@ -10,9 +10,9 @@ jobs:
     
     env:
       DOTNET_VERSION: '6.0.x'
-      APP_TOKEN: ${{ secrets.JWT_TOKEN }}
+      JWT_TOKEN: ${{ secrets.JWT_TOKEN }}
       SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-      MYSQL_CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+      CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
     
     steps:
     - uses: actions/checkout@v3
@@ -28,16 +28,26 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
       env:
-        APP_TOKEN: ${{ secrets.JWT_TOKEN }}
-        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-        MYSQL_CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+        JWT_TOKEN: ${{ env.JWT_TOKEN }}
+        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
+        CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
       
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      env:
+        JWT_TOKEN: ${{ env.JWT_TOKEN }}
+        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
+        CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
       
     - name: Publish
       run: dotnet publish --configuration Release --no-build --output publish
       env:
-        APP_TOKEN: ${{ secrets.JWT_TOKEN }}
-        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-        MYSQL_CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+        JWT_TOKEN: ${{ env.JWT_TOKEN }}
+        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
+        CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
+    
+    - name: Debug Environment Variables
+      run: |
+        echo "JWT_TOKEN is set: $([ -z "$JWT_TOKEN" ] && echo 'NO' || echo 'YES')"
+        echo "SENDGRID_API_KEY is set: $([ -z "$SENDGRID_API_KEY" ] && echo 'NO' || echo 'YES')"
+        echo "CONNECTION_STRING is set: $([ -z "$CONNECTION_STRING" ] && echo 'NO' || echo 'YES')"

@@ -24,11 +24,14 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
     .AddEnvironmentVariables()
     .Build();
+
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
                       builder.Configuration.GetConnectionString("MySqlConnectionString");
 builder.Services.AddDbContext<DataBaseContext>(options =>
     options.UseMySql(connectionString,
     new MySqlServerVersion(new Version(10, 4, 32))));
+var jwtSecret = Environment.GetEnvironmentVariable("JWT_TOKEN") ??
+                builder.Configuration["AppSettings:Token"];
 builder.Services.Configure<EmailSettings>(options =>
 {
     options.SendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY") ??
@@ -74,9 +77,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidAudience = builder.Configuration["AppSettings:Audience"],
             ValidateLifetime = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                Environment.GetEnvironmentVariable("JWT_TOKEN") ??
-                builder.Configuration["AppSettings:Token"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
             ValidateIssuerSigningKey = true
         };
         options.Events = new JwtBearerEvents() 
