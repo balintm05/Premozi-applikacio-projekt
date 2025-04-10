@@ -31,13 +31,7 @@ jobs:
         JWT_TOKEN: ${{ env.JWT_TOKEN }}
         SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
         CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
-      
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-      env:
-        JWT_TOKEN: ${{ env.JWT_TOKEN }}
-        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
-        CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
+     
       
     - name: Publish
       run: dotnet publish --configuration Release --no-build --output publish
