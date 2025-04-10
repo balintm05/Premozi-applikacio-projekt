@@ -84,11 +84,11 @@ namespace ReactApp1.Server.Services.Film
 
         public async Task<List<Entities.Film>?> getFilm()
         {
-            return await context.Film.Include(x => x.Images).Include(x=>x.Vetitesek).ToListAsync();
+            return await context.Film.AsNoTracking().Include(x => x.Images).Include(x=>x.Vetitesek).ToListAsync();
         }
         public async Task<Entities.Film?> getFilm(int id)
         { 
-            var film = await context.Film.Include(x=>x.Vetitesek).ThenInclude(x=>x.Terem).Include(x => x.Images).FirstOrDefaultAsync(x=>x.id==id);
+            var film = await context.Film.AsNoTracking().Include(x=>x.Vetitesek).ThenInclude(x=>x.Terem).Include(x => x.Images).FirstOrDefaultAsync(x=>x.id==id);
             return film;
         }
 

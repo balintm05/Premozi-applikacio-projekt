@@ -15,8 +15,8 @@ namespace ReactApp1.Server.Services.Terem
     {
         public async Task<List<GetTeremResponse>?> getTerem()
         {
-            var termek = await context.Terem.Include(x => x.Szekek).Include(x=>x.Vetites).ToListAsync();
-            var szekek = await context.Szekek.ToListAsync();
+            var termek = await context.Terem.AsNoTracking().Include(x => x.Szekek).Include(x=>x.Vetites).ToListAsync();
+            var szekek = await context.Szekek.AsNoTracking().ToListAsync();
             var response = new List<GetTeremResponse>();
             foreach (var terem in termek)
             {
@@ -27,7 +27,7 @@ namespace ReactApp1.Server.Services.Terem
         public async Task<GetTeremResponse?> getTerem(int id)
         {
             var terem = await context.Terem.FindAsync(id);
-            var szekek = await context.Szekek.ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Teremid == id)).ToListAsync();
+            var szekek = await context.Szekek.AsNoTracking().ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Teremid == id)).ToListAsync();
             var response = new List<GetTeremResponse>();
             if (terem == null)
             {

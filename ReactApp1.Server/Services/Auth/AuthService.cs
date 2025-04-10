@@ -109,7 +109,7 @@ namespace ReactApp1.Server.Services.Auth
         }
         public async Task<List<GetUserResponseObject>> get()
         {
-            var users = await context.Users.ToListAsync();
+            var users = await context.Users.AsNoTracking().ToListAsync();
             var list = new List<GetUserResponseObject>();   
             foreach(var user in users)
             {
