@@ -110,14 +110,6 @@ function VetitesIdopontLista() {
         fetchVetitesek();
     }, []);
 
-    const filteredVetitesek = vetitesek.filter(v => {
-        const vetitesDate = new Date(v.datum).toLocaleDateString('hu-HU', {
-            month: '2-digit',
-            day: '2-digit'
-        });
-        return vetitesDate === selectedDate;
-    });
-
     const filteredGroupedVetitesek = Object.keys(groupedVetitesek).reduce((acc, filmId) => {
         const film = groupedVetitesek[filmId];
         const filteredScreenings = film.screenings.filter(v => {

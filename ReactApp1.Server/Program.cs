@@ -66,7 +66,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     });
 builder.Services.AddControllers().AddNewtonsoftJson();
 builder.WebHost.ConfigureKestrel(serverOptions =>
