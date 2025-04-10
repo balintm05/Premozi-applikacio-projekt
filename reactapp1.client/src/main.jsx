@@ -38,6 +38,7 @@ import FoglalasSuccess from './components/foglalas/FoglalasSuccess';
 import ProfileFoglalasok from './components/profile/ProfileFoglalasok';
 import Enable2FA from './components/Enable2FA';
 import BeeMovie from './pages/BeeMovie';
+import LiterallyUsFrFr from './pages/LiterallyUsFrFr';
 
 const App = () => {
     return (
@@ -53,7 +54,9 @@ const App = () => {
                         <Route path="impresszum" element={<Impresszum />} />
 
                         <Route path="film/:id" element={<FilmAdatok />} />
+
                         <Route path="bee-movie" element={<BeeMovie />} />
+                        <Route path="literally-us-fr-fr" element={<LiterallyUsFrFr />} />
 
                         <Route path="foglalas" element={<ProtectedRoute />}>
                             <Route path=":id" element={<Foglalas />} />

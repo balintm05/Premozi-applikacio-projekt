@@ -76,7 +76,7 @@ function FilmEditAdmin() {
                         Megjegyzes: filmData.megjegyzes || '',
                         image: null,
                         imageId: filmData.imageID || null,
-                        selectedImageUrl: "https://localhost:7153" + filmData.images.relativePath || ''
+                        selectedImageUrl: `${window.location.protocol}//${window.location.hostname}:7153` + filmData.images.relativePath || ''
                     });
                 }
             } catch (error) {

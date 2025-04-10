@@ -115,7 +115,7 @@ const FilmAdatok = () => {
                 <div className="film-header" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                     <h1>{film.cim}</h1>
                     <img
-                        src={`https://localhost:7153/images/${film.korhatar}.png`}
+                        src={`${window.location.protocol}//${window.location.hostname}:7153/images/${film.korhatar}.png`}
                         alt={`Korhatár: ${film.Korhatar}`}
                         style={{ height: '40px' }}
                     />

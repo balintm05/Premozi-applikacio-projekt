@@ -9,7 +9,7 @@ import YouTubeModal from "../components/videos/YoutubeModal";
 import ReactDOM from 'react-dom';
 import '../components/images/ImageModal.css';
 
-const BASE_URL = "https://localhost:7153";
+const BASE_URL = `${window.location.protocol}//${window.location.hostname}:7153`;
 
 function FilmListAdmin() {
     const { api } = useContext(AuthContext);
@@ -206,7 +206,7 @@ function FilmListAdmin() {
                                                                     <td>{film.mufaj}</td>
                                                                     <th className={`w-25 ${darkMode ? 'bg-gray-700' : 'bg-light'}`}>Korhatár</th>
                                                                     <td><img
-                                                                        src={`https://localhost:7153/images/${film.korhatar}.png`}
+                                                                        src={`${window.location.protocol}//${window.location.hostname}:7153/images/${film.korhatar}.png`}
                                                                         style={{ height: "25px" }}
                                                                         alt={`Korhatár besorolás: ${film.korhatar}`}
                                                                         className="h-6"

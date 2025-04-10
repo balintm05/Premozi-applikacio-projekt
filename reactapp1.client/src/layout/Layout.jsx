@@ -149,7 +149,7 @@ export default function Layout() {
                                 style={{ background: 'none', border: 'none', padding: 0 }}
                             >
                                 <img
-                                    src="https://localhost:7153/images/Premlogo_sm.png"
+                                    src={`${window.location.protocol}//${window.location.hostname}:7153/images/Premlogo_sm.png`}
                                     className="navbar-logo"
                                     alt="Premozi Logo"
                                 />
@@ -177,7 +177,7 @@ export default function Layout() {
                                         style={{ background: 'none', border: 'none', padding: 0 }}
                                     >
                                         <img
-                                            src="https://localhost:7153/images/Premlogo_sm.png"
+                                            src={`${window.location.protocol}//${window.location.hostname}:7153/images/Premlogo_sm.png`}
                                             className="navbar-logo"
                                             alt="Premozi Logo"
                                         />

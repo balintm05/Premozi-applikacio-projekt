@@ -119,7 +119,7 @@ const Musor = () => {
                                                             <img
                                                                 alt="korhatár besorolás"
                                                                 className="age-rating-musor"
-                                                                src={`https://localhost:7153/images/${film.korhatar}.png`}
+                                                                src={`${window.location.protocol}//${window.location.hostname}:7153/images/${film.korhatar}.png`}
                                                                 onError={(e) => {
                                                                     e.target.style.display = 'none';
                                                                 }}

@@ -50,7 +50,7 @@ function VetitesIdopontLista() {
                                 terem: v.vetites.terem?.nev || 'Ismeretlen terem',
                                 trailerLink: v.vetites.film?.trailerLink,
                                 ageImage: v.vetites.film?.images ?
-                                    `https://localhost:7153/images/${v.vetites.film.korhatar}.png` : null,
+                                    `${window.location.protocol}//${window.location.hostname}:7153/images/${v.vetites.film.korhatar}.png` : null,
                                 rawTime: screeningDate.getHours()
                             };
                         })

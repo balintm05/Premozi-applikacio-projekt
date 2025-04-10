@@ -44,7 +44,7 @@ function ProfilePage() {
 
     const handleDeleteAccount = async () => {
         if (window.confirm("Biztosan törölni szeretné a fiókját?")) {
-            const response = await fetch(`https://localhost:7153/api/Auth/deleteUser/${profileData.userID}`, {
+            const response = await fetch(`${window.location.protocol}//${window.location.hostname}:7153/api/Auth/deleteUser/${profileData.userID}`, {
                 method: "DELETE",
                 credentials: 'include'
             });
