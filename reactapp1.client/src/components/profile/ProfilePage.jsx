@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import ThemeWrapper from "../../Layout/ThemeWrapper";
+import ThemeWrapper from "../../layout/ThemeWrapper";
 import "./ProfilePage.css";
 
 function ProfilePage() {
