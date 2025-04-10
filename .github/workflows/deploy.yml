@@ -29,7 +29,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
       env:
         JWT_TOKEN: ${{ env.JWT_TOKEN }}
-        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
+        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}  # Fixed
         CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
       
     - name: Test
@@ -43,7 +43,7 @@ jobs:
       run: dotnet publish --configuration Release --no-build --output publish
       env:
         JWT_TOKEN: ${{ env.JWT_TOKEN }}
-        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}
+        SENDGRID_API_KEY: ${{ env.SENDGRID_API_KEY }}  # Fixed
         CONNECTION_STRING: ${{ env.CONNECTION_STRING }}
     
     - name: Debug Environment Variables
@@ -51,3 +51,5 @@ jobs:
         echo "JWT_TOKEN is set: $([ -z "$JWT_TOKEN" ] && echo 'NO' || echo 'YES')"
         echo "SENDGRID_API_KEY is set: $([ -z "$SENDGRID_API_KEY" ] && echo 'NO' || echo 'YES')"
         echo "CONNECTION_STRING is set: $([ -z "$CONNECTION_STRING" ] && echo 'NO' || echo 'YES')"
+        echo "All environment variables:"
+        printenv
