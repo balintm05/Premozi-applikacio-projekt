@@ -8,9 +8,9 @@ on:
 
 env:
   DOTNET_VERSION: '6.0.x'
-  APP_TOKEN: ${{ secrets.APP_TOKEN }}
+  APP_TOKEN: ${{ secrets.JWT_TOKEN }}
   SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-  MYSQL_CONNECTION_STRING: ${{ secrets.MYSQL_CONNECTION_STRING }}
+  MYSQL_CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
 
 jobs:
   build:
