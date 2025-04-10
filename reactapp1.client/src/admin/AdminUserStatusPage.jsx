@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { Box, Button, Typography, Alert, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
-import ThemeWrapper from "../Layout/ThemeWrapper";
+import ThemeWrapper from "../layout/ThemeWrapper";
 
 function AdminUserStatusPage() {
     const { id } = useParams();
