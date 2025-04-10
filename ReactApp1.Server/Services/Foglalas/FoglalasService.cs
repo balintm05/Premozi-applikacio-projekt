@@ -18,7 +18,7 @@ namespace ReactApp1.Server.Services.Foglalas
         }
         public async Task<List<GetFoglalasResponse>?> GetFoglalas()
         {           
-            var foglalasok = await context.FoglalasAdatok
+            var foglalasok = await context.FoglalasAdatok.AsNoTracking().AsSplitQuery()
         .Include(x => x.User).IgnoreAutoIncludes()
         .Include(x => x.FoglaltSzekek)
             .ThenInclude(x => x.VetitesSzekek)
@@ -48,7 +48,7 @@ namespace ReactApp1.Server.Services.Foglalas
         {
             try
             {
-                var foglalasok = await context.FoglalasAdatok
+                var foglalasok = await context.FoglalasAdatok.AsNoTracking().AsSplitQuery()
         .Include(x => x.User).IgnoreAutoIncludes()
         .Include(x => x.FoglaltSzekek)
             .ThenInclude(x => x.VetitesSzekek)
@@ -89,7 +89,7 @@ namespace ReactApp1.Server.Services.Foglalas
             try
             {
                 var foglalasok = await context.FoglalasAdatok
-                .AsNoTracking()
+                .AsNoTracking().AsSplitQuery()
                 .Include(x => x.User).IgnoreAutoIncludes()
                 .Include(x => x.FoglaltSzekek)
                     .ThenInclude(x => x.VetitesSzekek)
