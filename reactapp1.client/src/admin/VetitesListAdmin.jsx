@@ -183,8 +183,10 @@ function VetitesListAdmin() {
                     </thead>
                     <tbody>
                         {filteredVetitesek.length > 0 ? (
-                            filteredVetitesek.map(vetites => (
-                                <tr key={`vetites-${vetites.id}`} className={darkMode ? 'table-dark' : ''}>
+                            filteredVetitesek
+                                .sort((a, b) => a.id - b.id)
+                                .map(vetites => (
+                                    <tr key={`vetites-${vetites.id}`} className={darkMode ? 'table-dark' : ''}>
                                     <td>{vetites.id}</td>
                                     <td>{vetites.film?.id || '-'}</td>
                                     <td>{vetites.terem?.id || '-'}</td>
