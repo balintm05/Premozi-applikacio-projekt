@@ -85,6 +85,9 @@ Ha a program elindult, csak másolja ki a linket a terminálból, vagy innét:
 ```
 https://localhost:60769/
 ```
+
+###Megjegyzés: a leadási határidőig nem sikerült megoldani a web szerveres hostolást. Ha a bemutatásig ez meg lesz oldva, a [premozi.site](https://premozi.site/) weboldalon lesz majd elérhető.
+
 ## Dokumentáció
 
 [Dokumentáció](https://github.com/balintm05/ReactApp1szenvedes/blob/master/dokument%C3%A1ci%C3%B32%20(2).docx)
