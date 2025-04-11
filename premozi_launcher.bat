@@ -1,5 +1,5 @@
 @echo off
-title Premozi App Launcher
+title Premozi Launcher
 color 0A
 cls
 
