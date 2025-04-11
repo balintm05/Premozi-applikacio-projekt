@@ -1,7 +1,7 @@
 
 # Premozi
 
-A modern mozizás élményét fejlesztjük egy innovatív, felhasználóbarát online jegyfoglaló rendszerrel, amely lehetővé teszi a mozijegyek gyors és kényelmes foglalását. Projektünk célja, hogy a felhasználók könnyedén tallózhassanak a filmek és vetítések közt, kiválaszthassák kedvenc helyüket a teremben, majd lefoglalhassák a jegyeket – mindezt egy reszponzív, modern felületen.
+A modern mozizás élményét fejlesztjük egy innovatív, felhasználóbarát online jegyfoglaló rendszerrel, amely lehetővé teszi a mozijegyek gyors és kényelmes foglalását. Projektünk célja, hogy a felhasználók könnyedén tallózhassanak a filmek és vetítések közt, kiválaszthassák kedvenc helyüket a teremben, majd lefoglalhassák a jegyeket – mindezt egy kényelmes, reszponzív, modern felületen.
 
 
 ## Fejlesztők
@@ -99,7 +99,7 @@ Megjegyzés: a leadási határidőig nem sikerült megoldani a web szerveres hos
 
 [Word Dokumentáció](https://github.com/balintm05/Premozi-applikacio-projekt/raw/refs/heads/master/Premozi%20Dokument%C3%A1ci%C3%B3%20Word.docx)
 
-[PDF Dokumentáció]((https://github.com/balintm05/Premozi-applikacio-projekt/blob/master/Premozi%20Dokument%C3%A1ci%C3%B3%20PDF.pdf))
+[PDF Dokumentáció](https://github.com/balintm05/Premozi-applikacio-projekt/blob/master/Premozi%20Dokument%C3%A1ci%C3%B3%20PDF.pdf)
 
 
 # Funkciók
