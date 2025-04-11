@@ -119,5 +119,5 @@ Megjegyzés: a leadási határidőig nem sikerült megoldani a web szerveres hos
 - A szerveren tárolt képek kezelése.
 - Foglalások törlése.
 
-.
+
 
