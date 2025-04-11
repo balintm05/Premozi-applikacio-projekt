@@ -73,11 +73,14 @@ Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2
   
       -> felül: project: ReactApp.Server, action: Start, debug target: https
       -> alul: project: reactapp.client, action: Start, debug target: üres
-  
+
   -> Alkalmaz -> Current Selection -> Alkalmaz
 
 Ezután sikeresen el fog indulni a program.)
+
+
 Emellett egy indító BAT fájl is mellékelve van, de annak működése a tanúsítványok miatt inkonzisztens, úgyhogy nem javasolt. 
+
 Ha a program elindult, csak másolja ki a linket a terminálból, vagy innét:
 ```
 https://localhost:60769/
