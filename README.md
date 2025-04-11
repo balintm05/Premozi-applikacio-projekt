@@ -86,7 +86,7 @@ Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2
 Ezután sikeresen el fog indulni a program.)
 
 
-Emellett egy indító BAT fájl is mellékelve van, de annak működése a tanúsítványok miatt inkonzisztens, úgyhogy nem javasolt. 
+Emellett egy indító BAT fájl is mellékelve van, de annak működése a tanúsítványok miatt inkonzisztens, úgyhogy használata nem javasolt. 
 
 Ha a program elindult, másolja ki a linket vagy a terminálból, vagy innét:
 ```
