@@ -14,7 +14,7 @@ namespace ReactApp1.Server.Services.Vetites
     {
         public async Task<List<GetVetitesResponse>?> getVetites()
         {
-            var vetitesek = await context.Vetites.AsNoTracking().AsSplitQuery().IgnoreAutoIncludes().Include(x=>x.Film).IgnoreAutoIncludes().Include(x => x.Terem).IgnoreAutoIncludes().Include(x => x.Film).ThenInclude(x => x.Images).IgnoreAutoIncludes().ToListAsync();
+            var vetitesek = await context.Vetites.AsNoTracking().AsSplitQuery().Include(x=>x.Film).Include(x => x.Terem).Include(x => x.Film).ThenInclude(x => x.Images).ToListAsync();
             var response = new List<GetVetitesResponse>();
             foreach(var vetites in vetitesek)
             {
@@ -24,7 +24,7 @@ namespace ReactApp1.Server.Services.Vetites
         }
         public async Task<GetVetitesResponse?> getVetites(int id)
         {
-            var vetites = await context.Vetites.AsNoTracking().AsSplitQuery().IgnoreAutoIncludes().Include(x => x.Film).IgnoreAutoIncludes().Include(x=>x.VetitesSzekek).IgnoreAutoIncludes().Include(x => x.Terem).IgnoreAutoIncludes().Include(x => x.Film).ThenInclude(x => x.Images).IgnoreAutoIncludes().ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == id)).ToListAsync();
+            var vetites = await context.Vetites.AsNoTracking().AsSplitQuery().Include(x => x.Film).Include(x=>x.VetitesSzekek).Include(x => x.Terem).Include(x => x.Film).ThenInclude(x => x.Images).ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == id)).ToListAsync();
             if (vetites == null || vetites.Count()==0)
             {
                 return new GetVetitesResponse("Nincs ilyen id-jű vetítés az adatbázisban");
