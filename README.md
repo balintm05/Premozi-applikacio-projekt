@@ -69,7 +69,7 @@ Ezután indítsa el a XAMPP-ot, lépjen be a PhpMyAdmin-ba és futtassa le a kó
 
 
 ## Helyi futtatás
-Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2022-ben az F5 gomb megnyomásával, vagy a https gomb megnyomásával.
+Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2022-ben az F5 billentyű lenyomásával, vagy a https gomb megnyomásával.
 
 A szerver projektnek kell kiválasztva lennie és a gombnak https-t kell írnia; ha nem indul el, akkor a teendő:
 
