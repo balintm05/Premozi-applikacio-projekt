@@ -69,9 +69,9 @@ Ezután indítsa el a XAMPP-ot, lépjen be a PhpMyAdmin-ba és futtassa le a kó
 
 
 ## Helyi futtatás
-Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2022-ben az F5 gomb megnyomásával, vagy a https gomb megnyomásával.
+Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2022-ben az F5 billentyű lenyomásával, vagy a https gomb megnyomásával.
 
-(a szerver projektnek kell kiválasztva lennie és a gombnak https-t kell írnia, ha nem indul el, akkor:
+A szerver projektnek kell kiválasztva lennie és a gombnak https-t kell írnia; ha nem indul el, akkor a teendő:
 
 
     -> https/start melletti leugró ablak 
@@ -83,7 +83,7 @@ Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2
     -> Current Selection 
     -> Alkalmaz
 
-Ezután sikeresen el fog indulni a program.)
+Ezután sikeresen el fog indulni a program.
 
 
 Emellett egy indító BAT fájl is mellékelve van, de annak működése a tanúsítványok miatt inkonzisztens, úgyhogy használata nem javasolt. 
