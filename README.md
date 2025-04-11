@@ -99,7 +99,7 @@ Megjegyzés: a leadási határidőig nem sikerült megoldani a web szerveres hos
 
 [Word Dokumentáció](https://github.com/balintm05/Premozi-applikacio-projekt/raw/refs/heads/master/Premozi%20Dokument%C3%A1ci%C3%B3%20Word.docx)
 
-[PDF Dokumentáció](https://github.com/balintm05/Premozi-applikacio-projekt/raw/refs/heads/master/Premozi%20Dokument%C3%A1ci%C3%B3%20Word.docx)
+[PDF Dokumentáció]((https://github.com/balintm05/Premozi-applikacio-projekt/blob/master/Premozi%20Dokument%C3%A1ci%C3%B3%20PDF.pdf))
 
 
 # Funkciók
