@@ -66,11 +66,16 @@ xunit.runner.visualstudio 3.0.2
 ```
 ## Helyi futtatás
 Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2022-ben az F5 gomb megnyomásával, vagy a https gombra.
+
 (a szerver komponensnek kell kiválasztva lennie, ha nem indul el, akkor:
+
   -> start melletti leugró ablak -> Configure Startup Projects -> Multiple startup projects -> 
+  
       -> felül: project: ReactApp.Server, action: Start, debug target: https
       -> alul: project: reactapp.client, action: Start, debug target: üres
+  
   -> Alkalmaz -> Current Selection -> Alkalmaz
+
 Ezután sikeresen el fog indulni a program.)
 Emellett egy indító BAT fájl is mellékelve van, de annak működése a tanúsítványok miatt inkonzisztens, úgyhogy nem javasolt. 
 Ha a program elindult, csak másolja ki a linket a terminálból, vagy innét:
