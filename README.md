@@ -65,9 +65,9 @@ xunit.runner.visualstudio 3.0.2
 
 ```
 ## Helyi futtatás
-Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2022-ben az F5 gomb megnyomásával, vagy a https gombra.
+Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2022-ben az F5 gomb megnyomásával, vagy a https gomb megnyomásával.
 
-(a szerver komponensnek kell kiválasztva lennie, ha nem indul el, akkor:
+(a szerver komponensnek kell kiválasztva lennie és https-t kell írnia, ha nem indul el, akkor:
 
   -> start melletti leugró ablak -> Configure Startup Projects -> Multiple startup projects -> 
   
