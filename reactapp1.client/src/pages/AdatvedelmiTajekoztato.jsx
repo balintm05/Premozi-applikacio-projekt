@@ -1,11 +1,12 @@
-import React from 'react';
+﻿import React from 'react';
+import ThemeWrapper from '../layout/ThemeWrapper';
 // minta forrás: https://minner.hu/wp-content/uploads/2019/02/Adatkezel%C3%A9si-t%C3%A1j%C3%A9koztat%C3%B3-converted.docx
 function AdatvedelmiTajekoztato() {
     document.title = "Adatvédelmi tájékoztató - Premozi";
     return (
-        <div className="privacy-policy-container">
-            <div className="sidebar">
-                <h3 style={{color:'black'}}>Tartalom</h3>
+        <ThemeWrapper className="privacy-policy-container" noText>
+            <ThemeWrapper className="sidebar" noBg>
+                <h3>Tartalom</h3>
                 <ul className="toc">
                     <li><a href="#az-adatkezelési-tájékoztató-célja">1. Az adatkezelési tájékoztató célja</a></li>
                     <li><a href="#az-adatkezelő-adatai">2. Az adatkezelő adatai</a>
@@ -21,7 +22,7 @@ function AdatvedelmiTajekoztato() {
                                 <ul>
                                     <li><a href="#a-sütik-feladata">3.3.1 A sütik feladata</a></li>
                                     <li><a href="#feltétlenül-szükséges-munkamenet-session-cookie-k">3.3.2 Feltétlenül szükséges, munkamenet (session) cookie-k</a></li>
-                                    <li><a href="#harmadik-fél-által-elhelyezett-cookie-k-analitika">3.3.3 Harmadik fél által elhelyezett cookie-k (analitika)</a></li>
+                                    <li><a href="#harmadik-fél-által-elplaced-cookie-k-analitika">3.3.3 Harmadik fél által elplaced cookie-k (analitika)</a></li>
                                 </ul>
                             </li>
                             <li><a href="#online-rendeléshez-kapcsolódó-adatok">3.4 Online rendeléshez kapcsolódó adatok</a></li>
@@ -54,8 +55,9 @@ function AdatvedelmiTajekoztato() {
                     </li>
                     <li><a href="#egyéb-rendelkezések">9. Egyéb rendelkezések</a></li>
                 </ul>
-            </div>
-            <div className="content">
+            </ThemeWrapper>
+
+            <ThemeWrapper className="content" noBg>
                 <h1>Adatkezelési tájékoztató</h1>
 
                 <section id="az-adatkezelési-tájékoztató-célja">
@@ -252,7 +254,7 @@ function AdatvedelmiTajekoztato() {
                         E tájékoztatóban fel nem sorolt adatkezelésekről az adat felvételekor adunk tájékoztatást.
                     </p>
                 </section>
-            </div>
+            </ThemeWrapper>
 
             <style>{`
                 .privacy-policy-container {
@@ -269,7 +271,7 @@ function AdatvedelmiTajekoztato() {
                     position: sticky;
                     top: 0;
                     align-self: flex-start;
-                    background-color: #f8f9fa;
+                    background-color: var(--sidebar-bg);
                     height: 100vh;
                     overflow-y: auto;
                 }
@@ -277,8 +279,13 @@ function AdatvedelmiTajekoztato() {
                 .sidebar h3 {
                     margin-top: 0;
                     font-size: 1.2rem;
+                    color: var(--text-color);
                 }
-
+                .sidebar a{
+                    margin-top: 0;
+                    font-size: 1.2rem;
+                    color: var(--text-color) !important;
+                }
                 .toc {
                     list-style-type: none;
                     padding: 0;
@@ -291,13 +298,13 @@ function AdatvedelmiTajekoztato() {
                 }
 
                 .toc a {
-                    color: #333;
+                    color: var(--toc-link-color, #333);
                     text-decoration: none;
                     font-size: 0.9rem;
                 }
 
                 .toc a:hover {
-                    color: #0066cc;
+                    color: var(--toc-link-hover-color, #0066cc);
                     text-decoration: underline;
                 }
 
@@ -314,6 +321,7 @@ function AdatvedelmiTajekoztato() {
 
                 .content h1 {
                     margin-top: 0;
+                    color: inherit;
                 }
 
                 section {
@@ -321,12 +329,14 @@ function AdatvedelmiTajekoztato() {
                 }
 
                 section h3 {
-                    border-bottom: 1px solid #eee;
+                    border-bottom: 1px solid var(--section-border-color, #eee);
                     padding-bottom: 5px;
+                    color: inherit;
                 }
 
                 section h3, section h4 {
                     margin-top: 20px;
+                    color: inherit;
                 }
 
                 table {
@@ -336,7 +346,7 @@ function AdatvedelmiTajekoztato() {
                 }
 
                 table, th, td {
-                    border: 1px solid #ddd;
+                    border: 1px solid var(--table-border-color, #ddd);
                 }
 
                 th, td {
@@ -345,7 +355,8 @@ function AdatvedelmiTajekoztato() {
                 }
 
                 th {
-                    background-color: #f2f2f2;
+                    background-color: var(--table-header-bg, #f2f2f2);
+                    color: inherit;
                 }
 
                 @media (max-width: 768px) {
@@ -363,8 +374,16 @@ function AdatvedelmiTajekoztato() {
                         padding: 20px 10px;
                     }
                 }
+                body.dark-mode {
+                    --sidebar-bg: #1e1e1e;
+                    --toc-link-color: #bbbbbb;
+                    --toc-link-hover-color: #ffffff;
+                    --section-border-color: #444;
+                    --table-border-color: #444;
+                    --table-header-bg: #2d2d2d;
+                }
             `}</style>
-        </div>
+        </ThemeWrapper>
     );
 }
 
