@@ -81,7 +81,7 @@ Ezután sikeresen el fog indulni a program.)
 
 Emellett egy indító BAT fájl is mellékelve van, de annak működése a tanúsítványok miatt inkonzisztens, úgyhogy nem javasolt. 
 
-Ha a program elindult, csak másolja ki a linket a terminálból, vagy innét:
+Ha a program elindult, másolja ki a linket vagy a terminálból, vagy innét:
 ```
 https://localhost:60769/
 ```
