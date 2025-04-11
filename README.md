@@ -73,12 +73,15 @@ Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2
 
 (a szerver komponensnek kell kiválasztva lennie és https-t kell írnia, ha nem indul el, akkor:
 
-  -> start melletti leugró ablak -> Configure Startup Projects -> Multiple startup projects -> 
-  
-      -> felül: project: ReactApp.Server, action: Start, debug target: https
-      -> alul: project: reactapp.client, action: Start, debug target: üres
 
-  -> Alkalmaz -> Current Selection -> Alkalmaz
+    -> https/start melletti leugró ablak 
+    -> Configure Startup Projects 
+    -> Multiple startup projects 
+        -> felül: project: ReactApp.Server, action: Start, debug target: https
+        -> alul: project: reactapp.client, action: Start, debug target: üres
+    -> Alkalmaz 
+    -> Current Selection 
+    -> Alkalmaz
 
 Ezután sikeresen el fog indulni a program.)
 
