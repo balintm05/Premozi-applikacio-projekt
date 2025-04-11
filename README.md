@@ -100,10 +100,15 @@ Megjegyzés: a leadási határidőig nem sikerült megoldani a web szerveres hos
 - Filmek böngészése – Áttekinthető lista a aktuális filmekről.
 - Vetítések – Időpontok és a hozzájuk tartozó ülésrend megtekintése.
 - Székválasztás- és foglalás – Interaktív térkép a moziteremről és a foglalások állapotáról valós időben.
+- Foglaláskezelés - a felhasználók a vetítés kezdetéig bármikor visszavonhatják foglalásaikat.
 - Email értesítések – Sikeres foglalásról és fontos információkról automatikus értesítés.
 
 ### Adminisztrációs felület
 - Filmek, termek, vetítések kezelése – Új vetítések hozzáadása és meglévők szerkesztése.
 - Székek konfigurálása – Moziterem elrendezés testreszabása.
 - Felhasználók kezelése – Regisztrált felhasználók listája és admin jogosultságok.
+- A szerveren tárolt képek kezelése.
+- Foglalások törlése.
+
+
 
