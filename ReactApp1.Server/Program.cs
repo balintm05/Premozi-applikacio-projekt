@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Serialization;
@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.CookiePolicy;
 using System.Security.Claims;
 using ReactApp1.Server.Services.Image;
 using System.Text.Json.Serialization;
-using Microsoft.VisualStudio.CodeCoverage;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
