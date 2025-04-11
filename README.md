@@ -1,7 +1,7 @@
 
 # Premozi
 
-A modern mozizás élményét fejlesztjük egy innovatív, felhasználóbarát online jegyfoglaló rendszerrel, amely lehetővé teszi a mozijegyek gyors és kényelmes foglalását. Projektünk célja, hogy a felhasználók könnyedén tallózhassanak a filmek és vetítések közt, kiválaszthassák kedvenc helyüket a teremben, majd lefoglalhassák a jegyeket – mindezt egy reszponzív, modern felületen.
+A modern mozizás élményét fejlesztjük egy innovatív, felhasználóbarát online jegyfoglaló rendszerrel, amely lehetővé teszi a mozijegyek gyors és kényelmes foglalását. Projektünk célja, hogy a felhasználók könnyedén tallózhassanak a filmek és vetítések közt, kiválaszthassák kedvenc helyüket a teremben, majd lefoglalhassák a jegyeket – mindezt egy kényelmes, reszponzív, modern felületen.
 
 
 ## Fejlesztők
