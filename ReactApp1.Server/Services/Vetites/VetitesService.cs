@@ -15,6 +15,7 @@ namespace ReactApp1.Server.Services.Vetites
         public async Task<List<GetVetitesResponse>?> getVetites()
         {
             var vetitesek = await context.Vetites.AsNoTracking().AsSplitQuery().Include(x=>x.Film).Include(x => x.Terem).Include(x => x.Film).ThenInclude(x => x.Images).ToListAsync();
+
             var response = new List<GetVetitesResponse>();
             foreach(var vetites in vetitesek)
             {
