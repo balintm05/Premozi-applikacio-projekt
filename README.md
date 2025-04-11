@@ -90,7 +90,7 @@ Megjegyzés: a leadási határidőig nem sikerült megoldani a web szerveres hos
 
 ## Dokumentáció
 
-[Dokumentáció](https://github.com/balintm05/ReactApp1szenvedes/blob/master/dokument%C3%A1ci%C3%B32%20(2).docx)
+[Dokumentáció](https://github.com/balintm05/Premozi-applikacio-projekt/raw/refs/heads/master/Premozi%20Dokument%C3%A1ci%C3%B3%20Word.docx)
 
 
 # Funkciók
