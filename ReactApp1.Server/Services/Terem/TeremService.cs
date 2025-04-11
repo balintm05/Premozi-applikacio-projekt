@@ -16,7 +16,7 @@ namespace ReactApp1.Server.Services.Terem
         public async Task<List<GetTeremResponse>?> getTerem()
         {
             return await context.Terem
-                .AsNoTracking()
+                .AsNoTracking().AsSplitQuery()
                 .Include(x => x.Szekek)
                 .Include(x => x.Vetites)
                 .Select(t => new GetTeremResponse(t))
@@ -24,8 +24,7 @@ namespace ReactApp1.Server.Services.Terem
         }
         public async Task<GetTeremResponse?> getTerem(int id)
         {
-            var terem = await context.Terem.FindAsync(id);
-            var szekek = await context.Szekek.AsNoTracking().ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.Teremid == id)).ToListAsync();
+            var terem = await context.Terem.AsNoTracking().AsSplitQuery().Include(x => x.Szekek).ToAsyncEnumerable().WhereAwait(async x => await ValueTask.FromResult(x.id == id)).FirstAsync();
             var response = new List<GetTeremResponse>();
             if (terem == null)
             {
