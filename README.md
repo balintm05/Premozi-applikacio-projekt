@@ -6,7 +6,7 @@ A modern mozizás élményét fejlesztjük egy innovatív, felhasználóbarát o
 
 ## Fejlesztők
 
-- [Bató Bence](https://www.github.com/ktjisebojtioeskotbwioi, _blank)
+- [Bató Bence](https://www.github.com/ktjisebojtioeskotbwioi)
 - [Magyarósi Bálint](https://github.com/balintm05)
 
 
