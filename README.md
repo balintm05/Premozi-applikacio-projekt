@@ -65,7 +65,7 @@ xunit.runner.visualstudio 3.0.2
 
 ```
 
-Ezután indítsa el a XAMPP-ot, lépjen be a PhpMyAdmin-ba és futtassa le a kódot a [premozi-dump-final-final.sql](https://github.com/balintm05/Premozi-applikacio-projekt/blob/master/premozi-dump-final-final.sql)-ből. 
+Ezután indítsa el a XAMPP-ot, lépjen be a PhpMyAdmin-ba és futtassa le a kódot a [premozi-dump-complete.sql](https://github.com/balintm05/Premozi-applikacio-projekt/blob/master/premozi-dump-complete.sql)-ből. 
 
 
 ## Helyi futtatás
