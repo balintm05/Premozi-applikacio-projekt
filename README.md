@@ -120,4 +120,3 @@ Megjegyzés: a leadási határidőig nem sikerült megoldani a web szerveres hos
 - Foglalások törlése.
 
 
-.
