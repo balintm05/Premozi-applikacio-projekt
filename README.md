@@ -75,20 +75,20 @@ Ezután sikeresen el fog indulni a program.)
 Emellett egy indító BAT fájl is mellékelve van, de annak működése a tanúsítványok miatt inkonzisztens, úgyhogy nem javasolt. 
 Ha a program elindult, csak másolja ki a linket a terminálból, vagy innét:
 ```
-Local:   https://localhost:60769/
+https://localhost:60769/
 ```
 ## Dokumentáció
 
 [Dokumentáció](https://github.com/balintm05/ReactApp1szenvedes/blob/master/dokument%C3%A1ci%C3%B32%20(2).docx)
 
 
-# Features
+# Funkciók
 
-### Felhasználói oldal
-- Regisztráció & Bejelentkezés – Biztonságos fiókkezelés kétlépcsős azonosítással.
-- Filmek böngészése – Áttekinthető lista a aktuális és coming soon filmekről.
-- Vetítések & Termek – Időpontok és elérhető helyek megtekintése.
-- Székválasztás & Foglalás – Interaktív térkép a moziteremről valós időben.
+### Felhasználói felület
+- Regisztráció és bejelentkezés – Biztonságos fiókkezelés kétlépcsős azonosítással, megerősítő emailekkel.
+- Filmek böngészése – Áttekinthető lista a aktuális filmekről.
+- Vetítések – Időpontok és a hozzájuk tartozó ülésrend megtekintése.
+- Székválasztás- és foglalás – Interaktív térkép a moziteremről és a foglalások állapotáról valós időben.
 - Email értesítések – Sikeres foglalásról és fontos információkról automatikus értesítés.
 
 ### Adminisztrációs felület
