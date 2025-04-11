@@ -21,7 +21,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `premozi`
 --
-CREATE DATABASE IF NOT EXISTS `premozi` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE IF NOT EXISTS `premozi` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci;
 USE `premozi`;
 
 -- --------------------------------------------------------
