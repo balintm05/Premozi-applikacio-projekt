@@ -64,6 +64,10 @@ xunit 2.9.3
 xunit.runner.visualstudio 3.0.2
 
 ```
+
+Ezután indítsa el a XAMPP-ot, lépjen be a PhpMyAdmin-ba és futtassa le a kódot a [premozi-dump-final-final.sql](https://github.com/balintm05/Premozi-applikacio-projekt/blob/master/premozi-dump-final-final.sql)-ből. 
+
+
 ## Helyi futtatás
 Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2022-ben az F5 gomb megnyomásával, vagy a https gomb megnyomásával.
 
@@ -81,7 +85,7 @@ Ezután sikeresen el fog indulni a program.)
 
 Emellett egy indító BAT fájl is mellékelve van, de annak működése a tanúsítványok miatt inkonzisztens, úgyhogy nem javasolt. 
 
-Ha a program elindult, csak másolja ki a linket a terminálból, vagy innét:
+Ha a program elindult, másolja ki a linket vagy a terminálból, vagy innét:
 ```
 https://localhost:60769/
 ```
