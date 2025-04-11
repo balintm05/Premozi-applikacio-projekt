@@ -1,22 +1,22 @@
 
 # Premozi
 
-A modern mozizás élményét fejlesztjük egy innovatív, felhasználóbarát online jegyfoglaló rendszerrel, amely lehetővé teszi a mozijegyek gyors és kényelmes megvásárlását. Projektünk célja, hogy a felhasználók könnyedén tallózhassanak a filmek között, választhassanak kedvenc helyüket a teremben, és biztonságosan fizethessenek – mindezt egy reszponzív, modern felületen.
+A modern mozizás élményét fejlesztjük egy innovatív, felhasználóbarát online jegyfoglaló rendszerrel, amely lehetővé teszi a mozijegyek gyors és kényelmes foglalását. Projektünk célja, hogy a felhasználók könnyedén tallózhassanak a filmek és vetítések közt, kiválaszthassák kedvenc helyüket a teremben, majd lefoglalhassák a jegyeket – mindezt egy reszponzív, modern felületen.
 
 
-## Authors
+## Fejlesztők
 
 - [Bató Bence](https://www.github.com/ktjisebojtioeskotbwioi)
 - [Magyarósi Bálint](https://github.com/balintm05)
 
 
-## Installation
+## Telepítés
 
-A projektünkhöz szükséges programok:
+A projekt futtatásához szükséges programok:
 - Visual Studio 2022
 - XAMPP
 
-A projektünk klónozása utánn, nyissunk a VS 2022-ben egy terminált, majd a következő comagokat telepítsük ha nincsenek:
+A projekt klónozása után, nyissa meg a Visual Studio 2022-ben a terminált, majd a következő csomagokat telepítse, ha nincsenek vagy problémát okoznak:
 
 ```bash
   npm install react-router-dom
@@ -37,7 +37,7 @@ A projektünk klónozása utánn, nyissunk a VS 2022-ben egy terminált, majd a 
   npm install universal-cookie@7.2.2
 
 ```
-Illetve a Visual Studio 2022-ben a következő NuGet comagnak szükséges a telepítsük:
+Illetve a Visual Studio 2022-ben a következő NuGet csomagokat is telepítse, ha nincsenek vagy problémát okoznak:
 
 ```
 BCrypt.Net-Next 4.0.3
@@ -64,9 +64,16 @@ xunit 2.9.3
 xunit.runner.visualstudio 3.0.2
 
 ```
-## Run Locally
-Ha a projektünk telepítése kész, csak indítsuk el a projektet Visual Studio 2022-ben egy "f5" megnyomásával. Ha nincs beállítva az "f5" indítás, akkor manuálisan rá kell nyomni "[a zöld háromszög] https" gombra.
-Ha a projekt elindult, csak másoljuk ki a linket a treminálból, vagy innét:
+## Helyi futtatás
+Ha a program és a függőségek telepítése kész, indítsa el Visual Studio 2022-ben az F5 gomb megnyomásával, vagy a https gombra.
+(a szerver komponensnek kell kiválasztva lennie, ha nem indul el, akkor:
+  -> start melletti leugró ablak -> Configure Startup Projects -> Multiple startup projects -> 
+      -> felül: project: ReactApp.Server, action: Start, debug target: https
+      -> alul: project: reactapp.client, action: Start, debug target: üres
+  -> Alkalmaz -> Current Selection -> Alkalmaz
+Ezután sikeresen el fog indulni a program.)
+Emellett egy indító BAT fájl is mellékelve van, de annak működése a tanúsítványok miatt inkonzisztens, úgyhogy nem javasolt. 
+Ha a program elindult, csak másolja ki a linket a terminálból, vagy innét:
 ```
 Local:   https://localhost:60769/
 ```
